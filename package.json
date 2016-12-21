@@ -63,6 +63,7 @@
   "dependencies": {
     "ngraph.forcelayout3d": "0.0.15",
     "ngraph.graph": "0.0.12",
+    "preact": "^7.1.0",
     "underscore": "^1.8.3"
   }
 }

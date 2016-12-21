@@ -47,7 +47,10 @@ module.exports = function(options) {
           moduleIds: true,
           comments: false,
           presets: ['es2015'],
-          plugins: ['transform-es2015-modules-umd']
+          plugins: [
+            'transform-es2015-modules-umd',
+            [ "transform-react-jsx", { "pragma":"h" } ]
+          ]
         }
       ).code
 

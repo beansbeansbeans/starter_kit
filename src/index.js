@@ -1,8 +1,10 @@
+import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
 import "../main.scss"
 import { values } from 'underscore'
 import forceLayout3d from 'ngraph.forcelayout3d'
 import graph from 'ngraph.graph'
+import './renderer'
 
 const ITERATIONS_COUNT = 50
 
@@ -26,3 +28,14 @@ g.forEachNode(node => {
 g.forEachLink(link => {
   console.log(layout.getLinkPosition(link.id))
 })
+
+class Clock extends Component {
+  render({}) {
+    return (
+      <div></div>
+    )
+  }
+}
+
+// render an instance of Clock into <body>:
+render(<Clock />, document.body);
