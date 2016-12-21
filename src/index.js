@@ -4,7 +4,8 @@ import "../main.scss"
 import { values } from 'underscore'
 import forceLayout3d from 'ngraph.forcelayout3d'
 import graph from 'ngraph.graph'
-import './renderer'
+import renderer from './renderer'
+import { getData } from './api'
 
 const ITERATIONS_COUNT = 50
 
@@ -29,13 +30,23 @@ g.forEachLink(link => {
   console.log(layout.getLinkPosition(link.id))
 })
 
-class Clock extends Component {
+class App extends Component {
   render({}) {
     return (
-      <div>lol</div>
+      <app>
+        <canvas id="webgl-canvas"></canvas>
+      </app>
     )
   }
 }
 
-// render an instance of Clock into <body>:
-render(<Clock />, document.body);
+Promise.all(['nodes', 'edges'].map(getData))
+  .then(data => {
+    render(<App />, document.body);
+
+    renderer.initialize({
+      element: document.querySelector("webgl-canvas"),
+      nodes: data[0],
+      edges: data[1]
+    })
+  })
