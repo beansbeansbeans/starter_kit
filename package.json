@@ -46,6 +46,8 @@
     "mocha": "^3.0.2",
     "phantomjs-prebuilt": "^2.1.12",
     "rollup": "^0.36.2",
+    "rollup-plugin-commonjs": "^6.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-scss": "^0.2.0",
     "serve": "^1.4.0",
     "sinon": "^1.17.5",
@@ -57,5 +59,8 @@
   "bugs": {
     "url": "https://github.com/GianlucaGuarini/es6-project-starter-kit/issues"
   },
-  "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit"
+  "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit",
+  "dependencies": {
+    "underscore": "^1.8.3"
+  }
 }

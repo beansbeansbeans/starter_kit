@@ -1,7 +1,6 @@
 import helpers from './helpers/helpers'
 import "../main.scss"
-
-console.log("lol")
+import { values } from 'underscore'
 
 /**
  * An awesome script

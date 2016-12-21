@@ -1,4 +1,6 @@
 var utils = require('./_utils'),
+  nodeResolve = require('rollup-plugin-node-resolve'),
+  commonjs = require('rollup-plugin-commonjs'),
   rollup = require( 'rollup' ),
   mkdirp = require('mkdirp'),
   fs = require('fs'),
@@ -24,6 +26,16 @@ module.exports = function(options) {
       plugins: [
         sass({
           output: true
+        }),
+        nodeResolve({
+          jsnext: true,
+          main: true
+        }),
+        commonjs({ 
+          include: './node_modules/**',
+          namedExports: { 
+            './node_modules/underscore/underscore.js': ['values']
+          }
         })
       ]
     }).then( function ( bundle ) {
