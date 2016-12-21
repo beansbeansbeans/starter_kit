@@ -61,6 +61,7 @@
   },
   "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit",
   "dependencies": {
+    "ngraph.forcelayout3d": "0.0.15",
     "underscore": "^1.8.3"
   }
 }

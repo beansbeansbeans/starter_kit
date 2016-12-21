@@ -8,10 +8,6 @@ var utils = require('./_utils'),
   sass = require('rollup-plugin-scss')
 
 module.exports = function(options) {
-
-  // delete the old ./dist folder
-  utils.clean('./dist')
-
   /**
    * Create a promise based on the result of the webpack compiling script
    */

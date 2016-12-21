@@ -1,6 +1,9 @@
 import helpers from './helpers/helpers'
 import "../main.scss"
 import { values } from 'underscore'
+import forceLayout3d from 'ngraph.forcelayout3d'
+
+console.log(forceLayout3d)
 
 /**
  * An awesome script
