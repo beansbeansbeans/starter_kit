@@ -1,3 +1,3 @@
-todo
+    $ npm install
 
-- enable common modules
+localhost:3000
