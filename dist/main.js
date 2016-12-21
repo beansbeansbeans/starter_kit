@@ -1,6 +1,6 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define('Greeter', ['module'], factory);
+    define('main', ['module'], factory);
   } else if (typeof exports !== "undefined") {
     factory(module);
   } else {
@@ -8,7 +8,7 @@
       exports: {}
     };
     factory(mod);
-    global.Greeter = mod.exports;
+    global.main = mod.exports;
   }
 })(this, function (module) {
   'use strict';
@@ -43,10 +43,12 @@
     }
   };
 
+  console.log("lol");
+
   var index = function () {
     function index() {
-      var name = arguments.length <= 0 || arguments[0] === undefined ? 'Dear Coder' : arguments[0];
-      var text = arguments.length <= 1 || arguments[1] === undefined ? 'hi there' : arguments[1];
+      var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Dear Coder';
+      var text = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'hi there';
 
       _classCallCheck(this, index);
 

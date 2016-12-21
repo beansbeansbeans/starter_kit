@@ -1,4 +1,7 @@
 import helpers from './helpers/helpers'
+import "../main.scss"
+
+console.log("lol")
 
 /**
  * An awesome script
