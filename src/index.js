@@ -2,21 +2,27 @@ import helpers from './helpers/helpers'
 import "../main.scss"
 import { values } from 'underscore'
 import forceLayout3d from 'ngraph.forcelayout3d'
+import graph from 'ngraph.graph'
 
-console.log(forceLayout3d)
+const ITERATIONS_COUNT = 50
 
-/**
- * An awesome script
- */
-export default class {
-  constructor(name = 'Dear Coder', text = 'hi there') {
-    this.name = name
-    this.text = text
-  }
-  get message() {
-    return `${this.text} ${this.name}!`
-  }
-  set message(text) {
-    this.text = helpers.trim(text)
-  }
+let g = graph()
+
+g.addNode('hello')
+g.addNode('world')
+
+g.addLink('hello', 'world')
+
+let layout = forceLayout3d(g)
+
+for(let i=0; i<ITERATIONS_COUNT; i++) {
+  layout.step()
 }
+
+g.forEachNode(node => {
+  console.log(layout.getNodePosition(node.id))
+})
+
+g.forEachLink(link => {
+  console.log(layout.getLinkPosition(link.id))
+})
