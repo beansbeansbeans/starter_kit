@@ -32,7 +32,7 @@ g.forEachLink(link => {
 class Clock extends Component {
   render({}) {
     return (
-      <div></div>
+      <div>lol</div>
     )
   }
 }

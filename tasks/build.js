@@ -4,7 +4,7 @@ var utils = require('./_utils'),
   rollup = require( 'rollup' ),
   mkdirp = require('mkdirp'),
   fs = require('fs'),
-  babel = require('babel-core'),
+  babel = require('rollup-plugin-babel'),
   sass = require('rollup-plugin-scss')
 
 module.exports = function(options) {
@@ -23,6 +23,9 @@ module.exports = function(options) {
         sass({
           output: true
         }),
+        babel({
+          exclude: './node_modules/**',
+        }),
         nodeResolve({
           jsnext: true,
           main: true
@@ -37,22 +40,10 @@ module.exports = function(options) {
     }).then( function ( bundle ) {
 
       // convert to valid es5 code with babel
-      var result = babel.transform(
-        // create a single bundle file
-        bundle.generate({
-          format: 'cjs'
-        }).code,
-        {
-          moduleId: global.library,
-          moduleIds: true,
-          comments: false,
-          presets: ['es2015'],
-          plugins: [
-            'transform-es2015-modules-umd',
-            [ "transform-react-jsx", { "pragma":"h" } ]
-          ]
-        }
-      ).code
+      var result = bundle.generate({
+        format: 'cjs',
+        useStrict: false
+      }).code
 
       mkdirp('./dist', function() {
         try {
@@ -62,7 +53,6 @@ module.exports = function(options) {
           reject(e)
         }
       })
-
     }).catch(e =>{ utils.print(e, 'error') })
   })
 
