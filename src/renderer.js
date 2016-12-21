@@ -20,9 +20,20 @@ export default {
         canvas: document.querySelector("#webgl-canvas")
       }),
       nodePositions = new Float32Array(nodes.length),
-      edgeVertices = new Float32Array(edges.length)
+      edgeVertices = new Float32Array(edges.length * 2),
+      nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 1),
+      edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 2)
     
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
+
+    nodeGeometry.addAttribute("position", nodePositionsBuffer)
+    edgeGeometry.addAttribute("position", edgeVerticesBuffer)
+
+    const lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
+    scene.add(lineSegments)
+    const points = new THREE.Points(nodeGeometry, nodeMaterial)
+    scene.add(points)
+    
   }
 }
