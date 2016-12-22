@@ -5,12 +5,12 @@ const scene = new THREE.Scene(),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
   nodeMaterial = new THREE.ShaderMaterial({
-    vertexShader: document.getElementById("node-vertex-shader"),
-    fragmentShader: document.getElementById("node-fragment-shader")
+    vertexShader: document.getElementById("node-vertex-shader").textContent,
+    fragmentShader: document.getElementById("node-fragment-shader").textContent
   }),
   edgeMaterial = new THREE.ShaderMaterial({
-    vertexShader: document.getElementById("edge-vertex-shader"),
-    fragmentShader: document.getElementById("edge-fragment-shader")
+    vertexShader: document.getElementById("edge-vertex-shader").textContent,
+    fragmentShader: document.getElementById("edge-fragment-shader").textContent
   })
 
 export default {
@@ -34,6 +34,6 @@ export default {
     scene.add(lineSegments)
     const points = new THREE.Points(nodeGeometry, nodeMaterial)
     scene.add(points)
-    
+
   }
 }
