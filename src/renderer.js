@@ -12,6 +12,7 @@ const g = graph(),
   cameraDistance = 1500
 
 let layout, renderer, nodePositions, edgeVertices, 
+  nodeColors, nodeColorsBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
@@ -61,9 +62,11 @@ export default {
     edges = opts.edges
     nodesLength = nodes.length
     edgesLength = edges.length
-    renderer = new THREE.WebGLRenderer({ canvas: opts.element })
+    renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
+    nodeColors = new Float32Array(nodesLength * 4)
     nodePositions = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
+    nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
 
@@ -88,8 +91,29 @@ export default {
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
 
+    nodeGeometry.addAttribute("color", nodeColorsBuffer)
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
+
+    for(let i=0; i<nodesLength; i++) {
+      let belief = nodes[i].trumporhillary
+
+      if(belief === 0) {
+        nodeColors[i * 4] = 1
+        nodeColors[i * 4 + 1] = 0.098
+        nodeColors[i * 4 + 2] = 0.3255
+      } else if(belief === 1 || belief === 2 || belief === 3) {
+        nodeColors[i * 4] = 0
+        nodeColors[i * 4 + 1] = 0.745
+        nodeColors[i * 4 + 2] = 0.99
+      } else {
+        nodeColors[i * 4] = 1
+        nodeColors[i * 4 + 1] = 1
+        nodeColors[i * 4 + 2] = 1
+      }
+
+      nodeColors[i * 4 + 3] = 0.5
+    }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
     scene.add(lineSegments)
