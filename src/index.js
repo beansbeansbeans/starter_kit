@@ -26,6 +26,7 @@ const textureLoader = new THREE.TextureLoader(),
           nodes = data[0]
           edges = data[1]
 
+          // must be multiples of 3 so webgl doesn't complain
           nodes.splice(roundDown(nodes.length, 3))
           edges.splice(roundDown(edges.length, 3))
         })

@@ -1,6 +1,8 @@
 import sharedState from './sharedState'
 import forceLayout3d from 'ngraph.forcelayout3d'
 import graph from 'ngraph.graph'
+import helpers from './helpers/helpers'
+const { decodeFloat } = helpers
 
 const g = graph(),
   scene = new THREE.Scene(),
@@ -20,8 +22,9 @@ let layout, renderer, nodePositions, edgeVertices,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points
 
 const renderLoop = () => {
-  renderer.render(scene, camera)
+  layout.step()
 
+  renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
 
@@ -43,6 +46,16 @@ export default {
     scene.add(lineSegments)
     points = new THREE.Points(nodeGeometry, nodeMaterial)
     scene.add(points)
+
+    for(let i=0, n=nodes.length; i<n; i++) {
+      g.addNode(nodes[i].node_id, nodes[i].trumporhillary)
+    }
+
+    for(let i=0, l=edges.length; i<l; i++) {
+      g.addLink(edges[i].source, edges[i].target)
+    }
+
+    layout = forceLayout3d(g)
 
     requestAnimationFrame(renderLoop)
   }
