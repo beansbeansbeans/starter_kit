@@ -41,7 +41,7 @@ Promise.all(['nodes', 'edges'].map(getData))
     }
 
     renderer.initialize({
-      element: document.querySelector("webgl-canvas"),
+      element: document.querySelector("#webgl-canvas"),
       nodes, edges
     })
   })

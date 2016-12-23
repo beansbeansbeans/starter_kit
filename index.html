@@ -9,16 +9,24 @@
 </head>
 <body>
   <script type="x-shader/x-vertex" id="node-vertex-shader">
-    
+    void main() {
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
   </script>
   <script type="x-shader/x-fragment" id="node-fragment-shader">
-    
+    void main() {
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 0.1);
+    }
   </script>
   <script type="x-shader/x-vertex" id="edge-vertex-shader">
-    
+    void main() {
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
   </script>
   <script type="x-shader/x-fragment" id="edge-fragment-shader">
-    
+    void main() {
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 0.1);
+    }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
   <script src="/dist/main.js"></script>
