@@ -46,6 +46,11 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 5] = target.z
   }
 
+  var timer = Date.now() * 0.0002
+  camera.position.x = Math.cos( timer ) * 1500
+  camera.position.z = Math.sin( timer ) * 1500
+  camera.lookAt(scene.position)
+
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
   renderer.render(scene, camera)
