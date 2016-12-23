@@ -20,10 +20,14 @@ const g = graph(),
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
-  nodesLength, edgesLength, nodes, edges
+  nodesLength, edgesLength, nodes, edges,
+  steps = 0
 
 const renderLoop = () => {
-  layout.step()
+  if(steps < 120) {
+    layout.step()
+    steps++
+  }
 
   for(let i=0; i<nodesLength; i++) {
     let node = nodes[i]
