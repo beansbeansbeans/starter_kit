@@ -20,8 +20,8 @@ const g = graph(),
             assets[k].data = data
             resolve(data)
           })
-        }, () => {},
-        xhr => reject(new Error(`could not load ${k}`)))        
+          }, () => {},
+          xhr => reject(new Error(`could not load ${k}`)))        
       )),
     getData: () =>
       Promise.all(['nodes', 'edges'].map(getData))
@@ -43,8 +43,7 @@ class App extends Component {
   }
 }
 
-Promise.all(Object.keys(preload).map(k => preload[k]()))
-  .then(() => {
+Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
 
   for(let i=0, n=nodes.length; i<n; i++) {
