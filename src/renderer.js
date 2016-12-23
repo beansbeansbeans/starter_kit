@@ -19,22 +19,50 @@ const g = graph(),
   })
 
 let layout, renderer, nodePositions, edgeVertices, 
-  nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points
+  nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
+  nodesLength, edgesLength, nodes, edges
 
 const renderLoop = () => {
   layout.step()
 
+  for(let i=0; i<nodesLength; i++) {
+    let node = nodes[i]
+    let pos = layout.getNodePosition(node.node_id)
+    nodePositions[i * 3] = pos.x
+    nodePositions[i * 3 + 1] = pos.y
+    nodePositions[i * 3 + 2] = pos.z
+  }
+
+  for(let i=0; i<edgesLength; i++) {
+    let edge = edges[i],
+      source = layout.getNodePosition(edge.source),
+      target = layout.getNodePosition(edge.target)
+
+    edgeVertices[i * 6] = source.x
+    edgeVertices[i * 6 + 1] = source.y
+    edgeVertices[i * 6 + 2] = source.z
+    edgeVertices[i * 6 + 3] = target.x
+    edgeVertices[i * 6 + 4] = target.y
+    edgeVertices[i * 6 + 5] = target.z
+  }
+
+  nodePositionsBuffer.needsUpdate = true
+  edgeVerticesBuffer.needsUpdate = true
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
 
 export default {
-  initialize({ element, nodes, edges, particleSprite }) {
-    renderer = new THREE.WebGLRenderer({ canvas: element })
-    nodePositions = new Float32Array(nodes.length)
-    edgeVertices = new Float32Array(edges.length * 2)
-    nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 1)
-    edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 2)
+  initialize(opts) {
+    nodes = opts.nodes
+    edges = opts.edges
+    nodesLength = nodes.length
+    edgesLength = edges.length
+    renderer = new THREE.WebGLRenderer({ canvas: opts.element })
+    nodePositions = new Float32Array(nodesLength * 3)
+    edgeVertices = new Float32Array(edgesLength * 2)
+    nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
+    edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -47,11 +75,11 @@ export default {
     points = new THREE.Points(nodeGeometry, nodeMaterial)
     scene.add(points)
 
-    for(let i=0, n=nodes.length; i<n; i++) {
+    for(let i=0; i<nodesLength; i++) {
       g.addNode(nodes[i].node_id, nodes[i].trumporhillary)
     }
 
-    for(let i=0, l=edges.length; i<l; i++) {
+    for(let i=0; i<edgesLength; i++) {
       g.addLink(edges[i].source, edges[i].target)
     }
 
