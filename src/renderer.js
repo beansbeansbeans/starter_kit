@@ -23,7 +23,7 @@ const renderLoop = () => {
 }
 
 export default {
-  initialize({ element, nodes, edges }) {
+  initialize({ element, nodes, edges, particleSprite }) {
     renderer = new THREE.WebGLRenderer({ canvas: element })
     nodePositions = new Float32Array(nodes.length)
     edgeVertices = new Float32Array(edges.length * 2)

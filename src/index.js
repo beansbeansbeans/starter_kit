@@ -7,8 +7,31 @@ import graph from 'ngraph.graph'
 import renderer from './renderer'
 import { getData } from './api'
 
-const ITERATIONS_COUNT = 50
-const g = graph()
+const g = graph(),
+  textureLoader = new THREE.TextureLoader(),
+  assets = {
+    particleSprite: { filename: "particle.png" }
+  },
+  preload = {
+    getTextures: () =>
+      Promise.all(Object.keys(assets).map(k =>
+        new Promise((resolve, reject) => {
+          textureLoader.load(`images/${assets[k].filename}`, data => {
+            assets[k].data = data
+            resolve(data)
+          })
+        }, () => {},
+        xhr => reject(new Error(`could not load ${k}`)))        
+      )),
+    getData: () =>
+      Promise.all(['nodes', 'edges'].map(getData))
+        .then(data => {
+          nodes = data[0]
+          edges = data[1]
+        })
+  }
+
+let nodes, edges, layout
 
 class App extends Component {
   render({}) {
@@ -20,28 +43,24 @@ class App extends Component {
   }
 }
 
-Promise.all(['nodes', 'edges'].map(getData))
-  .then(data => {
-    render(<App />, document.body);
+Promise.all(Object.keys(preload).map(k => preload[k]()))
+  .then(() => {
+  render(<App />, document.body);
 
-    const nodes = data[0], edges = data[1]
+  for(let i=0, n=nodes.length; i<n; i++) {
+    g.addNode(i, nodes[i])
+  }
 
-    for(let i=0, n=nodes.length; i<n; i++) {
-      g.addNode(i, nodes[i])
-    }
+  for(let i=0, l=edges.length; i<l; i++) {
+    g.addLink(edges[i].source, edges[i].target)
+  }
 
-    for(let i=0, l=edges.length; i<l; i++) {
-      g.addLink(edges[i].source, edges[i].target)
-    }
+  let layout = forceLayout3d(g)
 
-    let layout = forceLayout3d(g)
-
-    for(let i=0; i<ITERATIONS_COUNT; i++) {
-      layout.step()
-    }
-
-    renderer.initialize({
-      element: document.querySelector("#webgl-canvas"),
-      nodes, edges
-    })
+  renderer.initialize({
+    element: document.querySelector("#webgl-canvas"),
+    nodes, edges,
+    particleSprite: assets.particleSprite.data
   })
+})
+
