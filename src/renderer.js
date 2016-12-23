@@ -9,18 +9,12 @@ const g = graph(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  nodeMaterial = new THREE.ShaderMaterial({
-    vertexShader: document.getElementById("node-vertex-shader").textContent,
-    fragmentShader: document.getElementById("node-fragment-shader").textContent
-  }),
-  edgeMaterial = new THREE.ShaderMaterial({
-    vertexShader: document.getElementById("edge-vertex-shader").textContent,
-    fragmentShader: document.getElementById("edge-fragment-shader").textContent
-  })
+  cameraDistance = 1500
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
+  nodeMaterial, edgeMaterial,
   steps = 0
 
 const renderLoop = () => {
@@ -51,8 +45,8 @@ const renderLoop = () => {
   }
 
   var timer = Date.now() * 0.0002
-  camera.position.x = Math.cos( timer ) * 1500
-  camera.position.z = Math.sin( timer ) * 1500
+  camera.position.x = Math.cos( timer ) * cameraDistance
+  camera.position.z = Math.sin( timer ) * cameraDistance
   camera.lookAt(scene.position)
 
   nodePositionsBuffer.needsUpdate = true
@@ -69,9 +63,27 @@ export default {
     edgesLength = edges.length
     renderer = new THREE.WebGLRenderer({ canvas: opts.element })
     nodePositions = new Float32Array(nodesLength * 3)
-    edgeVertices = new Float32Array(edgesLength * 2)
+    edgeVertices = new Float32Array(edgesLength * 2 * 3)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
+
+    nodeMaterial = new THREE.ShaderMaterial({
+      vertexShader: document.getElementById("node-vertex-shader").textContent,
+      fragmentShader: document.getElementById("node-fragment-shader").textContent,
+      transparent: true,
+      depthTest: false,
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        tex: { value: opts.particleSprite },
+        cameraDistance: { value: cameraDistance }
+      }
+    })
+
+    edgeMaterial = new THREE.ShaderMaterial({
+      vertexShader: document.getElementById("edge-vertex-shader").textContent,
+      fragmentShader: document.getElementById("edge-fragment-shader").textContent,
+      transparent: true
+    })
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
