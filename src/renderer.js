@@ -1,6 +1,9 @@
 import sharedState from './sharedState'
+import forceLayout3d from 'ngraph.forcelayout3d'
+import graph from 'ngraph.graph'
 
-const scene = new THREE.Scene(),
+const g = graph(),
+  scene = new THREE.Scene(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
@@ -13,7 +16,7 @@ const scene = new THREE.Scene(),
     fragmentShader: document.getElementById("edge-fragment-shader").textContent
   })
 
-let renderer, nodePositions, edgeVertices, 
+let layout, renderer, nodePositions, edgeVertices, 
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points
 
 const renderLoop = () => {

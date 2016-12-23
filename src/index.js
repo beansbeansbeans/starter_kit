@@ -1,14 +1,10 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
 import "../main.scss"
-import { values } from 'underscore'
-import forceLayout3d from 'ngraph.forcelayout3d'
-import graph from 'ngraph.graph'
 import renderer from './renderer'
 import { getData } from './api'
 
-const g = graph(),
-  textureLoader = new THREE.TextureLoader(),
+const textureLoader = new THREE.TextureLoader(),
   assets = {
     particleSprite: { filename: "particle.png" }
   },
@@ -31,7 +27,7 @@ const g = graph(),
         })
   }
 
-let nodes, edges, layout
+let nodes, edges
 
 class App extends Component {
   render({}) {
@@ -45,16 +41,6 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
-
-  for(let i=0, n=nodes.length; i<n; i++) {
-    g.addNode(i, nodes[i])
-  }
-
-  for(let i=0, l=edges.length; i<l; i++) {
-    g.addLink(edges[i].source, edges[i].target)
-  }
-
-  let layout = forceLayout3d(g)
 
   renderer.initialize({
     element: document.querySelector("#webgl-canvas"),
