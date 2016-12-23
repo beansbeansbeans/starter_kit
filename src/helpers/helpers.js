@@ -10,5 +10,9 @@ export default {
    */
   trim: function(string) {
     return string.replace(/^\s+|\s+$/gm, '')
+  },
+
+  roundDown: function(num, nearestInt) {
+    return Math.floor(num / nearestInt) * nearestInt
   }
 }

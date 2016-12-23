@@ -1,5 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
+const { roundDown } = helpers
 import "../main.scss"
 import renderer from './renderer'
 import { getData } from './api'
@@ -24,6 +25,9 @@ const textureLoader = new THREE.TextureLoader(),
         .then(data => {
           nodes = data[0]
           edges = data[1]
+
+          nodes.splice(roundDown(nodes.length, 3))
+          edges.splice(roundDown(edges.length, 3))
         })
   }
 
