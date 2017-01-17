@@ -29,7 +29,7 @@ module.exports = function(options) {
 
   // run eslint when a source file gets updated
   utils.print('Watching files', 'cool')
-  chokidar.watch(['src/**/**/*.js', '*.scss', 'scss/*.scss'], {
+  chokidar.watch(['src/**/**/*.js', 'node_modules/**/**/*.js', '*.scss', 'scss/*.scss'], {
     ignoreInitial: true
   }).on('all', function(event) {
     // this tasks will run only if the current event matches the ones in the watchEvents array
