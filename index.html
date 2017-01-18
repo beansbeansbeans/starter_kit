@@ -39,6 +39,7 @@
         float dz = 0.;
         float mass;
         float pixelIndex;
+        int debugInt = 27;
         float debugVal = 27.;
         float queue[iterations];
         int queueLength = 1;
@@ -1019,6 +1020,10 @@
               }
             }
           }
+
+          // if(debugCompletedIterations == 54 && sourceBodyPos[0] - 9. < EPS && sourceBodyPos[1] + 6. < EPS && sourceBodyPos[2] - 3. < EPS) {
+          //   debugVal = fz;
+          // }
         }
 
         gl_FragColor = vec4(fx, fy, fz, 0);
