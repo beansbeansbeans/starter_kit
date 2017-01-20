@@ -15,11 +15,7 @@ results
 npm-debug.log
 dist/
 
-!node_modules/
-
-node_modules/*
-!node_modules/ngraph.quadtreebh3d/
+node_modules/
 
 coverage
 .DS_Store
-
