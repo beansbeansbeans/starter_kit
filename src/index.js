@@ -36,6 +36,15 @@ const textureLoader = new THREE.TextureLoader(),
             active: false 
           }))
 
+          Object.keys(retweets).forEach(k => {
+            retweets[k] = retweets[k].sort((a, b) => {
+              if(new Date(a.timestamp.substring(0, 19)) < new Date(b.timestamp.substring(0, 19))) {
+                return -1
+              }
+              return 1
+            })
+          })
+
           for(let j=0; j<nodes.length; j++) {
             let rank = nodes[j].pagerank
             if(rank > maxPageRank) {
