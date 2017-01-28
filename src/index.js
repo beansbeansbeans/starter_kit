@@ -117,6 +117,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   renderer.initialize({
     element: document.querySelector("#webgl-canvas"),
     nodes, edges,
+    tweets, retweets,
     particleSprite: assets.particleSprite.data
   })
 })

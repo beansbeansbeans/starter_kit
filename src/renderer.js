@@ -19,6 +19,7 @@ let layout, renderer, nodePositions, edgeVertices,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
   steps = 0,
+  tweets, retweets,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null,
@@ -103,10 +104,14 @@ const renderLoop = () => {
 
 export default {
   initialize(opts) {
+    tweets = opts.tweets
+    retweets = opts.retweets
     nodes = opts.nodes
     edges = opts.edges
+
     nodesLength = nodes.length
     edgesLength = edges.length
+    
     renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
     nodeColors = new Float32Array(nodesLength * 3)
     nodePositions = new Float32Array(nodesLength * 3)
@@ -213,8 +218,10 @@ export default {
 
     if(activeTweet) {
       let followers = [activeTweet.node_id] // these are the people who should be illuminated
-      let currentCrop = [activeTweet.node_id] // these are the people we are currently looking for followers of
+      let currentCrop = activeTweet.node_id // these are the people we are currently looking for followers of
       let newCrop = []
+
+      let retweetIterator = 0
 
       illuminateFollowersInterval = setInterval(() => {
         const followersLength = followers.length
@@ -223,33 +230,39 @@ export default {
           let edge = edges[i]
 
           // source follows target
-          if(currentCrop.indexOf(edge.target) > -1 && followers.indexOf(edge.source) === -1) {
+          if(currentCrop == edge.target && followers.indexOf(edge.source) === -1) {
             followers.push(edge.source)
             newCrop.push(edge.source)
 
             edgeTimes[i * 6] = colorTimer
             edgeTimes[i * 6 + 1] = 1
+            edgeTimes[i * 6 + 2] = 0.5
             edgeTimes[i * 6 + 3] = colorTimer      
             edgeTimes[i * 6 + 4] = 1  
+            edgeTimes[i * 6 + 5] = 0.5 
           }
         }
 
         for(let i=0; i<nodesLength; i++) {
-          if(currentCrop.indexOf(nodes[i].id) > -1) {
+          if(newCrop.indexOf(nodes[i].id) > -1) {
             nodeTimes[i * 3] = colorTimer
             nodeTimes[i * 3 + 1] = 1
+            nodeTimes[i * 3 + 2] = 1
           }
         }
 
         nodeTimesBuffer.needsUpdate = true
         edgeTimesBuffer.needsUpdate = true
 
-        currentCrop = newCrop
-        newCrop = []
-
-        if(followers.length === followersLength) {
+        if(retweets[activeTweet._id].length <= retweetIterator) {
           window.clearInterval(illuminateFollowersInterval)
-        } 
+        } else {
+          currentCrop = retweets[activeTweet._id][retweetIterator].retweeter_node_id
+
+          newCrop = []          
+        }
+
+        retweetIterator++
       }, fadeOutFrames * 17) // assuming 60fps
     }
   }
