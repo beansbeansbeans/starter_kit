@@ -12,11 +12,14 @@ const g = graph(),
   cameraDistance = 1500
 
 let layout, renderer, nodePositions, edgeVertices, 
+  edgeTimes, edgeTimesBuffer,
   nodeColors, nodeColorsBuffer, nodeSizes, nodeSizesBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  steps = 0
+  steps = 0,
+  colorTimer = 1, colorIncrement = 0.01,
+  fadeOutFrames = 17
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -52,6 +55,12 @@ const renderLoop = () => {
 
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
+
+  nodeMaterial.uniforms.time.value = colorTimer
+  edgeMaterial.uniforms.time.value = colorTimer
+
+  colorTimer += colorIncrement
+
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
@@ -66,11 +75,13 @@ export default {
     nodeColors = new Float32Array(nodesLength * 4)
     nodePositions = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
+    edgeTimes = new Float32Array(edgesLength * 2)
     nodeSizes = new Float32Array(nodesLength)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
     nodeSizesBuffer = new THREE.BufferAttribute(nodeSizes, 1)
+    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 1)
 
     nodeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("node-vertex-shader").textContent,
@@ -79,6 +90,8 @@ export default {
       depthTest: false,
       blending: THREE.AdditiveBlending,
       uniforms: {
+        fadeOutDur: { value: fadeOutFrames * colorIncrement },
+        time: { value: 0 },
         tex: { value: opts.particleSprite },
         cameraDistance: { value: cameraDistance }
       }
@@ -87,7 +100,11 @@ export default {
     edgeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("edge-vertex-shader").textContent,
       fragmentShader: document.getElementById("edge-fragment-shader").textContent,
-      transparent: true
+      transparent: true,
+      uniforms: {
+        time: { value: 0 },
+        fadeOutDur: { value: fadeOutFrames * colorIncrement }
+      }
     })
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
@@ -116,9 +133,14 @@ export default {
         nodeColors[i * 4 + 2] = 1
       }
 
-      nodeColors[i * 4 + 3] = 0.5
+      nodeColors[i * 4 + 3] = colorTimer
 
       nodeSizes[i] = node.pagerank
+    }
+
+    for(let i=0; i<edgesLength; i++) {
+      edgeTimes[i * 2] = colorTimer
+      edgeTimes[i * 2 + 1] = colorTimer
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
