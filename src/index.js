@@ -32,6 +32,7 @@ const textureLoader = new THREE.TextureLoader(),
           retweets = data[2]
           tweets = data[3].map(t => ({ 
             ...t, 
+            node_id: nodes.find(n => n.twitterid == t.author_id).id,
             active: false 
           }))
 
@@ -80,8 +81,9 @@ class App extends Component {
         return t
       })
     }, () => {
-      if(this.state.tweets.find(t => t.active)) {
-        renderer.setActiveTweet(id)
+      const match = this.state.tweets.find(t => t.active)
+      if(match) {
+        renderer.setActiveTweet(match)
       } else {
         renderer.setActiveTweet(null)
       }

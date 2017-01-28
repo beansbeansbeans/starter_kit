@@ -21,7 +21,8 @@ let layout, renderer, nodePositions, edgeVertices,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
-  lastActiveTweet = null, activeTweet = null
+  lastActiveTweet = null, activeTweet = null,
+  illuminateFollowersInterval = null
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -66,7 +67,7 @@ const renderLoop = () => {
     } else if(activeTweet == null && lastActiveTweet != null) {
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 2] = colorTimer
-        nodeTimes[i * 2 + 1] = 1 // 0 means fade out    
+        nodeTimes[i * 2 + 1] = 1   
       }
 
       for(let i=0; i<edgesLength; i++) {
@@ -74,7 +75,7 @@ const renderLoop = () => {
         edgeTimes[i * 4 + 1] = 1
         edgeTimes[i * 4 + 2] = colorTimer      
         edgeTimes[i * 4 + 3] = 1      
-      }      
+      }
     }
     
     nodeTimesBuffer.needsUpdate = true
@@ -206,5 +207,47 @@ export default {
   },
   setActiveTweet(newActiveTweet) {
     activeTweet = newActiveTweet
+
+    if(activeTweet) {
+      let followers = [activeTweet.node_id] // these are the people who should be illuminated
+      let currentCrop = [activeTweet.node_id] // these are the people we are currently looking for followers of
+      let newCrop = []
+
+      illuminateFollowersInterval = setInterval(() => {
+        const followersLength = followers.length
+        
+        for(let i=0; i<edgesLength; i++) {
+          let edge = edges[i]
+
+          // source follows target
+          if(currentCrop.indexOf(edge.target) > -1 && followers.indexOf(edge.source) === -1) {
+            followers.push(edge.source)
+            newCrop.push(edge.source)
+
+            edgeTimes[i * 4] = colorTimer
+            edgeTimes[i * 4 + 1] = 1
+            edgeTimes[i * 4 + 2] = colorTimer      
+            edgeTimes[i * 4 + 3] = 1  
+          }
+        }
+
+        for(let i=0; i<nodesLength; i++) {
+          if(currentCrop.indexOf(nodes[i].id) > -1) {
+            nodeTimes[i * 2] = colorTimer
+            nodeTimes[i * 2 + 1] = 1
+          }
+        }
+
+        nodeTimesBuffer.needsUpdate = true
+        edgeTimesBuffer.needsUpdate = true
+
+        currentCrop = newCrop
+        newCrop = []
+
+        if(followers.length === followersLength) {
+          window.clearInterval(illuminateFollowersInterval)
+        } 
+      }, fadeOutFrames * 17) // assuming 60fps
+    }
   }
 }
