@@ -23,7 +23,8 @@ let layout, renderer, nodePositions, edgeVertices,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null,
-  illuminateFollowersInterval = null
+  illuminateFollowersInterval = null,
+  defaultEdgeOpacity = 0.1, defaultNodeOpacity = 0.5
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -184,16 +185,16 @@ export default {
     for(let i=0; i<nodesLength; i++) {
       nodeTimes[i * 3] = 0
       nodeTimes[i * 3 + 1] = 1
-      nodeTimes[i * 3 + 2] = 0.5
+      nodeTimes[i * 3 + 2] = defaultNodeOpacity
     }
 
     for(let i=0; i<edgesLength; i++) {
       edgeTimes[i * 6] = 0
       edgeTimes[i * 6 + 1] = 1
-      edgeTimes[i * 6 + 2] = 0.1
+      edgeTimes[i * 6 + 2] = defaultEdgeOpacity
       edgeTimes[i * 6 + 3] = 0
       edgeTimes[i * 6 + 4] = 1
-      edgeTimes[i * 6 + 5] = 0.1
+      edgeTimes[i * 6 + 5] = defaultEdgeOpacity
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
@@ -264,6 +265,15 @@ export default {
 
         retweetIterator++
       }, fadeOutFrames * 17) // assuming 60fps
+    } else {
+      for(let i=0; i<edgesLength; i++) {
+        edgeTimes[i * 6 + 2] = defaultEdgeOpacity
+        edgeTimes[i * 6 + 5] = defaultEdgeOpacity 
+      }
+
+      for(let i=0; i<nodesLength; i++) {
+        nodeTimes[i * 3 + 2] = defaultNodeOpacity
+      }
     }
   }
 }
