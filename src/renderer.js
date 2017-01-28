@@ -20,7 +20,7 @@ let layout, renderer, nodePositions, edgeVertices,
   nodeMaterial, edgeMaterial,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
-  fadeOutFrames = 17,
+  fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null
 
 const renderLoop = () => {

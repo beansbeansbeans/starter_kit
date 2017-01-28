@@ -20,9 +20,9 @@
     void main() {
       float alpha = 0.;
       if(times.y > 0.) { // fade in
-        alpha = min(0.5, (time - times.x) * 0.5);
+        alpha = min(0.5, ((time - times.x) / fadeOutDur) * 0.5);
       } else { // fade out
-        alpha = max(0., 0.5 - (time - times.x));
+        alpha = max(0., 0.5 - (time - times.x) / fadeOutDur);
       }
 
       vColor = vec4(color, alpha);
@@ -50,9 +50,9 @@
 
     void main() {
       if(times.y > 0.) { // fade in
-        vAlpha = min(0.1, (time - times.x) * 0.1);
+        vAlpha = min(0.1, ((time - times.x) / fadeOutDur) * 0.1);
       } else { // fade out
-        vAlpha = max(0., 0.1 - (time - times.x));
+        vAlpha = max(0., 0.1 - (time - times.x) / fadeOutDur);
       }
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
