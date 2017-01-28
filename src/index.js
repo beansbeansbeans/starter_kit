@@ -4,6 +4,7 @@ const { roundDown } = helpers
 import "../main.scss"
 import renderer from './renderer'
 import { getData } from './api'
+import TweetList from './components/tweetList'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {
@@ -21,10 +22,12 @@ const textureLoader = new THREE.TextureLoader(),
           xhr => reject(new Error(`could not load ${k}`)))        
       )),
     getData: () =>
-      Promise.all(['viz_nodes', 'viz_edges'].map(getData))
+      Promise.all(['viz_nodes', 'viz_edges', 'viz_retweets', 'viz_tweets'].map(getData))
         .then(data => {
           nodes = data[0]
           edges = data[1]
+          retweets = data[2]
+          tweets = data[3]
 
           // must be multiples of 3 so webgl doesn't complain
           nodes.splice(roundDown(nodes.length, 3))
@@ -32,13 +35,14 @@ const textureLoader = new THREE.TextureLoader(),
         })
   }
 
-let nodes, edges
+let nodes, edges, tweets, retweets
 
 class App extends Component {
   render({}) {
     return (
       <app>
         <canvas id="webgl-canvas"></canvas>
+        <TweetList tweets={tweets} />
       </app>
     )
   }
