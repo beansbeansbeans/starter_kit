@@ -54,7 +54,7 @@ const renderLoop = () => {
   }
 
   if(activeTweet !== lastActiveTweet) {
-    if(activeTweet !== null && lastActiveTweet == null) {
+    if(activeTweet !== null) {
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 3] = colorTimer
         nodeTimes[i * 3 + 1] = 0 // 0 means fade out    
