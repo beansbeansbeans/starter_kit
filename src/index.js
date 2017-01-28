@@ -80,7 +80,7 @@ class App extends Component {
         return t
       })
     }, () => {
-      renderer.fadeOut()
+      renderer.setActiveTweet(id)
     })
   }
 

@@ -19,7 +19,8 @@ let layout, renderer, nodePositions, edgeVertices,
   nodeMaterial, edgeMaterial,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
-  fadeOutFrames = 17
+  fadeOutFrames = 17,
+  lastActiveTweet = null, activeTweet = null
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -48,6 +49,22 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 5] = target.z
   }
 
+  if(activeTweet !== null) {
+    if(lastActiveTweet == null) {
+      for(let i=0; i<nodesLength; i++) {
+        nodeColors[i * 4 + 3] = colorTimer + fadeOutFrames * colorIncrement
+      }
+
+      for(let i=0; i<edgesLength; i++) {
+        edgeTimes[i * 2] = colorTimer + fadeOutFrames * colorIncrement
+        edgeTimes[i * 2 + 1] = colorTimer + fadeOutFrames * colorIncrement      
+      }
+    }
+  
+    nodeColorsBuffer.needsUpdate = true
+    edgeTimesBuffer.needsUpdate = true
+  }
+
   var timer = Date.now() * 0.0002
   camera.position.x = Math.cos( timer ) * cameraDistance
   camera.position.z = Math.sin( timer ) * cameraDistance
@@ -60,6 +77,8 @@ const renderLoop = () => {
   edgeMaterial.uniforms.time.value = colorTimer
 
   colorTimer += colorIncrement
+
+  lastActiveTweet = activeTweet
 
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
@@ -161,18 +180,7 @@ export default {
 
     requestAnimationFrame(renderLoop)
   },
-  fadeOut() {
-    // fade nodes and edges out
-    for(let i=0; i<nodesLength; i++) {
-      nodeColors[i * 4 + 3] = colorTimer + fadeOutFrames * colorIncrement
-    }
-
-    for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 2] = colorTimer + fadeOutFrames * colorIncrement
-      edgeTimes[i * 2 + 1] = colorTimer + fadeOutFrames * colorIncrement
-    }
-
-    nodeColorsBuffer.needsUpdate = true
-    edgeTimesBuffer.needsUpdate = true
+  setActiveTweet(newActiveTweet) {
+    activeTweet = newActiveTweet
   }
 }
