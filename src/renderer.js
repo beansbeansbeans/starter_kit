@@ -266,6 +266,8 @@ export default {
         retweetIterator++
       }, fadeOutFrames * 17) // assuming 60fps
     } else {
+      clearInterval(illuminateFollowersInterval)
+      
       for(let i=0; i<edgesLength; i++) {
         edgeTimes[i * 6 + 2] = defaultEdgeOpacity
         edgeTimes[i * 6 + 5] = defaultEdgeOpacity 
