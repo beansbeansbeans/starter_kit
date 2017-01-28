@@ -5,6 +5,7 @@ import "../main.scss"
 import renderer from './renderer'
 import { getData } from './api'
 import TweetList from './components/tweetList'
+import { scaleLinear } from 'd3-scale'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {
@@ -24,6 +25,8 @@ const textureLoader = new THREE.TextureLoader(),
     getData: () =>
       Promise.all(['viz_nodes', 'viz_edges', 'viz_retweets', 'viz_tweets'].map(getData))
         .then(data => {
+          let minPageRank = Infinity, maxPageRank = 0
+
           nodes = data[0]
           edges = data[1]
           retweets = data[2]
@@ -31,6 +34,23 @@ const textureLoader = new THREE.TextureLoader(),
             ...t, 
             active: false 
           }))
+
+          for(let j=0; j<nodes.length; j++) {
+            let rank = nodes[j].pagerank
+            if(rank > maxPageRank) {
+              maxPageRank = rank
+            }
+            if(rank < minPageRank) {
+              minPageRank = rank
+            }
+          }
+
+          const pageRankScale = scaleLinear().domain([minPageRank, maxPageRank]).range([5, 20])
+
+          for(let j=0; j<nodes.length; j++) {
+            let rank = nodes[j].pagerank
+            nodes[j].pagerank = pageRankScale(rank)
+          }
 
           // must be multiples of 3 so webgl doesn't complain
           nodes.splice(roundDown(nodes.length, 3))
