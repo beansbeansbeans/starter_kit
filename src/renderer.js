@@ -114,6 +114,7 @@ export default {
     nodeGeometry.addAttribute("color", nodeColorsBuffer)
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
+    edgeGeometry.addAttribute("times", edgeTimesBuffer)
 
     for(let i=0; i<nodesLength; i++) {
       let node = nodes[i]
