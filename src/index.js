@@ -80,7 +80,11 @@ class App extends Component {
         return t
       })
     }, () => {
-      renderer.setActiveTweet(id)
+      if(this.state.tweets.find(t => t.active)) {
+        renderer.setActiveTweet(id)
+      } else {
+        renderer.setActiveTweet(null)
+      }
     })
   }
 

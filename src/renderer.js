@@ -50,8 +50,8 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 5] = target.z
   }
 
-  if(activeTweet !== null) {
-    if(lastActiveTweet == null) {
+  if(activeTweet !== lastActiveTweet) {
+    if(activeTweet !== null && lastActiveTweet == null) {
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 2] = colorTimer
         nodeTimes[i * 2 + 1] = 0 // 0 means fade out    
@@ -63,6 +63,18 @@ const renderLoop = () => {
         edgeTimes[i * 4 + 2] = colorTimer      
         edgeTimes[i * 4 + 3] = 0      
       }
+    } else if(activeTweet == null && lastActiveTweet != null) {
+      for(let i=0; i<nodesLength; i++) {
+        nodeTimes[i * 2] = colorTimer
+        nodeTimes[i * 2 + 1] = 1 // 0 means fade out    
+      }
+
+      for(let i=0; i<edgesLength; i++) {
+        edgeTimes[i * 4] = colorTimer
+        edgeTimes[i * 4 + 1] = 1
+        edgeTimes[i * 4 + 2] = colorTimer      
+        edgeTimes[i * 4 + 3] = 1      
+      }      
     }
     
     nodeTimesBuffer.needsUpdate = true
