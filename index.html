@@ -10,19 +10,22 @@
 <body>
   <script type="x-shader/x-vertex" id="node-vertex-shader">
     uniform float cameraDistance;
-    attribute vec4 color;
+    attribute vec3 color;
     attribute float size;
     varying vec4 vColor;
     uniform float fadeOutDur;
     uniform float time;
+    attribute vec2 times;
 
     void main() {
-      float alpha = min(0.5, (time - color.a) * 0.5);
-      if(time - color.a <= 0.) {
-        alpha = max(0., 0.5 * (color.a - time) / fadeOutDur);
+      float alpha = 0.;
+      if(times.y > 0.) { // fade in
+        alpha = min(0.5, (time - times.x) * 0.5);
+      } else { // fade out
+        alpha = max(0., 0.5 - (time - times.x));
       }
 
-      vColor = vec4(color.r, color.g, color.b, alpha);
+      vColor = vec4(color, alpha);
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mvPosition;
       gl_PointSize = size * ( cameraDistance / -mvPosition.z );
