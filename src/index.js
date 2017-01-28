@@ -27,7 +27,10 @@ const textureLoader = new THREE.TextureLoader(),
           nodes = data[0]
           edges = data[1]
           retweets = data[2]
-          tweets = data[3]
+          tweets = data[3].map(t => ({ 
+            ...t, 
+            active: false 
+          }))
 
           // must be multiples of 3 so webgl doesn't complain
           nodes.splice(roundDown(nodes.length, 3))
@@ -38,7 +41,11 @@ const textureLoader = new THREE.TextureLoader(),
 let nodes, edges, tweets, retweets
 
 class App extends Component {
-  render({}) {
+  state = {
+    tweets: tweets
+  }
+
+  render({}, { tweets }) {
     return (
       <app>
         <canvas id="webgl-canvas"></canvas>
