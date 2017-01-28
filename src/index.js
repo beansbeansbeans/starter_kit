@@ -21,7 +21,7 @@ const textureLoader = new THREE.TextureLoader(),
           xhr => reject(new Error(`could not load ${k}`)))        
       )),
     getData: () =>
-      Promise.all(['nodes', 'edges'].map(getData))
+      Promise.all(['viz_nodes', 'viz_edges'].map(getData))
         .then(data => {
           nodes = data[0]
           edges = data[1]

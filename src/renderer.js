@@ -26,7 +26,7 @@ const renderLoop = () => {
 
   for(let i=0; i<nodesLength; i++) {
     let node = nodes[i]
-    let pos = layout.getNodePosition(node.node_id)
+    let pos = layout.getNodePosition(node.id)
     nodePositions[i * 3] = pos.x
     nodePositions[i * 3 + 1] = pos.y
     nodePositions[i * 3 + 2] = pos.z
@@ -121,7 +121,7 @@ export default {
     scene.add(points)
 
     for(let i=0; i<nodesLength; i++) {
-      g.addNode(nodes[i].node_id, nodes[i].trumporhillary)
+      g.addNode(nodes[i].id, nodes[i].handle)
     }
 
     for(let i=0; i<edgesLength; i++) {
