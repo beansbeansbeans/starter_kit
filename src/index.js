@@ -79,6 +79,8 @@ class App extends Component {
         }
         return t
       })
+    }, () => {
+      renderer.fadeOut()
     })
   }
 

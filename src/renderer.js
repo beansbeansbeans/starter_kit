@@ -160,5 +160,19 @@ export default {
     layout = forceLayout3d(g)
 
     requestAnimationFrame(renderLoop)
+  },
+  fadeOut() {
+    // fade nodes and edges out
+    for(let i=0; i<nodesLength; i++) {
+      nodeColors[i * 4 + 3] = colorTimer + fadeOutFrames * colorIncrement
+    }
+
+    for(let i=0; i<edgesLength; i++) {
+      edgeTimes[i * 2] = colorTimer + fadeOutFrames * colorIncrement
+      edgeTimes[i * 2 + 1] = colorTimer + fadeOutFrames * colorIncrement
+    }
+
+    nodeColorsBuffer.needsUpdate = true
+    edgeTimesBuffer.needsUpdate = true
   }
 }
