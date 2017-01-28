@@ -42,13 +42,14 @@
 
     uniform float time;
     uniform float fadeOutDur;
-    attribute float times;
+    attribute vec2 times;
     varying float vAlpha;
 
     void main() {
-      vAlpha = min(0.1, (time - times) * 0.1);
-      if(time - times < 0.) {
-        vAlpha = max(0., 0.1 * (times - time) / fadeOutDur);
+      if(times.y > 0.) { // fade in
+        vAlpha = min(0.1, (time - times.x) * 0.1);
+      } else { // fade out
+        vAlpha = max(0., 0.1 - (time - times.x));
       }
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }

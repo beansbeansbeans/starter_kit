@@ -56,8 +56,10 @@ const renderLoop = () => {
       }
 
       for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 2] = colorTimer + fadeOutFrames * colorIncrement
-        edgeTimes[i * 2 + 1] = colorTimer + fadeOutFrames * colorIncrement      
+        edgeTimes[i * 4] = colorTimer
+        edgeTimes[i * 4 + 1] = 0 // 0 means fade out    
+        edgeTimes[i * 4 + 2] = colorTimer      
+        edgeTimes[i * 4 + 3] = 0      
       }
     }
   
@@ -94,13 +96,13 @@ export default {
     nodeColors = new Float32Array(nodesLength * 4)
     nodePositions = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
-    edgeTimes = new Float32Array(edgesLength * 2)
+    edgeTimes = new Float32Array(edgesLength * 2 * 2)
     nodeSizes = new Float32Array(nodesLength)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
     nodeSizesBuffer = new THREE.BufferAttribute(nodeSizes, 1)
-    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 1)
+    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 2)
 
     nodeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("node-vertex-shader").textContent,
@@ -159,8 +161,10 @@ export default {
     }
 
     for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 2] = 0
-      edgeTimes[i * 2 + 1] = 0
+      edgeTimes[i * 4] = 0
+      edgeTimes[i * 4 + 1] = 1
+      edgeTimes[i * 4 + 2] = 0
+      edgeTimes[i * 4 + 3] = 1
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
