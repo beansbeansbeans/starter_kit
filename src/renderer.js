@@ -54,27 +54,27 @@ const renderLoop = () => {
   if(activeTweet !== lastActiveTweet) {
     if(activeTweet !== null && lastActiveTweet == null) {
       for(let i=0; i<nodesLength; i++) {
-        nodeTimes[i * 2] = colorTimer
-        nodeTimes[i * 2 + 1] = 0 // 0 means fade out    
+        nodeTimes[i * 3] = colorTimer
+        nodeTimes[i * 3 + 1] = 0 // 0 means fade out    
       }
 
       for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 4] = colorTimer
-        edgeTimes[i * 4 + 1] = 0 // 0 means fade out    
-        edgeTimes[i * 4 + 2] = colorTimer      
-        edgeTimes[i * 4 + 3] = 0      
+        edgeTimes[i * 6] = colorTimer
+        edgeTimes[i * 6 + 1] = 0 // 0 means fade out    
+        edgeTimes[i * 6 + 3] = colorTimer      
+        edgeTimes[i * 6 + 4] = 0      
       }
     } else if(activeTweet == null && lastActiveTweet != null) {
       for(let i=0; i<nodesLength; i++) {
-        nodeTimes[i * 2] = colorTimer
-        nodeTimes[i * 2 + 1] = 1   
+        nodeTimes[i * 3] = colorTimer
+        nodeTimes[i * 3 + 1] = 1   
       }
 
       for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 4] = colorTimer
-        edgeTimes[i * 4 + 1] = 1
-        edgeTimes[i * 4 + 2] = colorTimer      
-        edgeTimes[i * 4 + 3] = 1      
+        edgeTimes[i * 6] = colorTimer
+        edgeTimes[i * 6 + 1] = 1
+        edgeTimes[i * 6 + 3] = colorTimer      
+        edgeTimes[i * 6 + 4] = 1      
       }
     }
     
@@ -110,16 +110,16 @@ export default {
     renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
     nodeColors = new Float32Array(nodesLength * 3)
     nodePositions = new Float32Array(nodesLength * 3)
-    nodeTimes = new Float32Array(nodesLength * 2)
+    nodeTimes = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
-    edgeTimes = new Float32Array(edgesLength * 2 * 2)
+    edgeTimes = new Float32Array(edgesLength * 2 * 3)
     nodeSizes = new Float32Array(nodesLength)
-    nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 2)
+    nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 3)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
     nodeSizesBuffer = new THREE.BufferAttribute(nodeSizes, 1)
-    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 2)
+    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 3)
 
     nodeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("node-vertex-shader").textContent,
@@ -177,15 +177,18 @@ export default {
     }
 
     for(let i=0; i<nodesLength; i++) {
-      nodeTimes[i * 2] = 0
-      nodeTimes[i * 2 + 1] = 1
+      nodeTimes[i * 3] = 0
+      nodeTimes[i * 3 + 1] = 1
+      nodeTimes[i * 3 + 2] = 0.5
     }
 
     for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 4] = 0
-      edgeTimes[i * 4 + 1] = 1
-      edgeTimes[i * 4 + 2] = 0
-      edgeTimes[i * 4 + 3] = 1
+      edgeTimes[i * 6] = 0
+      edgeTimes[i * 6 + 1] = 1
+      edgeTimes[i * 6 + 2] = 0.1
+      edgeTimes[i * 6 + 3] = 0
+      edgeTimes[i * 6 + 4] = 1
+      edgeTimes[i * 6 + 5] = 0.1
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
@@ -224,17 +227,17 @@ export default {
             followers.push(edge.source)
             newCrop.push(edge.source)
 
-            edgeTimes[i * 4] = colorTimer
-            edgeTimes[i * 4 + 1] = 1
-            edgeTimes[i * 4 + 2] = colorTimer      
-            edgeTimes[i * 4 + 3] = 1  
+            edgeTimes[i * 6] = colorTimer
+            edgeTimes[i * 6 + 1] = 1
+            edgeTimes[i * 6 + 3] = colorTimer      
+            edgeTimes[i * 6 + 4] = 1  
           }
         }
 
         for(let i=0; i<nodesLength; i++) {
           if(currentCrop.indexOf(nodes[i].id) > -1) {
-            nodeTimes[i * 2] = colorTimer
-            nodeTimes[i * 2 + 1] = 1
+            nodeTimes[i * 3] = colorTimer
+            nodeTimes[i * 3 + 1] = 1
           }
         }
 

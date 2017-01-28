@@ -15,14 +15,14 @@
     varying vec4 vColor;
     uniform float fadeOutDur;
     uniform float time;
-    attribute vec2 times;
+    attribute vec3 times;
 
     void main() {
       float alpha = 0.;
       if(times.y > 0.) { // fade in
-        alpha = min(0.5, ((time - times.x) / fadeOutDur) * 0.5);
+        alpha = min(times.z, ((time - times.x) / fadeOutDur) * times.z);
       } else { // fade out
-        alpha = max(0., 0.5 - (time - times.x) / fadeOutDur);
+        alpha = max(0., times.z - (time - times.x) / fadeOutDur);
       }
 
       vColor = vec4(color, alpha);
@@ -45,14 +45,14 @@
 
     uniform float time;
     uniform float fadeOutDur;
-    attribute vec2 times;
+    attribute vec3 times;
     varying float vAlpha;
 
     void main() {
       if(times.y > 0.) { // fade in
-        vAlpha = min(0.1, ((time - times.x) / fadeOutDur) * 0.1);
+        vAlpha = min(times.z, ((time - times.x) / fadeOutDur) * times.z);
       } else { // fade out
-        vAlpha = max(0., 0.1 - (time - times.x) / fadeOutDur);
+        vAlpha = max(0., times.z - (time - times.x) / fadeOutDur);
       }
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
