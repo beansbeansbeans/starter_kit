@@ -134,14 +134,14 @@ export default {
         nodeColors[i * 4 + 2] = 1
       }
 
-      nodeColors[i * 4 + 3] = colorTimer
+      nodeColors[i * 4 + 3] = 0
 
       nodeSizes[i] = node.pagerank
     }
 
     for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 2] = colorTimer
-      edgeTimes[i * 2 + 1] = colorTimer
+      edgeTimes[i * 2] = 0
+      edgeTimes[i * 2 + 1] = 0
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
