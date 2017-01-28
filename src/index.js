@@ -45,11 +45,30 @@ class App extends Component {
     tweets: tweets
   }
 
+  componentWillMount() {
+    this.clickTweet = this.clickTweet.bind(this)
+  }
+
+  clickTweet(id) {
+    this.setState({
+      tweets: this.state.tweets.map(t => {
+        if(t._id === id) {
+          t.active = !t.active
+        } else {
+          t.active = false
+        }
+        return t
+      })
+    })
+  }
+
   render({}, { tweets }) {
     return (
       <app>
         <canvas id="webgl-canvas"></canvas>
-        <TweetList tweets={tweets} />
+        <TweetList 
+          clickTweet={this.clickTweet}
+          tweets={tweets} />
       </app>
     )
   }

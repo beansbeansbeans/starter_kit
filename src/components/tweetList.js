@@ -12,11 +12,14 @@ export default class TweetList extends Component {
 
   }
 
-  render({ tweets }, { }) {
+  render({ clickTweet, tweets }, { }) {
     return (
       <div class="tweets-container">
         {tweets.map(t =>
-          <div class="tweet">{t.tweet}</div>)}
+          <div 
+            data-active={t.active}
+            onClick={() => clickTweet(t._id)}
+            class="tweet">{t.tweet}</div>)}
       </div>
     )
   }
