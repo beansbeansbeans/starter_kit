@@ -21,19 +21,18 @@ let layout, renderer, nodePositions, edgeVertices,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  steps = 0,
   tweets, retweets,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null,
   illuminateFollowersInterval = null,
   defaultEdgeOpacity = 0.01, defaultNodeOpacity = 0.75,
-  followers = []
+  followers = [], laidOut = false, dampingStep = 0
 
 const renderLoop = () => {
-  if(steps < 120) {
+  if(!laidOut || dampingStep < 5) {
+    dampingStep++
     layout.step()
-    steps++
   }
 
   if(orbiting) {
@@ -217,6 +216,9 @@ export default {
     }
 
     layout = forceLayout3d(g)
+    layout.on("stable", d => {
+      laidOut = true
+    })
 
     controls = new THREE.Controls(camera, renderer.domElement, group, minZoom, maxZoom)
 
