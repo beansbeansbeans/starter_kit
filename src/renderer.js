@@ -225,7 +225,6 @@ export default {
         edgeTimes[i * 6 + 2] = defaultEdgeOpacity
         edgeTimes[i * 6 + 5] = defaultEdgeOpacity 
       }
-
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 3 + 2] = defaultNodeOpacity
       }      
@@ -236,42 +235,39 @@ export default {
             nodeTimes[i * 3 + 1] = 0                 
           }
         }
-
         for(let i=0; i<edgesLength; i++) {
           if(followers.indexOf(edges[i].source) > -1) {
             edgeTimes[i * 6 + 1] = 0 
             edgeTimes[i * 6 + 4] = 0                    
           }
         }
-
         nodeTimesBuffer.needsUpdate = true
         edgeTimesBuffer.needsUpdate = true
       }
 
       followers = [newActiveTweet.node_id] // these are the people who should be illuminated
-      let currentCrop = newActiveTweet.node_id // these are the people we are currently looking for followers of
-      let newCrop = []
-
+      let currentCrop // these are the people we are currently looking for followers of
+      let newCrop = [ newActiveTweet.node_id ]
       let retweetIterator = 0
 
       illuminateFollowersInterval = setInterval(() => {
-        const followersLength = followers.length
-        
-        for(let i=0; i<edgesLength; i++) {
-          let edge = edges[i]
+        if(retweetIterator > 0) {
+          for(let i=0; i<edgesLength; i++) {
+            let edge = edges[i]
 
-          // source follows target
-          if(currentCrop == edge.target && followers.indexOf(edge.source) === -1) {
-            followers.push(edge.source)
-            newCrop.push(edge.source)
+            // source follows target
+            if(currentCrop == edge.target && followers.indexOf(edge.source) === -1) {
+              followers.push(edge.source)
+              newCrop.push(edge.source)
 
-            edgeTimes[i * 6] = colorTimer
-            edgeTimes[i * 6 + 1] = 1
-            edgeTimes[i * 6 + 2] = 0.5
-            edgeTimes[i * 6 + 3] = colorTimer      
-            edgeTimes[i * 6 + 4] = 1  
-            edgeTimes[i * 6 + 5] = 0.5 
-          }
+              edgeTimes[i * 6] = colorTimer
+              edgeTimes[i * 6 + 1] = 1
+              edgeTimes[i * 6 + 2] = 0.5
+              edgeTimes[i * 6 + 3] = colorTimer      
+              edgeTimes[i * 6 + 4] = 1  
+              edgeTimes[i * 6 + 5] = 0.5 
+            }
+          }          
         }
 
         for(let i=0; i<nodesLength; i++) {
@@ -285,18 +281,20 @@ export default {
         nodeTimesBuffer.needsUpdate = true
         edgeTimesBuffer.needsUpdate = true
 
-        if(retweets[newActiveTweet._id].length <= retweetIterator) {
+        if(retweets[newActiveTweet._id].length < retweetIterator) {
           window.clearInterval(illuminateFollowersInterval)
         } else {
-          currentCrop = retweets[newActiveTweet._id][retweetIterator].retweeter_node_id
+          if(retweetIterator === 0) {
+            currentCrop = newActiveTweet.node_id
+          } else {
+            currentCrop = retweets[newActiveTweet._id][retweetIterator - 1].retweeter_node_id
+          }
 
           newCrop = []          
         }
-
         retweetIterator++
       }, fadeOutFrames * 17) // assuming 60fps
     }
-
     activeTweet = newActiveTweet
   }
 }
