@@ -48,27 +48,29 @@
     }
   </script>
   <script type="x-shader/x-vertex" id="edge-vertex-shader">
-    // if you set the times attribute to be equal to colorTimer, then the edge will fade in.
-
     uniform float time;
     uniform float fadeOutDur;
     attribute vec3 times;
-    varying float vAlpha;
+    attribute vec3 color;
+    varying vec4 vColor;
 
     void main() {
+      float alpha;
       if(times.y > 0.) { // fade in
-        vAlpha = min(times.z, ((time - times.x) / fadeOutDur) * times.z);
+        alpha = min(times.z, ((time - times.x) / fadeOutDur) * times.z);
       } else { // fade out
-        vAlpha = max(0., times.z - (time - times.x) / fadeOutDur);
+        alpha = max(0., times.z - (time - times.x) / fadeOutDur);
       }
+
+      vColor = vec4(color, alpha);
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   </script>
   <script type="x-shader/x-fragment" id="edge-fragment-shader">
-    varying float vAlpha;
+    varying vec4 vColor;
 
     void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, vAlpha);
+      gl_FragColor = vColor;
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>

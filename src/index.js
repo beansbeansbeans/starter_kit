@@ -29,7 +29,12 @@ const textureLoader = new THREE.TextureLoader(),
         .then(data => {
           let minPageRank = Infinity, maxPageRank = 0
 
-          nodes = data[0]
+          nodes = data[0].sort((a, b) => {
+            if(a.id < b.id) {
+              return -1
+            }
+            return 1
+          })
           edges = data[1]
           retweets = data[2]
           tweets = data[3].map(t => ({ 

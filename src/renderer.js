@@ -17,6 +17,7 @@ let layout, renderer, nodePositions, edgeVertices,
   edgeTimes, edgeTimesBuffer,
   nodeTimes, nodeTimesBuffer,
   controls, orbiting, time = 0,
+  edgeColors, edgeColorsBuffer,
   nodeColors, nodeColorsBuffer, nodeSizes, nodeSizesBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
@@ -118,12 +119,14 @@ export default {
     edgesLength = edges.length
     
     renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
+    edgeColors = new Float32Array(edgesLength * 2 * 3)
     nodeColors = new Float32Array(nodesLength * 3)
     nodePositions = new Float32Array(nodesLength * 3)
     nodeTimes = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
     edgeTimes = new Float32Array(edgesLength * 2 * 3)
     nodeSizes = new Float32Array(nodesLength)
+    edgeColorsBuffer = new THREE.BufferAttribute(edgeColors, 3)
     nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 3)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
@@ -166,6 +169,7 @@ export default {
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
     edgeGeometry.addAttribute("times", edgeTimesBuffer)
+    edgeGeometry.addAttribute("color", edgeColorsBuffer)
 
     for(let i=0; i<nodesLength; i++) {
       let node = nodes[i]
@@ -186,6 +190,15 @@ export default {
       }
 
       nodeSizes[i] = node.pagerank
+    }
+
+    for(let i=0; i<edgesLength; i++) {
+      edgeColors[i * 6] = 1
+      edgeColors[i * 6 + 1] = 1
+      edgeColors[i * 6 + 2] = 1
+      edgeColors[i * 6 + 3] = 1
+      edgeColors[i * 6 + 4] = 1
+      edgeColors[i * 6 + 5] = 1
     }
 
     for(let i=0; i<nodesLength; i++) {
