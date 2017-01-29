@@ -18,17 +18,23 @@
     attribute vec3 times;
 
     void main() {
+      float x = time - times.x;
       float alpha = 0.;
       if(times.y > 0.) { // fade in
-        alpha = min(times.z, ((time - times.x) / fadeOutDur) * times.z);
+        alpha = min(times.z, (x / fadeOutDur) * times.z);
       } else { // fade out
-        alpha = max(0., times.z - (time - times.x) / fadeOutDur);
+        alpha = max(0., times.z - x / fadeOutDur);
+      }
+
+      float sizeFactor = 1.;
+      if(abs(times.y - 0.5) < 0.001) {
+        sizeFactor = max(1., 1. + (x - pow(x, 2.)) * 15.);
       }
 
       vColor = vec4(color, alpha);
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = size * ( cameraDistance / -mvPosition.z );
+      gl_PointSize = size * sizeFactor * ( cameraDistance / -mvPosition.z );
     }
   </script>
   <script type="x-shader/x-fragment" id="node-fragment-shader">
