@@ -241,12 +241,15 @@ export default {
       if(activeTweet != null) {
         for(let i=0; i<nodesLength; i++) {
           if(followers.indexOf(nodes[i].id) > -1) {
+            nodeTimes[i * 3] = colorTimer - fadeOutFrames * colorIncrement
             nodeTimes[i * 3 + 1] = 0                 
           }
         }
         for(let i=0; i<edgesLength; i++) {
           if(followers.indexOf(edges[i].source) > -1) {
+            edgeTimes[i * 6] = colorTimer - fadeOutFrames * colorIncrement 
             edgeTimes[i * 6 + 1] = 0 
+            edgeTimes[i * 6 + 3] = colorTimer - fadeOutFrames * colorIncrement         
             edgeTimes[i * 6 + 4] = 0                    
           }
         }
