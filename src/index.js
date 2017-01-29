@@ -107,6 +107,12 @@ class App extends Component {
     })
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.orbiting !== prevState.orbiting) {
+      this.updateControls()
+    }
+  }
+
   clickTweet(id) {
     this.setState({
       tweets: this.state.tweets.map(t => {
@@ -127,10 +133,13 @@ class App extends Component {
     })
   }
 
-  render({}, { tweets }) {
+  render({}, { tweets, orbiting }) {
     return (
       <app>
         <canvas id="webgl-canvas"></canvas>
+        <div class="controls">
+          <div onClick={this.toggleOrbiting} class="button">{orbiting ? 'Stop orbiting' : 'Orbit'}</div>          
+        </div>
         <TweetList 
           clickTweet={this.clickTweet}
           tweets={tweets} />

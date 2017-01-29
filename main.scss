@@ -16,10 +16,18 @@ app {
   height: 100%;
 }
 
+.controls {
+  position: absolute;
+  color: white;
+  cursor: pointer;
+  left: 1rem;
+  top: 1rem;
+}
+
 .tweets-container {
   position: absolute;
   color: white;
-  top: 0;
+  top: 5rem;
   width: 20vw;
   .tweet {
     margin-bottom: 2rem;
