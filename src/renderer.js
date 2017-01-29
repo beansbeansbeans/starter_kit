@@ -260,10 +260,10 @@ export default {
               followers.push(edge.source)
               newCrop.push(edge.source)
 
-              edgeTimes[i * 6] = colorTimer
+              edgeTimes[i * 6] = colorTimer + fadeOutFrames * colorIncrement
               edgeTimes[i * 6 + 1] = 1
               edgeTimes[i * 6 + 2] = 0.5
-              edgeTimes[i * 6 + 3] = colorTimer      
+              edgeTimes[i * 6 + 3] = colorTimer
               edgeTimes[i * 6 + 4] = 1  
               edgeTimes[i * 6 + 5] = 0.5 
             }
