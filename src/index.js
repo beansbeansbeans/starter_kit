@@ -6,6 +6,8 @@ import renderer from './renderer'
 import { getData } from './api'
 import TweetList from './components/tweetList'
 import { scaleLinear } from 'd3-scale'
+import './controls'
+import mediator from './mediator'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {

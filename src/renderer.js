@@ -9,11 +9,14 @@ const g = graph(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1500
+  cameraDistance = 1300,
+  maxZoom = 0, minZoom = -1600,
+  group = new THREE.Object3D()
 
 let layout, renderer, nodePositions, edgeVertices, 
   edgeTimes, edgeTimesBuffer,
   nodeTimes, nodeTimesBuffer,
+  controls, orbiting, time = 0,
   nodeColors, nodeColorsBuffer, nodeSizes, nodeSizesBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
@@ -31,6 +34,11 @@ const renderLoop = () => {
   if(steps < 120) {
     layout.step()
     steps++
+  }
+
+  if(orbiting) {
+    time += 0.002
+    group.rotation.y = time
   }
 
   for(let i=0; i<nodesLength; i++) {
@@ -85,11 +93,6 @@ const renderLoop = () => {
     edgeTimesBuffer.needsUpdate = true
   }
 
-  var timer = Date.now() * 0.0002
-  camera.position.x = Math.cos( timer ) * cameraDistance
-  camera.position.z = Math.sin( timer ) * cameraDistance
-  camera.lookAt(scene.position)
-
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
 
@@ -100,6 +103,7 @@ const renderLoop = () => {
 
   lastActiveTweet = activeTweet
 
+  controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
@@ -198,10 +202,9 @@ export default {
       edgeTimes[i * 6 + 5] = defaultEdgeOpacity
     }
 
-    lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
-    scene.add(lineSegments)
-    points = new THREE.Points(nodeGeometry, nodeMaterial)
-    scene.add(points)
+    group.add(new THREE.LineSegments(edgeGeometry, edgeMaterial))
+    group.add(new THREE.Points(nodeGeometry, nodeMaterial))
+    scene.add(group)
 
     for(let i=0; i<nodesLength; i++) {
       g.addNode(nodes[i].id, nodes[i].handle)
@@ -212,6 +215,10 @@ export default {
     }
 
     layout = forceLayout3d(g)
+
+    controls = new THREE.Controls(camera, renderer.domElement, group, minZoom, maxZoom)
+
+    camera.position.z = cameraDistance
 
     requestAnimationFrame(renderLoop)
   },
