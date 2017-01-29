@@ -19,7 +19,13 @@ export default class TweetList extends Component {
           <div 
             data-active={t.active}
             onClick={() => clickTweet(t._id)}
-            class="tweet">{t.tweet}</div>)}
+            class="tweet">
+            <div class="text">{t.tweet}</div>
+            <div class="attribution">
+              <div class="author">{`@${t.author_screen_name}`}</div>
+              <div class="time">{t.time.substring(0, 10)}</div>
+            </div>
+          </div>)}
       </div>
     )
   }
