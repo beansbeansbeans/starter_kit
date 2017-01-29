@@ -11,7 +11,8 @@ const g = graph(),
   edgeGeometry = new THREE.BufferGeometry(),
   cameraDistance = 1300,
   maxZoom = 0, minZoom = -1600,
-  group = new THREE.Object3D()
+  group = new THREE.Object3D(),
+  red = [1, 0.098, 0.3255], blue = [0, 0.745, 0.99]
 
 let layout, renderer, nodePositions, edgeVertices, 
   edgeTimes, edgeTimesBuffer,
@@ -176,13 +177,13 @@ export default {
       let belief = node.trumporhillary
 
       if(belief === 0) {
-        nodeColors[i * 3] = 1
-        nodeColors[i * 3 + 1] = 0.098
-        nodeColors[i * 3 + 2] = 0.3255
+        nodeColors[i * 3] = red[0]
+        nodeColors[i * 3 + 1] = red[1]
+        nodeColors[i * 3 + 2] = red[2]
       } else if(belief === 1 || belief === 2 || belief === 3) {
-        nodeColors[i * 3] = 0
-        nodeColors[i * 3 + 1] = 0.745
-        nodeColors[i * 3 + 2] = 0.99
+        nodeColors[i * 3] = blue[0]
+        nodeColors[i * 3 + 1] = blue[1]
+        nodeColors[i * 3 + 2] = blue[2]
       } else {
         nodeColors[i * 3] = 1
         nodeColors[i * 3 + 1] = 1
@@ -247,11 +248,19 @@ export default {
     if(newActiveTweet == null) {
       for(let i=0; i<edgesLength; i++) {
         edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-        edgeTimes[i * 6 + 5] = defaultEdgeOpacity 
+        edgeTimes[i * 6 + 5] = defaultEdgeOpacity
+
+        edgeColors[i * 6] = 1
+        edgeColors[i * 6 + 1] = 1
+        edgeColors[i * 6 + 2] = 1
+        edgeColors[i * 6 + 3] = 1
+        edgeColors[i * 6 + 4] = 1
+        edgeColors[i * 6 + 5] = 1
       }
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 3 + 2] = defaultNodeOpacity
-      }      
+      }  
+      edgeColorsBuffer.needsUpdate = true    
     } else if(newActiveTweet !== activeTweet) {
       if(activeTweet != null) {
         for(let i=0; i<nodesLength; i++) {
@@ -293,6 +302,13 @@ export default {
               edgeTimes[i * 6 + 3] = colorTimer
               edgeTimes[i * 6 + 4] = 1  
               edgeTimes[i * 6 + 5] = 0.15
+
+              edgeColors[i * 6] = red[0]
+              edgeColors[i * 6 + 1] = red[1]
+              edgeColors[i * 6 + 2] = red[2]
+              edgeColors[i * 6 + 3] = blue[0]
+              edgeColors[i * 6 + 4] = blue[1]
+              edgeColors[i * 6 + 5] = blue[2]
             }
           }
         }
@@ -316,6 +332,7 @@ export default {
           }
         }
 
+        edgeColorsBuffer.needsUpdate = true
         nodeTimesBuffer.needsUpdate = true
         edgeTimesBuffer.needsUpdate = true
 
