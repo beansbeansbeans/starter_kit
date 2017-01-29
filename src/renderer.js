@@ -27,7 +27,7 @@ let layout, renderer, nodePositions, edgeVertices,
   fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null,
   illuminateFollowersInterval = null,
-  defaultEdgeOpacity = 0.1, defaultNodeOpacity = 0.5,
+  defaultEdgeOpacity = 0.01, defaultNodeOpacity = 0.75,
   followers = []
 
 const renderLoop = () => {
@@ -150,6 +150,8 @@ export default {
       vertexShader: document.getElementById("edge-vertex-shader").textContent,
       fragmentShader: document.getElementById("edge-fragment-shader").textContent,
       transparent: true,
+      depthTest: false,
+      blending: THREE.AdditiveBlending,
       uniforms: {
         time: { value: 0 },
         fadeOutDur: { value: fadeOutFrames * colorIncrement }
@@ -269,10 +271,10 @@ export default {
 
               edgeTimes[i * 6] = colorTimer + fadeOutFrames * colorIncrement
               edgeTimes[i * 6 + 1] = 1
-              edgeTimes[i * 6 + 2] = 0.5
+              edgeTimes[i * 6 + 2] = 0.15
               edgeTimes[i * 6 + 3] = colorTimer
               edgeTimes[i * 6 + 4] = 1  
-              edgeTimes[i * 6 + 5] = 0.5 
+              edgeTimes[i * 6 + 5] = 0.15
             }
           }          
         }
