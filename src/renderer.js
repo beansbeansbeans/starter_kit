@@ -12,7 +12,19 @@ const g = graph(),
   cameraDistance = 1300,
   maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
-  red = [1, 0.098, 0.3255], blue = [0, 0.745, 0.99]
+  colors = {
+    'conservative': [1, 0.098, 0.3255],
+    'liberal': [0, 0.745, 0.99],
+    'neutral': [1, 1, 1]
+  },
+  getOrientation = belief => {
+    if(belief === 0) {
+      return 'conservative'
+    } else if(belief === 1 || belief === 2 || belief === 3) {
+      return 'liberal'
+    }
+    return 'neutral'
+  }
 
 let layout, renderer, nodePositions, edgeVertices, 
   edgeTimes, edgeTimesBuffer,
@@ -174,22 +186,11 @@ export default {
 
     for(let i=0; i<nodesLength; i++) {
       let node = nodes[i]
-      let belief = node.trumporhillary
+      let color = colors[getOrientation(node.trumporhillary)]
 
-      if(belief === 0) {
-        nodeColors[i * 3] = red[0]
-        nodeColors[i * 3 + 1] = red[1]
-        nodeColors[i * 3 + 2] = red[2]
-      } else if(belief === 1 || belief === 2 || belief === 3) {
-        nodeColors[i * 3] = blue[0]
-        nodeColors[i * 3 + 1] = blue[1]
-        nodeColors[i * 3 + 2] = blue[2]
-      } else {
-        nodeColors[i * 3] = 1
-        nodeColors[i * 3 + 1] = 1
-        nodeColors[i * 3 + 2] = 1
-      }
-
+      nodeColors[i * 3] = color[0]
+      nodeColors[i * 3 + 1] = color[1]
+      nodeColors[i * 3 + 2] = color[2]
       nodeSizes[i] = node.pagerank
     }
 
@@ -293,6 +294,20 @@ export default {
 
             // source follows target
             if(currentCrop == edge.target && followers.indexOf(edge.source) === -1) {
+              let sourceNode, targetNode
+
+              for(let j=0; j<nodesLength; j++) {
+                if(typeof sourceNode !== 'undefined' && typeof targetNode !== 'undefined') break
+
+                let node = nodes[j]
+
+                if(node.id == edge.source) {
+                  sourceNode = node
+                } else if(node.id == edge.target) {
+                  targetNode = node
+                }
+              }
+
               followers.push(edge.source)
               newCrop.push(edge.source)
 
@@ -303,12 +318,15 @@ export default {
               edgeTimes[i * 6 + 4] = 1  
               edgeTimes[i * 6 + 5] = 0.15
 
-              edgeColors[i * 6] = red[0]
-              edgeColors[i * 6 + 1] = red[1]
-              edgeColors[i * 6 + 2] = red[2]
-              edgeColors[i * 6 + 3] = blue[0]
-              edgeColors[i * 6 + 4] = blue[1]
-              edgeColors[i * 6 + 5] = blue[2]
+              let sourceColor = colors[getOrientation(sourceNode.trumporhillary)]
+              let targetColor = colors[getOrientation(targetNode.trumporhillary)]
+
+              edgeColors[i * 6] = sourceColor[0]
+              edgeColors[i * 6 + 1] = sourceColor[1]
+              edgeColors[i * 6 + 2] = sourceColor[2]
+              edgeColors[i * 6 + 3] = targetColor[0]
+              edgeColors[i * 6 + 4] = targetColor[1]
+              edgeColors[i * 6 + 5] = targetColor[2]
             }
           }
         }
