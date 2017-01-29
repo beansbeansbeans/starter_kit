@@ -279,18 +279,25 @@ export default {
               edgeTimes[i * 6 + 4] = 1  
               edgeTimes[i * 6 + 5] = 0.15
             }
-          }          
+          }
         }
 
         for(let i=0; i<nodesLength; i++) {
-          if(newCrop.indexOf(nodes[i].id) > -1) {
+          let id = nodes[i].id
+          if(newCrop.indexOf(id) > -1) {
             if(retweetIterator === 0) {
               nodeTimes[i * 3] = colorTimer
+              nodeTimes[i * 3 + 1] = 0.5
             } else {
               nodeTimes[i * 3] = colorTimer + fadeOutFrames * colorIncrement
+              nodeTimes[i * 3 + 1] = 1
             }
-            nodeTimes[i * 3 + 1] = 1
+
             nodeTimes[i * 3 + 2] = 1
+          }
+
+          if(id == currentCrop) {
+            nodeTimes[i * 3 + 1] = 0.5            
           }
         }
 
