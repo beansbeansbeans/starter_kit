@@ -24,7 +24,8 @@ let layout, renderer, nodePositions, edgeVertices,
   fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null,
   illuminateFollowersInterval = null,
-  defaultEdgeOpacity = 0.1, defaultNodeOpacity = 0.5
+  defaultEdgeOpacity = 0.1, defaultNodeOpacity = 0.5,
+  followers = []
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -54,7 +55,7 @@ const renderLoop = () => {
   }
 
   if(activeTweet !== lastActiveTweet) {
-    if(activeTweet !== null) {
+    if(activeTweet !== null && lastActiveTweet == null) {
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 3] = colorTimer
         nodeTimes[i * 3 + 1] = 0 // 0 means fade out    
@@ -215,11 +216,39 @@ export default {
     requestAnimationFrame(renderLoop)
   },
   setActiveTweet(newActiveTweet) {
-    if(newActiveTweet) {
-      if(newActiveTweet !== activeTweet) {
-        clearInterval(illuminateFollowersInterval)
+    if(newActiveTweet !== activeTweet) {
+      clearInterval(illuminateFollowersInterval)
+    }
+
+    if(newActiveTweet == null) {
+      for(let i=0; i<edgesLength; i++) {
+        edgeTimes[i * 6 + 2] = defaultEdgeOpacity
+        edgeTimes[i * 6 + 5] = defaultEdgeOpacity 
       }
-      let followers = [newActiveTweet.node_id] // these are the people who should be illuminated
+
+      for(let i=0; i<nodesLength; i++) {
+        nodeTimes[i * 3 + 2] = defaultNodeOpacity
+      }      
+    } else if(newActiveTweet !== activeTweet) {
+      if(activeTweet != null) {
+        for(let i=0; i<nodesLength; i++) {
+          if(followers.indexOf(nodes[i].id) > -1) {
+            nodeTimes[i * 3 + 1] = 0                 
+          }
+        }
+
+        for(let i=0; i<edgesLength; i++) {
+          if(followers.indexOf(edges[i].source) > -1) {
+            edgeTimes[i * 6 + 1] = 0 
+            edgeTimes[i * 6 + 4] = 0                    
+          }
+        }
+
+        nodeTimesBuffer.needsUpdate = true
+        edgeTimesBuffer.needsUpdate = true
+      }
+
+      followers = [newActiveTweet.node_id] // these are the people who should be illuminated
       let currentCrop = newActiveTweet.node_id // these are the people we are currently looking for followers of
       let newCrop = []
 
@@ -266,17 +295,6 @@ export default {
 
         retweetIterator++
       }, fadeOutFrames * 17) // assuming 60fps
-    } else {
-      clearInterval(illuminateFollowersInterval)
-
-      for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-        edgeTimes[i * 6 + 5] = defaultEdgeOpacity 
-      }
-
-      for(let i=0; i<nodesLength; i++) {
-        nodeTimes[i * 3 + 2] = defaultNodeOpacity
-      }
     }
 
     activeTweet = newActiveTweet
