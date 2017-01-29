@@ -272,7 +272,7 @@ export default {
 
         for(let i=0; i<nodesLength; i++) {
           if(newCrop.indexOf(nodes[i].id) > -1) {
-            nodeTimes[i * 3] = colorTimer
+            nodeTimes[i * 3] = colorTimer + fadeOutFrames * colorIncrement
             nodeTimes[i * 3 + 1] = 1
             nodeTimes[i * 3 + 2] = 1
           }
