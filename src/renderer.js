@@ -307,5 +307,8 @@ export default {
       }, fadeOutFrames * 17) // assuming 60fps
     }
     activeTweet = newActiveTweet
+  },
+  updateControls(opts) {
+    orbiting = opts.orbiting
   }
 }

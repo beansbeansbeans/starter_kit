@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
-const { roundDown } = helpers
+const { roundDown, bindAll } = helpers
 import "../main.scss"
 import renderer from './renderer'
 import { getData } from './api'
@@ -74,11 +74,37 @@ let nodes, edges, tweets, retweets
 
 class App extends Component {
   state = {
-    tweets: tweets
+    tweets: tweets,
+    orbiting: true
   }
 
   componentWillMount() {
-    this.clickTweet = this.clickTweet.bind(this)
+    bindAll(this, ['clickTweet', 'updateControls', 'toggleOrbiting'])
+  }
+
+  componentDidMount() {
+    renderer.initialize({
+      element: document.querySelector("#webgl-canvas"),
+      nodes, edges,
+      tweets, retweets,
+      particleSprite: assets.particleSprite.data
+    })
+
+    this.updateControls({ orbiting: this.state.orbiting })
+
+    mediator.subscribe("dragging", () => {
+      this.setState({ orbiting: false })
+    })
+  }
+
+  updateControls() {
+    renderer.updateControls({ orbiting: this.state.orbiting })
+  }
+
+  toggleOrbiting() {
+    this.setState({
+      orbiting: this.state.orbiting ? false : true
+    })
   }
 
   clickTweet(id) {
@@ -115,12 +141,6 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
-
-  renderer.initialize({
-    element: document.querySelector("#webgl-canvas"),
-    nodes, edges,
-    tweets, retweets,
-    particleSprite: assets.particleSprite.data
-  })
+  
 })
 
