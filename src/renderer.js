@@ -318,8 +318,15 @@ export default {
               edgeTimes[i * 6 + 4] = 1  
               edgeTimes[i * 6 + 5] = 0.15
 
-              let sourceColor = colors[getOrientation(sourceNode.trumporhillary)]
-              let targetColor = colors[getOrientation(targetNode.trumporhillary)]
+              let sourceColor = colors.neutral,
+                targetColor = colors.neutral
+
+              if(sourceNode) {
+                sourceColor = colors[getOrientation(sourceNode.trumporhillary)]
+              }
+              if(targetNode) {
+                targetColor = colors[getOrientation(targetNode.trumporhillary)]
+              }
 
               edgeColors[i * 6] = sourceColor[0]
               edgeColors[i * 6 + 1] = sourceColor[1]
