@@ -122,9 +122,9 @@ THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
 
   node.addEventListener('mousemove', mousemove)
 
-  window.addEventListener('wheel', wheel)
+  node.addEventListener('wheel', wheel)
 
-  window.addEventListener('wheel', debounce(wheelEnd, 150))
+  node.addEventListener('wheel', debounce(wheelEnd, 150))
 }
 
 THREE.Controls.prototype = Object.create(THREE.EventDispatcher.prototype)

@@ -139,10 +139,10 @@ class App extends Component {
         <canvas id="webgl-canvas"></canvas>
         <div class="controls">
           <div onClick={this.toggleOrbiting} class="button">{orbiting ? 'Stop orbiting' : 'Orbit'}</div>          
+          <TweetList 
+            clickTweet={this.clickTweet}
+            tweets={tweets} />
         </div>
-        <TweetList 
-          clickTweet={this.clickTweet}
-          tweets={tweets} />
       </app>
     )
   }
