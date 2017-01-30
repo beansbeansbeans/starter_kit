@@ -9,7 +9,7 @@ const g = graph(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1300,
+  cameraDistance = 1200,
   maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
   colors = {
@@ -40,8 +40,43 @@ let layout, renderer, nodePositions, edgeVertices,
   fadeOutFrames = 40,
   lastActiveTweet = null, activeTweet = null,
   illuminateFollowersInterval = null,
-  defaultEdgeOpacity = 0.01, defaultNodeOpacity = 0.75,
+  defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
+  defaultNodeOpacity = 0.75,
   followers = [], laidOut = false, dampingStep = 0
+
+const resetEdgeColors = i => {
+  let sourceNode, targetNode,
+    edge = edges[i]
+
+  for(let j=0; j<nodesLength; j++) {
+    if(typeof sourceNode !== 'undefined' && typeof targetNode !== 'undefined') break
+
+    let node = nodes[j]
+
+    if(node.id == edge.source) {
+      sourceNode = node
+    } else if(node.id == edge.target) {
+      targetNode = node
+    }
+  }
+
+  let sourceColor = colors.neutral,
+    targetColor = colors.neutral
+
+  if(sourceNode) {
+    sourceColor = colors[getOrientation(sourceNode.trumporhillary)]
+  }
+  if(targetNode) {
+    targetColor = colors[getOrientation(targetNode.trumporhillary)]
+  }
+
+  edgeColors[i * 6] = sourceColor[0]
+  edgeColors[i * 6 + 1] = sourceColor[1]
+  edgeColors[i * 6 + 2] = sourceColor[2]
+  edgeColors[i * 6 + 3] = targetColor[0]
+  edgeColors[i * 6 + 4] = targetColor[1]
+  edgeColors[i * 6 + 5] = targetColor[2]
+}
 
 const renderLoop = () => {
   if(!laidOut || dampingStep < 5) {
@@ -194,14 +229,7 @@ export default {
       nodeSizes[i] = node.pagerank
     }
 
-    for(let i=0; i<edgesLength; i++) {
-      edgeColors[i * 6] = 1
-      edgeColors[i * 6 + 1] = 1
-      edgeColors[i * 6 + 2] = 1
-      edgeColors[i * 6 + 3] = 1
-      edgeColors[i * 6 + 4] = 1
-      edgeColors[i * 6 + 5] = 1
-    }
+    for(let i=0; i<edgesLength; i++) resetEdgeColors(i)
 
     for(let i=0; i<nodesLength; i++) {
       nodeTimes[i * 3] = 0
@@ -215,7 +243,7 @@ export default {
       edgeTimes[i * 6 + 2] = defaultEdgeOpacity
       edgeTimes[i * 6 + 3] = 0
       edgeTimes[i * 6 + 4] = 1
-      edgeTimes[i * 6 + 5] = defaultEdgeOpacity
+      edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
     }
 
     group.add(new THREE.LineSegments(edgeGeometry, edgeMaterial))
@@ -249,14 +277,9 @@ export default {
     if(newActiveTweet == null) {
       for(let i=0; i<edgesLength; i++) {
         edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-        edgeTimes[i * 6 + 5] = defaultEdgeOpacity
+        edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
 
-        edgeColors[i * 6] = 1
-        edgeColors[i * 6 + 1] = 1
-        edgeColors[i * 6 + 2] = 1
-        edgeColors[i * 6 + 3] = 1
-        edgeColors[i * 6 + 4] = 1
-        edgeColors[i * 6 + 5] = 1
+        resetEdgeColors(i)
       }
       for(let i=0; i<nodesLength; i++) {
         nodeTimes[i * 3 + 2] = defaultNodeOpacity
@@ -294,46 +317,17 @@ export default {
 
             // source follows target
             if(currentCrop == edge.target && followers.indexOf(edge.source) === -1) {
-              let sourceNode, targetNode
-
-              for(let j=0; j<nodesLength; j++) {
-                if(typeof sourceNode !== 'undefined' && typeof targetNode !== 'undefined') break
-
-                let node = nodes[j]
-
-                if(node.id == edge.source) {
-                  sourceNode = node
-                } else if(node.id == edge.target) {
-                  targetNode = node
-                }
-              }
+              resetEdgeColors(i)
 
               followers.push(edge.source)
               newCrop.push(edge.source)
 
               edgeTimes[i * 6] = colorTimer + fadeOutFrames * colorIncrement
               edgeTimes[i * 6 + 1] = 1
-              edgeTimes[i * 6 + 2] = 0.15
+              edgeTimes[i * 6 + 2] = 0.1
               edgeTimes[i * 6 + 3] = colorTimer
               edgeTimes[i * 6 + 4] = 1  
-              edgeTimes[i * 6 + 5] = 0.15
-
-              let sourceColor = colors.neutral,
-                targetColor = colors.neutral
-
-              if(sourceNode) {
-                sourceColor = colors[getOrientation(sourceNode.trumporhillary)]
-              }
-              if(targetNode) {
-                targetColor = colors[getOrientation(targetNode.trumporhillary)]
-              }
-
-              edgeColors[i * 6] = sourceColor[0]
-              edgeColors[i * 6 + 1] = sourceColor[1]
-              edgeColors[i * 6 + 2] = sourceColor[2]
-              edgeColors[i * 6 + 3] = targetColor[0]
-              edgeColors[i * 6 + 4] = targetColor[1]
-              edgeColors[i * 6 + 5] = targetColor[2]
+              edgeTimes[i * 6 + 5] = 0.5
             }
           }
         }
