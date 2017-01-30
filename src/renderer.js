@@ -335,11 +335,10 @@ export default {
         for(let i=0; i<nodesLength; i++) {
           let id = nodes[i].id
           if(newCrop.indexOf(id) > -1) {
+            nodeTimes[i * 3] = colorTimer + fadeOutFrames * colorIncrement
             if(retweetIterator === 0) {
-              nodeTimes[i * 3] = colorTimer
               nodeTimes[i * 3 + 1] = 0.5
             } else {
-              nodeTimes[i * 3] = colorTimer + fadeOutFrames * colorIncrement
               nodeTimes[i * 3 + 1] = 1
             }
 
