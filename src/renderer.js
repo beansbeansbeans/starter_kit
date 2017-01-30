@@ -347,6 +347,7 @@ export default {
           }
 
           if(id == currentCrop) {
+            nodeTimes[i * 3] = colorTimer
             nodeTimes[i * 3 + 1] = 0.5            
           }
         }
