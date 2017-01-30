@@ -18,9 +18,9 @@ const g = graph(),
     'neutral': [1, 1, 1]
   },
   getOrientation = belief => {
-    if(belief === 0) {
+    if(belief == 0) {
       return 'conservative'
-    } else if(belief === 1 || belief === 2 || belief === 3) {
+    } else if(belief == 1) {
       return 'liberal'
     }
     return 'neutral'
@@ -64,10 +64,10 @@ const resetEdgeColors = i => {
     targetColor = colors.neutral
 
   if(sourceNode) {
-    sourceColor = colors[getOrientation(sourceNode.trumporhillary)]
+    sourceColor = colors[getOrientation(sourceNode.ideology)]
   }
   if(targetNode) {
-    targetColor = colors[getOrientation(targetNode.trumporhillary)]
+    targetColor = colors[getOrientation(targetNode.ideology)]
   }
 
   edgeColors[i * 6] = sourceColor[0]
@@ -221,7 +221,7 @@ export default {
 
     for(let i=0; i<nodesLength; i++) {
       let node = nodes[i]
-      let color = colors[getOrientation(node.trumporhillary)]
+      let color = colors[getOrientation(node.ideology)]
 
       nodeColors[i * 3] = color[0]
       nodeColors[i * 3 + 1] = color[1]
