@@ -40,7 +40,7 @@ document.addEventListener("click", e => {
 
   if(intersects.length) {
     let index = [intersects[0].index]
-    console.log(nodes[index])
+    window.open(`http://twitter.com/${nodes[index].handle}`, '_blank')
   }
 })
 
