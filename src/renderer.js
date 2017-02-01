@@ -6,10 +6,11 @@ const { decodeFloat } = helpers
 
 const g = graph(),
   scene = new THREE.Scene(),
+  raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1200,
+  cameraDistance = 1600,
   maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
   colors = {
@@ -25,6 +26,23 @@ const g = graph(),
     }
     return 'neutral'
   }
+
+document.addEventListener("click", e => {
+  event.preventDefault()
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+
+  nodeGeometry.computeBoundingSphere()
+
+  raycaster.setFromCamera(mouse, camera)
+
+  let intersects = raycaster.intersectObject(points, true)
+
+  if(intersects.length) {
+    let index = [intersects[0].index]
+    console.log(nodes[index])
+  }
+})
 
 let layout, renderer, nodePositions, edgeVertices, 
   edgeTimes, edgeTimesBuffer,
@@ -246,9 +264,12 @@ export default {
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
     }
 
+    points = new THREE.Points(nodeGeometry, nodeMaterial)
     group.add(new THREE.LineSegments(edgeGeometry, edgeMaterial))
-    group.add(new THREE.Points(nodeGeometry, nodeMaterial))
+    group.add(points)
     scene.add(group)
+
+    group.translateZ(600)
 
     for(let i=0; i<nodesLength; i++) {
       g.addNode(nodes[i].id, nodes[i].handle)
