@@ -57,13 +57,20 @@
     attribute vec3 times;
     attribute vec3 color;
     varying vec4 vColor;
+    attribute float sourceTarget;
 
     void main() {
       float alpha;
+      float minAlpha = 0.;
+
+      if(abs(sourceTarget - 1.) < 0.001) {
+        minAlpha = 0.005; // target edges are always visible
+      }
+
       if(times.y > 0.) { // fade in
-        alpha = min(times.z, ((time - times.x) / fadeOutDur) * times.z);
+        alpha = min(times.z, minAlpha + ((time - times.x) / fadeOutDur) * (times.z - minAlpha));
       } else { // fade out
-        alpha = max(0., times.z - (time - times.x) / fadeOutDur);
+        alpha = max(minAlpha, times.z - ((time - times.x) / fadeOutDur) * (times.z - minAlpha));
       }
 
       vColor = vec4(color, alpha);

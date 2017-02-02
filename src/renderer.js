@@ -46,6 +46,7 @@ document.addEventListener("click", e => {
 
 let layout, renderer, nodePositions, edgeVertices, 
   edgeTimes, edgeTimesBuffer,
+  edgeSourceTarget, edgeSourceTargetBuffer,
   nodeTimes, nodeTimesBuffer,
   controls, orbiting, time = 0,
   edgeColors, edgeColorsBuffer,
@@ -184,7 +185,8 @@ export default {
     nodesLength = nodes.length
     edgesLength = edges.length
     
-    renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
+    renderer = new THREE.WebGLRenderer({ canvas: opts.element })
+    edgeSourceTarget = new Float32Array(edgesLength * 2)
     edgeColors = new Float32Array(edgesLength * 2 * 3)
     nodeColors = new Float32Array(nodesLength * 3)
     nodePositions = new Float32Array(nodesLength * 3)
@@ -192,6 +194,7 @@ export default {
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
     edgeTimes = new Float32Array(edgesLength * 2 * 3)
     nodeSizes = new Float32Array(nodesLength)
+    edgeSourceTargetBuffer = new THREE.BufferAttribute(edgeSourceTarget, 1)
     edgeColorsBuffer = new THREE.BufferAttribute(edgeColors, 3)
     nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 3)
@@ -233,6 +236,7 @@ export default {
     nodeGeometry.addAttribute("size", nodeSizesBuffer)
     nodeGeometry.addAttribute("color", nodeColorsBuffer)
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
+    edgeGeometry.addAttribute("sourceTarget", edgeSourceTargetBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
     edgeGeometry.addAttribute("times", edgeTimesBuffer)
     edgeGeometry.addAttribute("color", edgeColorsBuffer)
@@ -262,6 +266,9 @@ export default {
       edgeTimes[i * 6 + 3] = 0
       edgeTimes[i * 6 + 4] = 1
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
+
+      edgeSourceTarget[i * 2] = 0 // source
+      edgeSourceTarget[i * 2 + 1] = 1 // target
     }
 
     points = new THREE.Points(nodeGeometry, nodeMaterial)
@@ -358,7 +365,7 @@ export default {
           if(newCrop.indexOf(id) > -1) {
             nodeTimes[i * 3] = colorTimer + fadeOutFrames * colorIncrement
             if(retweetIterator === 0) {
-              nodeTimes[i * 3 + 1] = 0.5
+              nodeTimes[i * 3 + 1] = 0.5 // 0.5 means get big and then small
             } else {
               nodeTimes[i * 3 + 1] = 1
             }
