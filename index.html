@@ -19,12 +19,14 @@
     attribute vec3 times;
 
     void main() {
+      float minAlpha = 0.3;
+
       float x = time - times.x;
       float alpha = 0.;
       if(times.y > 0.) { // fade in
-        alpha = min(times.z, (x / fadeOutDur) * times.z);
+        alpha = min(times.z, minAlpha + (x / fadeOutDur) * (times.z - minAlpha));
       } else { // fade out
-        alpha = max(0., times.z - x / fadeOutDur);
+        alpha = max(minAlpha, times.z - (x / fadeOutDur) * (times.z - minAlpha));
       }
 
       float sizeFactor = 1.;
