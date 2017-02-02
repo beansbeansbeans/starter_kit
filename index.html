@@ -33,7 +33,10 @@
       if(abs(times.y - 0.5) < 0.001) {
         float minSizeMultiplier = 15. / size / 0.25; // 10 is the minimum target size, 0.25 is maximum value of x - x^2
 
-        sizeFactor = max(1., 1. + (x - pow(x, 2.)) * max(minSizeMultiplier, 15.));
+        // sizeFactor = max(1., 1. + (x - pow(x, 2.)) * max(minSizeMultiplier, 15.));
+
+        // keep the nodes big, actually
+        sizeFactor = min(5., 1. + (x / fadeOutDur) * 4.);
       }
 
       vColor = vec4(color, alpha);
