@@ -19,12 +19,6 @@ export default {
     return Math.floor(num / nearestInt) * nearestInt
   },
 
-  bindAll(ctx, fns) {
-    fns.forEach(d => {
-      ctx[d] = ctx[d].bind(ctx)
-    })
-  },
-
   decodeFloat: function(x, y, z, w) {
     UINT8_VIEW[0] = Math.floor(w)
     UINT8_VIEW[1] = Math.floor(z)

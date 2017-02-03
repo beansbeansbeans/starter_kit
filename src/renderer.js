@@ -6,106 +6,22 @@ const { decodeFloat } = helpers
 
 const g = graph(),
   scene = new THREE.Scene(),
-  raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1600,
-  maxZoom = 0, minZoom = -1600,
-  group = new THREE.Object3D(),
-  colors = {
-    'conservative': [1, 0.098, 0.3255],
-    'liberal': [0, 0.745, 0.99],
-    'neutral': [1, 1, 1]
-  },
-  getOrientation = belief => {
-    if(belief == 0) {
-      return 'conservative'
-    } else if(belief == 1) {
-      return 'liberal'
-    }
-    return 'neutral'
-  }
-
-document.addEventListener("click", e => {
-  event.preventDefault()
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
-  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
-
-  nodeGeometry.computeBoundingSphere()
-
-  raycaster.setFromCamera(mouse, camera)
-
-  let intersects = raycaster.intersectObject(points, true)
-
-  if(intersects.length) {
-    let index = [intersects[0].index]
-    window.open(`http://twitter.com/${nodes[index].handle}`, '_blank')
-  }
-})
+  cameraDistance = 1500
 
 let layout, renderer, nodePositions, edgeVertices, 
-  edgeTimes, edgeTimesBuffer,
-  edgeSourceTarget, edgeSourceTargetBuffer,
-  nodeTimes, nodeTimesBuffer,
-  controls, orbiting, time = 0,
-  edgeColors, edgeColorsBuffer,
-  nodeColors, nodeColorsBuffer, nodeSizes, nodeSizesBuffer,
+  nodeColors, nodeColorsBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  tweets, retweets,
-  colorTimer = 1, colorIncrement = 0.01,
-  fadeOutFrames = 40,
-  lastActiveTweet = null, activeTweet = null,
-  illuminateFollowersInterval = null,
-  defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
-  defaultNodeOpacity = 0.75,
-  followers = [], laidOut = false, dampingStep = 0
-
-const resetEdgeColors = i => {
-  let sourceNode, targetNode,
-    edge = edges[i]
-
-  for(let j=0; j<nodesLength; j++) {
-    if(typeof sourceNode !== 'undefined' && typeof targetNode !== 'undefined') break
-
-    let node = nodes[j]
-
-    if(node.id == edge.source) {
-      sourceNode = node
-    } else if(node.id == edge.target) {
-      targetNode = node
-    }
-  }
-
-  let sourceColor = colors.neutral,
-    targetColor = colors.neutral
-
-  if(sourceNode) {
-    sourceColor = colors[getOrientation(sourceNode.ideology)]
-  }
-  if(targetNode) {
-    targetColor = colors[getOrientation(targetNode.ideology)]
-  }
-
-  edgeColors[i * 6] = sourceColor[0]
-  edgeColors[i * 6 + 1] = sourceColor[1]
-  edgeColors[i * 6 + 2] = sourceColor[2]
-  edgeColors[i * 6 + 3] = targetColor[0]
-  edgeColors[i * 6 + 4] = targetColor[1]
-  edgeColors[i * 6 + 5] = targetColor[2]
-}
+  steps = 0
 
 const renderLoop = () => {
-  if(!laidOut || dampingStep < 5) {
-    dampingStep++
+  if(steps < 120) {
     layout.step()
-  }
-
-  if(orbiting) {
-    time += 0.002
-    group.rotation.y = time
+    steps++
   }
 
   for(let i=0; i<nodesLength; i++) {
@@ -129,79 +45,30 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 5] = target.z
   }
 
-  if(activeTweet !== lastActiveTweet) {
-    if(activeTweet !== null && lastActiveTweet == null) {
-      for(let i=0; i<nodesLength; i++) {
-        nodeTimes[i * 3] = colorTimer
-        nodeTimes[i * 3 + 1] = 0 // 0 means fade out    
-      }
-
-      for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 6] = colorTimer
-        edgeTimes[i * 6 + 1] = 0 // 0 means fade out    
-        edgeTimes[i * 6 + 3] = colorTimer      
-        edgeTimes[i * 6 + 4] = 0      
-      }
-    } else if(activeTweet == null && lastActiveTweet != null) {
-      for(let i=0; i<nodesLength; i++) {
-        nodeTimes[i * 3] = colorTimer
-        nodeTimes[i * 3 + 1] = 1   
-      }
-
-      for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 6] = colorTimer
-        edgeTimes[i * 6 + 1] = 1
-        edgeTimes[i * 6 + 3] = colorTimer      
-        edgeTimes[i * 6 + 4] = 1      
-      }
-    }
-    
-    nodeTimesBuffer.needsUpdate = true
-    edgeTimesBuffer.needsUpdate = true
-  }
+  var timer = Date.now() * 0.0002
+  camera.position.x = Math.cos( timer ) * cameraDistance
+  camera.position.z = Math.sin( timer ) * cameraDistance
+  camera.lookAt(scene.position)
 
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
-
-  nodeMaterial.uniforms.time.value = colorTimer
-  edgeMaterial.uniforms.time.value = colorTimer
-
-  colorTimer += colorIncrement
-
-  lastActiveTweet = activeTweet
-
-  controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
 
 export default {
   initialize(opts) {
-    tweets = opts.tweets
-    retweets = opts.retweets
     nodes = opts.nodes
     edges = opts.edges
-
     nodesLength = nodes.length
     edgesLength = edges.length
-    
-    renderer = new THREE.WebGLRenderer({ canvas: opts.element })
-    edgeSourceTarget = new Float32Array(edgesLength * 2)
-    edgeColors = new Float32Array(edgesLength * 2 * 3)
-    nodeColors = new Float32Array(nodesLength * 3)
+    renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
+    nodeColors = new Float32Array(nodesLength * 4)
     nodePositions = new Float32Array(nodesLength * 3)
-    nodeTimes = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
-    edgeTimes = new Float32Array(edgesLength * 2 * 3)
-    nodeSizes = new Float32Array(nodesLength)
-    edgeSourceTargetBuffer = new THREE.BufferAttribute(edgeSourceTarget, 1)
-    edgeColorsBuffer = new THREE.BufferAttribute(edgeColors, 3)
-    nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
-    nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 3)
+    nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
-    nodeSizesBuffer = new THREE.BufferAttribute(nodeSizes, 1)
-    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 3)
 
     nodeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("node-vertex-shader").textContent,
@@ -210,8 +77,6 @@ export default {
       depthTest: false,
       blending: THREE.AdditiveBlending,
       uniforms: {
-        fadeOutDur: { value: fadeOutFrames * colorIncrement },
-        time: { value: 0 },
         tex: { value: opts.particleSprite },
         cameraDistance: { value: cameraDistance }
       }
@@ -220,63 +85,40 @@ export default {
     edgeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("edge-vertex-shader").textContent,
       fragmentShader: document.getElementById("edge-fragment-shader").textContent,
-      transparent: true,
-      depthTest: false,
-      blending: THREE.AdditiveBlending,
-      uniforms: {
-        time: { value: 0 },
-        fadeOutDur: { value: fadeOutFrames * colorIncrement }
-      }
+      transparent: true
     })
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
 
-    nodeGeometry.addAttribute("times", nodeTimesBuffer)
-    nodeGeometry.addAttribute("size", nodeSizesBuffer)
     nodeGeometry.addAttribute("color", nodeColorsBuffer)
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
-    edgeGeometry.addAttribute("sourceTarget", edgeSourceTargetBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
-    edgeGeometry.addAttribute("times", edgeTimesBuffer)
-    edgeGeometry.addAttribute("color", edgeColorsBuffer)
 
     for(let i=0; i<nodesLength; i++) {
-      let node = nodes[i]
-      let color = colors[getOrientation(node.ideology)]
+      let belief = nodes[i].trumporhillary
 
-      nodeColors[i * 3] = color[0]
-      nodeColors[i * 3 + 1] = color[1]
-      nodeColors[i * 3 + 2] = color[2]
-      nodeSizes[i] = node.pagerank
+      if(belief === 0) {
+        nodeColors[i * 4] = 1
+        nodeColors[i * 4 + 1] = 0.098
+        nodeColors[i * 4 + 2] = 0.3255
+      } else if(belief === 1 || belief === 2 || belief === 3) {
+        nodeColors[i * 4] = 0
+        nodeColors[i * 4 + 1] = 0.745
+        nodeColors[i * 4 + 2] = 0.99
+      } else {
+        nodeColors[i * 4] = 1
+        nodeColors[i * 4 + 1] = 1
+        nodeColors[i * 4 + 2] = 1
+      }
+
+      nodeColors[i * 4 + 3] = 0.5
     }
 
-    for(let i=0; i<edgesLength; i++) resetEdgeColors(i)
-
-    for(let i=0; i<nodesLength; i++) {
-      nodeTimes[i * 3] = 0
-      nodeTimes[i * 3 + 1] = 1
-      nodeTimes[i * 3 + 2] = defaultNodeOpacity
-    }
-
-    for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 6] = 0
-      edgeTimes[i * 6 + 1] = 1
-      edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-      edgeTimes[i * 6 + 3] = 0
-      edgeTimes[i * 6 + 4] = 1
-      edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
-
-      edgeSourceTarget[i * 2] = 0 // source
-      edgeSourceTarget[i * 2 + 1] = 1 // target
-    }
-
+    lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
+    scene.add(lineSegments)
     points = new THREE.Points(nodeGeometry, nodeMaterial)
-    group.add(new THREE.LineSegments(edgeGeometry, edgeMaterial))
-    group.add(points)
-    scene.add(group)
-
-    group.translateZ(600)
+    scene.add(points)
 
     for(let i=0; i<nodesLength; i++) {
       g.addNode(nodes[i].id, nodes[i].handle)
@@ -287,119 +129,7 @@ export default {
     }
 
     layout = forceLayout3d(g)
-    layout.on("stable", d => {
-      laidOut = true
-    })
-
-    controls = new THREE.Controls(camera, renderer.domElement, group, minZoom, maxZoom)
-
-    camera.position.z = cameraDistance
 
     requestAnimationFrame(renderLoop)
-  },
-  setActiveTweet(newActiveTweet) {
-    if(newActiveTweet !== activeTweet) {
-      clearInterval(illuminateFollowersInterval)
-    }
-
-    if(newActiveTweet == null) {
-      for(let i=0; i<edgesLength; i++) {
-        edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-        edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
-
-        resetEdgeColors(i)
-      }
-      for(let i=0; i<nodesLength; i++) {
-        nodeTimes[i * 3 + 2] = defaultNodeOpacity
-      }  
-      edgeColorsBuffer.needsUpdate = true    
-    } else if(newActiveTweet !== activeTweet) {
-      if(activeTweet != null) {
-        for(let i=0; i<nodesLength; i++) {
-          if(followers.indexOf(nodes[i].id) > -1) {
-            nodeTimes[i * 3] = colorTimer - fadeOutFrames * colorIncrement
-            nodeTimes[i * 3 + 1] = 0                 
-          }
-        }
-        for(let i=0; i<edgesLength; i++) {
-          if(followers.indexOf(edges[i].source) > -1) {
-            edgeTimes[i * 6] = colorTimer - fadeOutFrames * colorIncrement 
-            edgeTimes[i * 6 + 1] = 0 
-            edgeTimes[i * 6 + 3] = colorTimer - fadeOutFrames * colorIncrement         
-            edgeTimes[i * 6 + 4] = 0                    
-          }
-        }
-        nodeTimesBuffer.needsUpdate = true
-        edgeTimesBuffer.needsUpdate = true
-      }
-
-      followers = [newActiveTweet.node_id] // these are the people who should be illuminated
-      let currentCrop // these are the people we are currently looking for followers of
-      let newCrop = [ newActiveTweet.node_id ]
-      let retweetIterator = 0
-
-      illuminateFollowersInterval = setInterval(() => {
-        if(retweetIterator > 0) {
-          for(let i=0; i<edgesLength; i++) {
-            let edge = edges[i]
-
-            // source follows target
-            if(currentCrop == edge.target && followers.indexOf(edge.source) === -1) {
-              resetEdgeColors(i)
-
-              followers.push(edge.source)
-              newCrop.push(edge.source)
-
-              edgeTimes[i * 6] = colorTimer + fadeOutFrames * colorIncrement
-              edgeTimes[i * 6 + 1] = 1
-              edgeTimes[i * 6 + 2] = 0.1
-              edgeTimes[i * 6 + 3] = colorTimer
-              edgeTimes[i * 6 + 4] = 1  
-              edgeTimes[i * 6 + 5] = 0.5
-            }
-          }
-        }
-
-        for(let i=0; i<nodesLength; i++) {
-          let id = nodes[i].id
-          if(newCrop.indexOf(id) > -1) {
-            nodeTimes[i * 3] = colorTimer + fadeOutFrames * colorIncrement
-            if(retweetIterator === 0) {
-              nodeTimes[i * 3 + 1] = 0.5 // 0.5 means get big and then small
-            } else {
-              nodeTimes[i * 3 + 1] = 1
-            }
-
-            nodeTimes[i * 3 + 2] = 1
-          }
-
-          if(id == currentCrop) {
-            nodeTimes[i * 3] = colorTimer
-            nodeTimes[i * 3 + 1] = 0.5            
-          }
-        }
-
-        edgeColorsBuffer.needsUpdate = true
-        nodeTimesBuffer.needsUpdate = true
-        edgeTimesBuffer.needsUpdate = true
-
-        if(retweets[newActiveTweet._id].length < retweetIterator) {
-          window.clearInterval(illuminateFollowersInterval)
-        } else {
-          if(retweetIterator === 0) {
-            currentCrop = newActiveTweet.node_id
-          } else {
-            currentCrop = retweets[newActiveTweet._id][retweetIterator - 1].retweeter_node_id
-          }
-
-          newCrop = []          
-        }
-        retweetIterator++
-      }, fadeOutFrames * 17) // assuming 60fps
-    }
-    activeTweet = newActiveTweet
-  },
-  updateControls(opts) {
-    orbiting = opts.orbiting
   }
 }

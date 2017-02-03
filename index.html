@@ -6,43 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link href="bundle.css" rel="stylesheet">
-  <style>@import 'https://fonts.googleapis.com/css?family=Poppins:300,400';</style>
 </head>
 <body>
   <script type="x-shader/x-vertex" id="node-vertex-shader">
     uniform float cameraDistance;
-    attribute vec3 color;
-    attribute float size;
+    attribute vec4 color;
     varying vec4 vColor;
-    uniform float fadeOutDur;
-    uniform float time;
-    attribute vec3 times;
 
     void main() {
-      float minAlpha = 0.3;
-
-      float x = time - times.x;
-      float alpha = 0.;
-      if(times.y > 0.) { // fade in
-        alpha = min(times.z, minAlpha + (x / fadeOutDur) * (times.z - minAlpha));
-      } else { // fade out
-        alpha = max(minAlpha, times.z - (x / fadeOutDur) * (times.z - minAlpha));
-      }
-
-      float sizeFactor = 1.;
-      if(abs(times.y - 0.5) < 0.001) {
-        float minSizeMultiplier = 15. / size / 0.25; // 10 is the minimum target size, 0.25 is maximum value of x - x^2
-
-        // sizeFactor = max(1., 1. + (x - pow(x, 2.)) * max(minSizeMultiplier, 15.));
-
-        // keep the nodes big, actually
-        sizeFactor = min(5., 1. + (x / fadeOutDur) * 4.);
-      }
-
-      vColor = vec4(color, alpha);
+      vColor = color;
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = size * sizeFactor * ( cameraDistance / -mvPosition.z );
+      gl_PointSize = 10.0 * ( cameraDistance / -mvPosition.z );
     }
   </script>
   <script type="x-shader/x-fragment" id="node-fragment-shader">
@@ -55,36 +30,13 @@
     }
   </script>
   <script type="x-shader/x-vertex" id="edge-vertex-shader">
-    uniform float time;
-    uniform float fadeOutDur;
-    attribute vec3 times;
-    attribute vec3 color;
-    varying vec4 vColor;
-    attribute float sourceTarget;
-
     void main() {
-      float alpha;
-      float minAlpha = 0.;
-
-      if(abs(sourceTarget - 1.) < 0.001) {
-        minAlpha = 0.005; // target edges are always visible
-      }
-
-      if(times.y > 0.) { // fade in
-        alpha = min(times.z, minAlpha + ((time - times.x) / fadeOutDur) * (times.z - minAlpha));
-      } else { // fade out
-        alpha = max(minAlpha, times.z - ((time - times.x) / fadeOutDur) * (times.z - minAlpha));
-      }
-
-      vColor = vec4(color, alpha);
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   </script>
   <script type="x-shader/x-fragment" id="edge-fragment-shader">
-    varying vec4 vColor;
-
     void main() {
-      gl_FragColor = vColor;
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 0.1);
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
