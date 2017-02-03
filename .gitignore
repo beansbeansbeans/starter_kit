@@ -21,6 +21,7 @@ node_modules/*
 !node_modules/ngraph.forcelayout3d/
 !node_modules/ngraph.physics.simulator/
 !node_modules/ngraph.forcelayout/
+!node_modules/ngraph.graph/
 
 coverage
 .DS_Store
