@@ -84,8 +84,10 @@ export default {
 
     edgeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("edge-vertex-shader").textContent,
-      fragmentShader: document.getElementById("edge-fragment-shader").textContent,
-      transparent: true
+      transparent: true,
+      depthTest: false,
+      blending: THREE.AdditiveBlending,
+      fragmentShader: document.getElementById("edge-fragment-shader").textContent
     })
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
