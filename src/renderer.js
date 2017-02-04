@@ -18,7 +18,7 @@ let layout, renderer, nodePositions, edgeVertices,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
   steps = 0,
-  graphNodes = [], graphEdges = []
+  graphNodes = [seedID], graphEdges = []
 
 const renderLoop = () => {
   // if(steps < 120) {
@@ -46,11 +46,6 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 4] = target.y
     edgeVertices[i * 6 + 5] = target.z
   }
-
-  var timer = Date.now() * 0.0002
-  camera.position.x = Math.cos( timer ) * cameraDistance
-  camera.position.z = Math.sin( timer ) * cameraDistance
-  camera.lookAt(scene.position)
 
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
@@ -125,61 +120,50 @@ export default {
     scene.add(points)
 
     let accumulatedEdges = {}
-    let accumulatedNodes = [seedID]
     let copyOfEdges = JSON.parse(JSON.stringify(edges))
-    let lastNodesIndex = 0
+    let currentNodeIndex = 0
 
-    window.graphNodes = graphNodes
-    window.graphEdges = graphEdges
+    g.addNode(graphNodes[currentNodeIndex])
 
     let buildNetworkIntervalID = setInterval(() => {
-      let nextDegreeNodes = [], nextDegreeEdges = []
+      // change lastNodesIndex when all of the people the currentNode follows and their edge relationships have been newly recorded
 
-      for(let i=lastNodesIndex, l = accumulatedNodes.length; i<l; i++) {
-        let id = accumulatedNodes[i], toDelete = []
+      let id = graphNodes[currentNodeIndex]
 
-        for(let j=0, len = copyOfEdges.length; j<len; j++) {
-          let edge = copyOfEdges[j]
+      for(let i=0, len=copyOfEdges.length; i<len; i++) {
+        let edge = copyOfEdges[i]
+        if(typeof accumulatedEdges[edge.source] === 'undefined') {
+          accumulatedEdges[edge.source] = []
+        }
 
-          if(typeof accumulatedEdges[edge.source] === 'undefined') {
-            accumulatedEdges[edge.source] = []
+        if(edge.source === id && accumulatedEdges[edge.source].indexOf(edge.target) === -1) {
+          graphEdges.push(edge)
+          if(graphNodes.indexOf(edge.target) === -1) {
+            graphNodes.push(edge.target)
           }
 
-          if(edge.source === id && accumulatedEdges[edge.source].indexOf(edge.target) === -1) {            
-            nextDegreeEdges.push(edge)
-            if(accumulatedNodes.indexOf(edge.target) === -1) {
-              nextDegreeNodes.push(edge.target)
-            }
+          g.addNode(edge.target)
+          g.addLink(edge.source, edge.target)
 
-            toDelete.push(j)
-          }
-        }  
+          copyOfEdges.splice(i, 1)
 
-        for(let j=0; j<toDelete.length; j++) {
-          copyOfEdges.splice(toDelete[j] - j, 1)
+          break
+        }
+
+        if(i === len - 1) {
+          currentNodeIndex++
         }
       }
 
-      for(let i=0; i<nextDegreeNodes.length; i++) {
-        g.addNode(nextDegreeNodes[i])
-      }
-
-      for(let i=0; i<nextDegreeEdges.length; i++) {
-        g.addLink(nextDegreeEdges[i].source, nextDegreeEdges[i].target)
-      }
-
-      lastNodesIndex = accumulatedNodes.length
-      accumulatedNodes = accumulatedNodes.concat(nextDegreeNodes)
-
-      graphNodes = accumulatedNodes
-      graphEdges = graphEdges.concat(nextDegreeEdges)
-
-      if(accumulatedNodes.length >= nodesLength || nextDegreeNodes.length === 0) {
+      if(currentNodeIndex >= nodesLength) {
         window.clearInterval(buildNetworkIntervalID)
       }
-    }, 1000)
+    }, 30)
 
     layout = forceLayout3d(g)
+
+    camera.position.z = cameraDistance
+    camera.lookAt(scene.position)
 
     requestAnimationFrame(renderLoop)
   }

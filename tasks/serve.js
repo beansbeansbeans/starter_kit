@@ -3,7 +3,7 @@ var utils = require('./_utils')
 module.exports = function(options) {
 
   options = utils.extend({
-    port: 5000
+    port: 5050
   }, options)
   // serve the contents of this folder
   return utils.exec('./node_modules/.bin/serve', utils.optionsToArray(options))
