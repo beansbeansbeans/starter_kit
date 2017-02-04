@@ -156,13 +156,14 @@ export default {
       if(currentNodeIndex < nodesLength) {
         requestAnimationFrame(buildNetwork)
       } else {
-        console.log("done")
+        console.log("done", graphNodes.length, graphEdges.length)
       }
     }
 
-    requestAnimationFrame(buildNetwork)
-
     layout = forceLayout3d(g)
+    layout.pinNode(g.getNode(seedID), true)
+
+    requestAnimationFrame(buildNetwork)
 
     camera.position.z = cameraDistance
     camera.lookAt(scene.position)
