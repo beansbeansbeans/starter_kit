@@ -158,7 +158,7 @@ export default {
       if(currentNodeIndex >= nodesLength) {
         window.clearInterval(buildNetworkIntervalID)
       }
-    }, 30)
+    }, 10)
 
     layout = forceLayout3d(g)
 
