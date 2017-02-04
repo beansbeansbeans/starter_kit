@@ -9,31 +9,33 @@ const g = graph(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1500
+  cameraDistance = 1500,
+  seedID = 7163
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  steps = 0
+  steps = 0,
+  graphNodes = [], graphEdges = []
 
 const renderLoop = () => {
-  if(steps < 120) {
+  // if(steps < 120) {
     layout.step()
-    steps++
-  }
+  //   steps++
+  // }
 
-  for(let i=0; i<nodesLength; i++) {
-    let node = nodes[i]
-    let pos = layout.getNodePosition(node.id)
+  for(let i=0; i<graphNodes.length; i++) {
+    let node = graphNodes[i]
+    let pos = layout.getNodePosition(node)
     nodePositions[i * 3] = pos.x
     nodePositions[i * 3 + 1] = pos.y
     nodePositions[i * 3 + 2] = pos.z
   }
 
-  for(let i=0; i<edgesLength; i++) {
-    let edge = edges[i],
+  for(let i=0; i<graphEdges.length; i++) {
+    let edge = graphEdges[i],
       source = layout.getNodePosition(edge.source),
       target = layout.getNodePosition(edge.target)
 
@@ -122,13 +124,60 @@ export default {
     points = new THREE.Points(nodeGeometry, nodeMaterial)
     scene.add(points)
 
-    for(let i=0; i<nodesLength; i++) {
-      g.addNode(nodes[i].id, nodes[i].handle)
-    }
+    let accumulatedEdges = {}
+    let accumulatedNodes = [seedID]
+    let copyOfEdges = JSON.parse(JSON.stringify(edges))
+    let lastNodesIndex = 0
 
-    for(let i=0; i<edgesLength; i++) {
-      g.addLink(edges[i].source, edges[i].target)
-    }
+    window.graphNodes = graphNodes
+    window.graphEdges = graphEdges
+
+    let buildNetworkIntervalID = setInterval(() => {
+      let nextDegreeNodes = [], nextDegreeEdges = []
+
+      for(let i=lastNodesIndex, l = accumulatedNodes.length; i<l; i++) {
+        let id = accumulatedNodes[i], toDelete = []
+
+        for(let j=0, len = copyOfEdges.length; j<len; j++) {
+          let edge = copyOfEdges[j]
+
+          if(typeof accumulatedEdges[edge.source] === 'undefined') {
+            accumulatedEdges[edge.source] = []
+          }
+
+          if(edge.source === id && accumulatedEdges[edge.source].indexOf(edge.target) === -1) {            
+            nextDegreeEdges.push(edge)
+            if(accumulatedNodes.indexOf(edge.target) === -1) {
+              nextDegreeNodes.push(edge.target)
+            }
+
+            toDelete.push(j)
+          }
+        }  
+
+        for(let j=0; j<toDelete.length; j++) {
+          copyOfEdges.splice(toDelete[j] - j, 1)
+        }
+      }
+
+      for(let i=0; i<nextDegreeNodes.length; i++) {
+        g.addNode(nextDegreeNodes[i])
+      }
+
+      for(let i=0; i<nextDegreeEdges.length; i++) {
+        g.addLink(nextDegreeEdges[i].source, nextDegreeEdges[i].target)
+      }
+
+      lastNodesIndex = accumulatedNodes.length
+      accumulatedNodes = accumulatedNodes.concat(nextDegreeNodes)
+
+      graphNodes = accumulatedNodes
+      graphEdges = graphEdges.concat(nextDegreeEdges)
+
+      if(accumulatedNodes.length >= nodesLength || nextDegreeNodes.length === 0) {
+        window.clearInterval(buildNetworkIntervalID)
+      }
+    }, 1000)
 
     layout = forceLayout3d(g)
 
