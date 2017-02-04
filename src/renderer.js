@@ -125,10 +125,8 @@ export default {
 
     g.addNode(graphNodes[currentNodeIndex])
 
-    let buildNetworkIntervalID = setInterval(() => {
-      // change lastNodesIndex when all of the people the currentNode follows and their edge relationships have been newly recorded
-
-      let id = graphNodes[currentNodeIndex]
+    const buildNetwork = () => {
+      let id = graphNodes[currentNodeIndex], toDelete = []
 
       for(let i=0, len=copyOfEdges.length; i<len; i++) {
         let edge = copyOfEdges[i]
@@ -145,20 +143,24 @@ export default {
           g.addNode(edge.target)
           g.addLink(edge.source, edge.target)
 
-          copyOfEdges.splice(i, 1)
-
-          break
-        }
-
-        if(i === len - 1) {
-          currentNodeIndex++
+          toDelete.push(i)
         }
       }
 
-      if(currentNodeIndex >= nodesLength) {
-        window.clearInterval(buildNetworkIntervalID)
+      for(let i=0; i<toDelete.length; i++) {
+        copyOfEdges.splice(toDelete[i] - i, 1)
       }
-    }, 10)
+
+      currentNodeIndex++
+
+      if(currentNodeIndex < nodesLength) {
+        requestAnimationFrame(buildNetwork)
+      } else {
+        console.log("done")
+      }
+    }
+
+    requestAnimationFrame(buildNetwork)
 
     layout = forceLayout3d(g)
 
