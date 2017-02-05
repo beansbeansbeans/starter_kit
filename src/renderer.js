@@ -125,33 +125,39 @@ export default {
 
     g.addNode(graphNodes[currentNodeIndex])
 
+    let iterator = 0
+
     const buildNetwork = () => {
-      let id = graphNodes[currentNodeIndex], toDelete = []
+      if(iterator % 2 === 0) {
+        let id = graphNodes[currentNodeIndex], toDelete = []
 
-      for(let i=0, len=copyOfEdges.length; i<len; i++) {
-        let edge = copyOfEdges[i]
-        if(typeof accumulatedEdges[edge.source] === 'undefined') {
-          accumulatedEdges[edge.source] = []
-        }
-
-        if(edge.source === id && accumulatedEdges[edge.source].indexOf(edge.target) === -1) {
-          graphEdges.push(edge)
-          if(graphNodes.indexOf(edge.target) === -1) {
-            graphNodes.push(edge.target)
+        for(let i=0, len=copyOfEdges.length; i<len; i++) {
+          let edge = copyOfEdges[i]
+          if(typeof accumulatedEdges[edge.source] === 'undefined') {
+            accumulatedEdges[edge.source] = []
           }
 
-          g.addNode(edge.target)
-          g.addLink(edge.source, edge.target)
+          if(edge.source === id && accumulatedEdges[edge.source].indexOf(edge.target) === -1) {
+            graphEdges.push(edge)
+            if(graphNodes.indexOf(edge.target) === -1) {
+              graphNodes.push(edge.target)
+            }
 
-          toDelete.push(i)
+            g.addNode(edge.target)
+            g.addLink(edge.source, edge.target)
+
+            toDelete.push(i)
+          }
         }
+
+        for(let i=0; i<toDelete.length; i++) {
+          copyOfEdges.splice(toDelete[i] - i, 1)
+        }
+
+        currentNodeIndex++        
       }
 
-      for(let i=0; i<toDelete.length; i++) {
-        copyOfEdges.splice(toDelete[i] - i, 1)
-      }
-
-      currentNodeIndex++
+      iterator++
 
       if(currentNodeIndex < nodesLength) {
         requestAnimationFrame(buildNetwork)
