@@ -9,33 +9,31 @@ const g = graph(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1500,
-  seedID = 7163
+  cameraDistance = 1500
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  steps = 0,
-  graphNodes = [seedID], graphEdges = []
+  steps = 0
 
 const renderLoop = () => {
-  // if(steps < 120) {
+  if(steps < 120) {
     layout.step()
-  //   steps++
-  // }
+    steps++
+  }
 
-  for(let i=0; i<graphNodes.length; i++) {
-    let node = graphNodes[i]
-    let pos = layout.getNodePosition(node)
+  for(let i=0; i<nodesLength; i++) {
+    let node = nodes[i]
+    let pos = layout.getNodePosition(node.id)
     nodePositions[i * 3] = pos.x
     nodePositions[i * 3 + 1] = pos.y
     nodePositions[i * 3 + 2] = pos.z
   }
 
-  for(let i=0; i<graphEdges.length; i++) {
-    let edge = graphEdges[i],
+  for(let i=0; i<edgesLength; i++) {
+    let edge = edges[i],
       source = layout.getNodePosition(edge.source),
       target = layout.getNodePosition(edge.target)
 
@@ -46,6 +44,11 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 4] = target.y
     edgeVertices[i * 6 + 5] = target.z
   }
+
+  var timer = Date.now() * 0.0002
+  camera.position.x = Math.cos( timer ) * cameraDistance
+  camera.position.z = Math.sin( timer ) * cameraDistance
+  camera.lookAt(scene.position)
 
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
@@ -119,60 +122,15 @@ export default {
     points = new THREE.Points(nodeGeometry, nodeMaterial)
     scene.add(points)
 
-    let accumulatedEdges = {}
-    let copyOfEdges = JSON.parse(JSON.stringify(edges))
-    let currentNodeIndex = 0
+    for(let i=0; i<nodesLength; i++) {
+      g.addNode(nodes[i].id, nodes[i].handle)
+    }
 
-    g.addNode(graphNodes[currentNodeIndex])
-
-    let iterator = 0
-
-    const buildNetwork = () => {
-      if(iterator % 2 === 0) {
-        let id = graphNodes[currentNodeIndex], toDelete = []
-
-        for(let i=0, len=copyOfEdges.length; i<len; i++) {
-          let edge = copyOfEdges[i]
-          if(typeof accumulatedEdges[edge.source] === 'undefined') {
-            accumulatedEdges[edge.source] = []
-          }
-
-          if(edge.source === id && accumulatedEdges[edge.source].indexOf(edge.target) === -1) {
-            graphEdges.push(edge)
-            if(graphNodes.indexOf(edge.target) === -1) {
-              graphNodes.push(edge.target)
-            }
-
-            g.addNode(edge.target)
-            g.addLink(edge.source, edge.target)
-
-            toDelete.push(i)
-          }
-        }
-
-        for(let i=0; i<toDelete.length; i++) {
-          copyOfEdges.splice(toDelete[i] - i, 1)
-        }
-
-        currentNodeIndex++        
-      }
-
-      iterator++
-
-      if(currentNodeIndex < nodesLength) {
-        requestAnimationFrame(buildNetwork)
-      } else {
-        console.log("done", graphNodes.length, graphEdges.length)
-      }
+    for(let i=0; i<edgesLength; i++) {
+      g.addLink(edges[i].source, edges[i].target)
     }
 
     layout = forceLayout3d(g)
-    layout.pinNode(g.getNode(seedID), true)
-
-    requestAnimationFrame(buildNetwork)
-
-    camera.position.z = cameraDistance
-    camera.lookAt(scene.position)
 
     requestAnimationFrame(renderLoop)
   }
