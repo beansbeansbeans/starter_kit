@@ -121,16 +121,16 @@ export default {
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
 
     for(let i=0; i<nodesLength; i++) {
-      nodeTimes[i * 3] = 0
+      nodeTimes[i * 3] = colorTimer + 0.75
       nodeTimes[i * 3 + 1] = 1
       nodeTimes[i * 3 + 2] = defaultNodeOpacity
     }
 
     for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 6] = 0
+      edgeTimes[i * 6] = colorTimer + 0.75
       edgeTimes[i * 6 + 1] = 1
       edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-      edgeTimes[i * 6 + 3] = 0
+      edgeTimes[i * 6 + 3] = colorTimer + 0.75
       edgeTimes[i * 6 + 4] = 1
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
     }
