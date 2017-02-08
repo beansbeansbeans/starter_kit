@@ -22,7 +22,7 @@ let layout, renderer, nodePositions, edgeVertices,
   nodeMaterial, edgeMaterial,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
-  fadeOutFrames = 40,
+  fadeOutFrames = 40
 
 const renderLoop = () => {
   if(steps < 120) {
