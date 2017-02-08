@@ -9,14 +9,20 @@ const g = graph(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
-  cameraDistance = 1500
+  cameraDistance = 1500,
+  defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
+  defaultNodeOpacity = 0.75
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
+  edgeTimes, edgeTimesBuffer,
+  nodeTimes, nodeTimesBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  steps = 0
+  steps = 0,
+  colorTimer = 1, colorIncrement = 0.01,
+  fadeOutFrames = 40,
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -50,6 +56,11 @@ const renderLoop = () => {
   camera.position.z = Math.sin( timer ) * cameraDistance
   camera.lookAt(scene.position)
 
+  nodeMaterial.uniforms.time.value = colorTimer
+  edgeMaterial.uniforms.time.value = colorTimer
+
+  colorTimer += colorIncrement
+
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
   renderer.render(scene, camera)
@@ -66,9 +77,13 @@ export default {
     nodeColors = new Float32Array(nodesLength * 4)
     nodePositions = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
+    nodeTimes = new Float32Array(nodesLength * 3)
+    edgeTimes = new Float32Array(edgesLength * 2 * 3)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
+    nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
+    edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 3)
 
     nodeMaterial = new THREE.ShaderMaterial({
       vertexShader: document.getElementById("node-vertex-shader").textContent,
@@ -77,6 +92,8 @@ export default {
       depthTest: false,
       blending: THREE.AdditiveBlending,
       uniforms: {
+        fadeOutDur: { value: fadeOutFrames * colorIncrement },
+        time: { value: 0 },
         tex: { value: opts.particleSprite },
         cameraDistance: { value: cameraDistance }
       }
@@ -87,15 +104,36 @@ export default {
       transparent: true,
       depthTest: false,
       blending: THREE.AdditiveBlending,
-      fragmentShader: document.getElementById("edge-fragment-shader").textContent
+      fragmentShader: document.getElementById("edge-fragment-shader").textContent,
+      uniforms: {
+        time: { value: 0 },
+        fadeOutDur: { value: fadeOutFrames * colorIncrement }
+      }
     })
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
 
+    nodeGeometry.addAttribute("times", nodeTimesBuffer)
     nodeGeometry.addAttribute("color", nodeColorsBuffer)
+    edgeGeometry.addAttribute("times", edgeTimesBuffer)
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
+
+    for(let i=0; i<nodesLength; i++) {
+      nodeTimes[i * 3] = 0
+      nodeTimes[i * 3 + 1] = 1
+      nodeTimes[i * 3 + 2] = defaultNodeOpacity
+    }
+
+    for(let i=0; i<edgesLength; i++) {
+      edgeTimes[i * 6] = 0
+      edgeTimes[i * 6 + 1] = 1
+      edgeTimes[i * 6 + 2] = defaultEdgeOpacity
+      edgeTimes[i * 6 + 3] = 0
+      edgeTimes[i * 6 + 4] = 1
+      edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
+    }
 
     for(let i=0; i<nodesLength; i++) {
       let belief = nodes[i].trumporhillary
