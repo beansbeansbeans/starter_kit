@@ -21,7 +21,7 @@ let layout, renderer, nodePositions, edgeVertices,
 const renderLoop = () => {
   if(steps < 120) {
     layout.step()
-    steps++
+    // steps++
   }
 
   for(let i=0; i<nodesLength; i++) {
