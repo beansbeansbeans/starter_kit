@@ -82,12 +82,12 @@ export default {
     edgesLength = edges.length
     renderer = new THREE.WebGLRenderer({ canvas: opts.element })
     edgeColors = new Float32Array(edgesLength * 2 * 3)
-    nodeColors = new Float32Array(nodesLength * 4)
+    nodeColors = new Float32Array(nodesLength * 3)
     nodePositions = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
     nodeTimes = new Float32Array(nodesLength * 3)
     edgeTimes = new Float32Array(edgesLength * 2 * 3)
-    nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
+    nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 3)
     edgeColorsBuffer = new THREE.BufferAttribute(edgeColors, 3)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
@@ -156,20 +156,18 @@ export default {
       let belief = nodes[i].trumporhillary
 
       if(belief === 0) {
-        nodeColors[i * 4] = 1
-        nodeColors[i * 4 + 1] = 0.098
-        nodeColors[i * 4 + 2] = 0.3255
+        nodeColors[i * 3] = 1
+        nodeColors[i * 3 + 1] = 0.098
+        nodeColors[i * 3 + 2] = 0.3255
       } else if(belief === 1 || belief === 2 || belief === 3) {
-        nodeColors[i * 4] = 0
-        nodeColors[i * 4 + 1] = 0.745
-        nodeColors[i * 4 + 2] = 0.99
+        nodeColors[i * 3] = 0
+        nodeColors[i * 3 + 1] = 0.745
+        nodeColors[i * 3 + 2] = 0.99
       } else {
-        nodeColors[i * 4] = 1
-        nodeColors[i * 4 + 1] = 1
-        nodeColors[i * 4 + 2] = 1
+        nodeColors[i * 3] = 1
+        nodeColors[i * 3 + 1] = 1
+        nodeColors[i * 3 + 2] = 1
       }
-
-      nodeColors[i * 4 + 3] = 0.5
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
