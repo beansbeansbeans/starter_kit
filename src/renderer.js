@@ -180,7 +180,7 @@ export default {
     }
 
     for(let i=0; i<edgesLength; i++) {
-      g.addLink(edges[i].source, edges[i].target, {}, edges[i].weight)
+      g.addLink(edges[i].source, edges[i].target, {}, edges[i].weight, edges[i].length)
     }
 
     layout = forceLayout3d(g)
