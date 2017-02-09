@@ -137,10 +137,10 @@ export default {
     }
 
     for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 6] = colorTimer + 0.75
+      edgeTimes[i * 6] = colorTimer
       edgeTimes[i * 6 + 1] = 1
       edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-      edgeTimes[i * 6 + 3] = colorTimer + 0.75
+      edgeTimes[i * 6 + 3] = colorTimer
       edgeTimes[i * 6 + 4] = 1
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
 
