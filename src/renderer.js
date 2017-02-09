@@ -15,6 +15,7 @@ const g = graph(),
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
+  edgeColors, edgeColorsBuffer,
   edgeTimes, edgeTimesBuffer,
   nodeTimes, nodeTimesBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
@@ -23,6 +24,12 @@ let layout, renderer, nodePositions, edgeVertices,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40
+
+const adjustSpringWeight = (fromID, toID, newWeight) => {
+  // to be safe, I'll adjust both the link and spring objects to reflect the new weight
+  g.getLink(fromID, toID).weight = newWeight
+  layout.getSpring(fromID, toID).weight = newWeight
+}
 
 const renderLoop = () => {
   if(steps < 120) {
@@ -73,13 +80,15 @@ export default {
     edges = opts.edges
     nodesLength = nodes.length
     edgesLength = edges.length
-    renderer = new THREE.WebGLRenderer({ canvas: opts.element }),
+    renderer = new THREE.WebGLRenderer({ canvas: opts.element })
+    edgeColors = new Float32Array(edgesLength * 2 * 3)
     nodeColors = new Float32Array(nodesLength * 4)
     nodePositions = new Float32Array(nodesLength * 3)
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
     nodeTimes = new Float32Array(nodesLength * 3)
     edgeTimes = new Float32Array(edgesLength * 2 * 3)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 4)
+    edgeColorsBuffer = new THREE.BufferAttribute(edgeColors, 3)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
     nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
@@ -116,6 +125,7 @@ export default {
 
     nodeGeometry.addAttribute("times", nodeTimesBuffer)
     nodeGeometry.addAttribute("color", nodeColorsBuffer)
+    edgeGeometry.addAttribute("color", edgeColorsBuffer)
     edgeGeometry.addAttribute("times", edgeTimesBuffer)
     nodeGeometry.addAttribute("position", nodePositionsBuffer)
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
@@ -133,6 +143,13 @@ export default {
       edgeTimes[i * 6 + 3] = colorTimer + 0.75
       edgeTimes[i * 6 + 4] = 1
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
+
+      edgeColors[i * 6] = 1
+      edgeColors[i * 6 + 1] = 1
+      edgeColors[i * 6 + 2] = 1
+      edgeColors[i * 6 + 3] = 1
+      edgeColors[i * 6 + 4] = 1
+      edgeColors[i * 6 + 5] = 1        
     }
 
     for(let i=0; i<nodesLength; i++) {
@@ -165,7 +182,7 @@ export default {
     }
 
     for(let i=0; i<edgesLength; i++) {
-      g.addLink(edges[i].source, edges[i].target, {}, 1)
+      g.addLink(edges[i].source, edges[i].target, {}, edges[i].weight)
     }
 
     layout = forceLayout3d(g)

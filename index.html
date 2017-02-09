@@ -46,6 +46,7 @@
     attribute vec3 times;
     uniform float time;
     varying vec4 vColor;
+    attribute vec3 color;
     uniform float fadeOutDur;
 
     void main() {
@@ -59,7 +60,7 @@
         alpha = max(minAlpha, times.z - (x / fadeOutDur) * (times.z - minAlpha));
       }
 
-      vColor = vec4(1.0, 1.0, 1.0, alpha);
+      vColor = vec4(color, alpha);
 
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
