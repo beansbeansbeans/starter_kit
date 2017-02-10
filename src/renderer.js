@@ -25,11 +25,14 @@ let layout, renderer, nodePositions, edgeVertices,
   nodeMaterial, edgeMaterial,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
-  fadeOutFrames = 40
+  fadeOutFrames = 40,
+  shouldDetectIntersections = true
 
 raycaster.params.Points.threshold = 5
 
-document.addEventListener("click", e => {
+document.addEventListener("mousemove", e => {
+  if(!shouldDetectIntersections) return 
+    
   event.preventDefault()
   mouse.x = ( event.clientX / sharedState.get('windowWidth') ) * 2 - 1
   mouse.y = - ( event.clientY / sharedState.get('windowHeight') ) * 2 + 1
