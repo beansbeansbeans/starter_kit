@@ -20,6 +20,7 @@ let layout, renderer, nodePositions, edgeVertices,
   edgeColors, edgeColorsBuffer,
   edgeTimes, edgeTimesBuffer,
   nodeTimes, nodeTimesBuffer,
+  nodeSizes, nodeSizesBuffer,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
@@ -159,9 +160,11 @@ export default {
     edgeVertices = new Float32Array(edgesLength * 2 * 3)
     nodeTimes = new Float32Array(nodesLength * 3)
     edgeTimes = new Float32Array(edgesLength * 2 * 3)
+    nodeSizes = new Float32Array(nodesLength)
     nodeColorsBuffer = new THREE.BufferAttribute(nodeColors, 3)
     edgeColorsBuffer = new THREE.BufferAttribute(edgeColors, 3)
     nodePositionsBuffer = new THREE.BufferAttribute(nodePositions, 3)
+    nodeSizesBuffer = new THREE.BufferAttribute(nodeSizes, 1)
     edgeVerticesBuffer = new THREE.BufferAttribute(edgeVertices, 3)
     nodeTimesBuffer = new THREE.BufferAttribute(nodeTimes, 3)
     edgeTimesBuffer = new THREE.BufferAttribute(edgeTimes, 3)
@@ -196,6 +199,7 @@ export default {
     renderer.setPixelRatio(window.devicePixelRatio)
 
     nodeGeometry.addAttribute("times", nodeTimesBuffer)
+    nodeGeometry.addAttribute("size", nodeSizesBuffer)
     nodeGeometry.addAttribute("color", nodeColorsBuffer)
     edgeGeometry.addAttribute("color", edgeColorsBuffer)
     edgeGeometry.addAttribute("times", edgeTimesBuffer)
@@ -203,9 +207,18 @@ export default {
     edgeGeometry.addAttribute("position", edgeVerticesBuffer)
 
     for(let i=0; i<nodesLength; i++) {
+      let node = nodes[i]
+      let color = colors[getOrientation(node.ideology)]
+
+      nodeColors[i * 3] = color[0]
+      nodeColors[i * 3 + 1] = color[1]
+      nodeColors[i * 3 + 2] = color[2]
+
       nodeTimes[i * 3] = colorTimer + 0.75
       nodeTimes[i * 3 + 1] = 1
       nodeTimes[i * 3 + 2] = defaultNodeOpacity
+
+      nodeSizes[i] = node.pagerank
     }
 
     for(let i=0; i<edgesLength; i++) {
@@ -217,15 +230,6 @@ export default {
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
 
       resetEdgeColors(i)      
-    }
-
-    for(let i=0; i<nodesLength; i++) {
-      let node = nodes[i]
-      let color = colors[getOrientation(node.ideology)]
-
-      nodeColors[i * 3] = color[0]
-      nodeColors[i * 3 + 1] = color[1]
-      nodeColors[i * 3 + 2] = color[2]
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)

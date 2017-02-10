@@ -11,6 +11,7 @@
   <script type="x-shader/x-vertex" id="node-vertex-shader">
     uniform float cameraDistance;
     attribute vec4 color;
+    attribute float size;
     varying vec4 vColor;
     attribute vec3 times;
     uniform float time;
@@ -30,7 +31,7 @@
       vColor = vec4(color.r, color.g, color.b, alpha);
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = 10.0 * ( cameraDistance / -mvPosition.z );
+      gl_PointSize = size * ( cameraDistance / -mvPosition.z );
     }
   </script>
   <script type="x-shader/x-fragment" id="node-fragment-shader">
