@@ -51,8 +51,6 @@ document.addEventListener("mousemove", e => {
   mouse.x = ( event.clientX / sharedState.get('windowWidth') ) * 2 - 1
   mouse.y = - ( event.clientY / sharedState.get('windowHeight') ) * 2 + 1
 
-  nodeGeometry.computeBoundingSphere()
-
   raycaster.setFromCamera(mouse, camera)
 
   let intersects = raycaster.intersectObject(points, true)
@@ -253,5 +251,9 @@ export default {
     camera.lookAt(scene.position)
 
     requestAnimationFrame(renderLoop)
+
+    setTimeout(() => { // timeout seems to be necessary for some reason?
+      nodeGeometry.computeBoundingSphere()
+    }, 1000)
   }
 }
