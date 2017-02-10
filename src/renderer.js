@@ -259,5 +259,8 @@ export default {
     setTimeout(() => { // timeout seems to be necessary for some reason?
       nodeGeometry.computeBoundingSphere()
     }, 1000)
+  },
+  pan(direction) {
+    controls.pan(direction)
   }
 }

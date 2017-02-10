@@ -2,7 +2,7 @@ import { debounce } from 'underscore'
 import mediator from './mediator'
 
 THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
-  var panMag = 0.5,
+  var panMag = 5,
     dragging = false,
     autoRotating = false,
     velocity = 0,
@@ -59,7 +59,15 @@ THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
   }
 
   this.pan = function(direction) {
-
+    if(direction === 'up') {
+      graph.position.y += panMag
+    } else if(direction === 'down') {
+      graph.position.y -= panMag
+    } else if(direction === 'right') {
+      graph.position.x += panMag
+    } else {
+      graph.position.x -= panMag
+    }
   }
 
   var mousemove = (function() {

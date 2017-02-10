@@ -81,3 +81,16 @@ window.addEventListener("resize", debounce(() => {
   sharedState.set("windowWidth", window.innerWidth)
   sharedState.set("windowHeight", window.innerHeight)
 }, 250))
+
+document.addEventListener("keydown", e => {
+  const key = e.keyCode
+  if(key === 38) {
+    renderer.pan('up')
+  } else if(key === 40) {
+    renderer.pan('down')
+  } else if(key === 37) {
+    renderer.pan('left')
+  } else if(key === 39) {
+    renderer.pan('right')
+  }
+})
