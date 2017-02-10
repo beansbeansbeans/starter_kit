@@ -11,6 +11,7 @@ const g = graph(),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
   cameraDistance = 1500,
+  maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
   defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
   defaultNodeOpacity = 0.75
@@ -24,7 +25,7 @@ let layout, renderer, nodePositions, edgeVertices,
   nodePositionsBuffer, edgeVerticesBuffer, lineSegments, points,
   nodesLength, edgesLength, nodes, edges,
   nodeMaterial, edgeMaterial,
-  steps = 0,
+  steps = 0, controls,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
   shouldDetectIntersections = true,
@@ -138,6 +139,7 @@ const renderLoop = () => {
   edgeMaterial.uniforms.time.value = colorTimer
 
   colorTimer += colorIncrement
+  controls.update()
 
   nodePositionsBuffer.needsUpdate = true
   edgeVerticesBuffer.needsUpdate = true
@@ -249,6 +251,8 @@ export default {
 
     camera.position.z = cameraDistance
     camera.lookAt(scene.position)
+
+    controls = new THREE.Controls(camera, renderer.domElement, group, minZoom, maxZoom)
 
     requestAnimationFrame(renderLoop)
 
