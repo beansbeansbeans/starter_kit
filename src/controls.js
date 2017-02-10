@@ -33,6 +33,9 @@ THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
   function autoRotate() {
     if(!autoRotating) { return }
 
+    graph.rotation.x += dragDirection.y * velocity * 100
+    graph.rotation.y += dragDirection.x * velocity * 100
+
     velocity = velocity * 0.7
 
     if(velocity < 0.0001) { autoRotating = false }
