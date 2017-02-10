@@ -4,6 +4,8 @@ const { roundDown } = helpers
 import "../main.scss"
 import renderer from './renderer'
 import { getData } from './api'
+import sharedState from './sharedState'
+import { debounce } from 'underscore'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {
@@ -54,3 +56,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   })
 })
 
+window.addEventListener("resize", debounce(() => {
+  sharedState.set("windowWidth", window.innerWidth)
+  sharedState.set("windowHeight", window.innerHeight)
+}, 250))

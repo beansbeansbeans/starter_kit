@@ -31,8 +31,8 @@ raycaster.params.Points.threshold = 5
 
 document.addEventListener("click", e => {
   event.preventDefault()
-  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
-  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+  mouse.x = ( event.clientX / sharedState.get('windowWidth') ) * 2 - 1
+  mouse.y = - ( event.clientY / sharedState.get('windowHeight') ) * 2 + 1
 
   nodeGeometry.computeBoundingSphere()
 
