@@ -27,6 +27,8 @@ let layout, renderer, nodePositions, edgeVertices,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40
 
+raycaster.params.Points.threshold = 5
+
 document.addEventListener("click", e => {
   event.preventDefault()
   mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
