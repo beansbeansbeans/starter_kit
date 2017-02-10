@@ -6,10 +6,12 @@ const { decodeFloat } = helpers
 
 const g = graph(),
   scene = new THREE.Scene(),
+  raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2(),
   camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
   nodeGeometry = new THREE.BufferGeometry(),
   edgeGeometry = new THREE.BufferGeometry(),
   cameraDistance = 1500,
+  group = new THREE.Object3D(),
   defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
   defaultNodeOpacity = 0.75
 
@@ -24,6 +26,24 @@ let layout, renderer, nodePositions, edgeVertices,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40
+
+document.addEventListener("click", e => {
+  event.preventDefault()
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1
+
+  nodeGeometry.computeBoundingSphere()
+
+  raycaster.setFromCamera(mouse, camera)
+
+  let intersects = raycaster.intersectObject(points, true)
+
+  if(intersects.length) {
+    let index = [intersects[0].index]
+    console.log(intersects[0])
+    // window.open(`http://twitter.com/${nodes[index].handle}`, '_blank')
+  }
+})
 
 const adjustSpringWeight = (fromID, toID, newWeight) => {
   // to be safe, I'll adjust both the link and spring objects to reflect the new weight
@@ -58,10 +78,10 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 5] = target.z
   }
 
-  var timer = Date.now() * 0.0002
-  camera.position.x = Math.cos( timer ) * cameraDistance
-  camera.position.z = Math.sin( timer ) * cameraDistance
-  camera.lookAt(scene.position)
+  // var timer = Date.now() * 0.0002
+  // camera.position.x = Math.cos( timer ) * cameraDistance
+  // camera.position.z = Math.sin( timer ) * cameraDistance
+  // camera.lookAt(scene.position)
 
   nodeMaterial.uniforms.time.value = colorTimer
   edgeMaterial.uniforms.time.value = colorTimer
@@ -171,9 +191,11 @@ export default {
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
-    scene.add(lineSegments)
     points = new THREE.Points(nodeGeometry, nodeMaterial)
-    scene.add(points)
+
+    group.add(lineSegments)
+    group.add(points)
+    scene.add(group)
 
     for(let i=0; i<nodesLength; i++) {
       g.addNode(nodes[i].id, nodes[i].handle)
@@ -184,6 +206,9 @@ export default {
     }
 
     layout = forceLayout3d(g)
+
+    camera.position.z = cameraDistance
+    camera.lookAt(scene.position)
 
     requestAnimationFrame(renderLoop)
   }
