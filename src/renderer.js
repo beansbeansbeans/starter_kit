@@ -28,7 +28,6 @@ let layout, renderer, nodePositions, edgeVertices,
   steps = 0, controls,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
-  shouldDetectIntersections = true,
   colors = {
     'conservative': [1, 0.098, 0.3255],
     'liberal': [0, 0.745, 0.99],
@@ -46,7 +45,7 @@ let layout, renderer, nodePositions, edgeVertices,
 raycaster.params.Points.threshold = 5
 
 document.addEventListener("mousemove", e => {
-  if(!shouldDetectIntersections) return 
+  if(sharedState.get("controlsActive")) return 
 
   event.preventDefault()
   mouse.x = ( event.clientX / sharedState.get('windowWidth') ) * 2 - 1

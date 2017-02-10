@@ -1,5 +1,5 @@
 import { debounce } from 'underscore'
-import mediator from './mediator'
+import sharedState from './sharedState'
 
 THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
   var panMag = 5,
@@ -56,6 +56,13 @@ THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
     rotate()
     autoRotate()
     zoom()
+
+    let controlsActive = false
+    if(wheelDelta > 0 || autoRotating || dragging) {
+      controlsActive = true
+    }
+
+    sharedState.set("controlsActive", controlsActive)
   }
 
   this.pan = function(direction) {
@@ -115,12 +122,6 @@ THREE.Controls = function(camera, node, graph, minZoom, maxZoom) {
     resetLastMousePosition()
 
     dragging = true
-
-    setTimeout(function() {
-      if(dragging) {
-        mediator.publish('dragging')
-      }
-    }, 100)
   })
 
   node.addEventListener('mouseup', function() {
