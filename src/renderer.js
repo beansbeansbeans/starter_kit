@@ -26,13 +26,26 @@ let layout, renderer, nodePositions, edgeVertices,
   steps = 0,
   colorTimer = 1, colorIncrement = 0.01,
   fadeOutFrames = 40,
-  shouldDetectIntersections = true
+  shouldDetectIntersections = true,
+  colors = {
+    'conservative': [1, 0.098, 0.3255],
+    'liberal': [0, 0.745, 0.99],
+    'neutral': [1, 1, 1]
+  },
+  getOrientation = belief => {
+    if(belief == 0) {
+      return 'conservative'
+    } else if(belief == 1) {
+      return 'liberal'
+    }
+    return 'neutral'
+  }
 
 raycaster.params.Points.threshold = 5
 
 document.addEventListener("mousemove", e => {
   if(!shouldDetectIntersections) return 
-    
+
   event.preventDefault()
   mouse.x = ( event.clientX / sharedState.get('windowWidth') ) * 2 - 1
   mouse.y = - ( event.clientY / sharedState.get('windowHeight') ) * 2 + 1
@@ -49,6 +62,40 @@ document.addEventListener("mousemove", e => {
     // window.open(`http://twitter.com/${nodes[index].handle}`, '_blank')
   }
 })
+
+const resetEdgeColors = i => {
+  let sourceNode, targetNode,
+    edge = edges[i]
+
+  for(let j=0; j<nodesLength; j++) {
+    if(typeof sourceNode !== 'undefined' && typeof targetNode !== 'undefined') break
+
+    let node = nodes[j]
+
+    if(node.id == edge.source) {
+      sourceNode = node
+    } else if(node.id == edge.target) {
+      targetNode = node
+    }
+  }
+
+  let sourceColor = colors.neutral,
+    targetColor = colors.neutral
+
+  if(sourceNode) {
+    sourceColor = colors[getOrientation(sourceNode.ideology)]
+  }
+  if(targetNode) {
+    targetColor = colors[getOrientation(targetNode.ideology)]
+  }
+
+  edgeColors[i * 6] = sourceColor[0]
+  edgeColors[i * 6 + 1] = sourceColor[1]
+  edgeColors[i * 6 + 2] = sourceColor[2]
+  edgeColors[i * 6 + 3] = targetColor[0]
+  edgeColors[i * 6 + 4] = targetColor[1]
+  edgeColors[i * 6 + 5] = targetColor[2]
+}
 
 const adjustSpringWeight = (fromID, toID, newWeight) => {
   // to be safe, I'll adjust both the link and spring objects to reflect the new weight
@@ -169,30 +216,16 @@ export default {
       edgeTimes[i * 6 + 4] = 1
       edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
 
-      edgeColors[i * 6] = 1
-      edgeColors[i * 6 + 1] = 1
-      edgeColors[i * 6 + 2] = 1
-      edgeColors[i * 6 + 3] = 1
-      edgeColors[i * 6 + 4] = 1
-      edgeColors[i * 6 + 5] = 1        
+      resetEdgeColors(i)      
     }
 
     for(let i=0; i<nodesLength; i++) {
-      let belief = nodes[i].trumporhillary
+      let node = nodes[i]
+      let color = colors[getOrientation(node.ideology)]
 
-      if(belief === 0) {
-        nodeColors[i * 3] = 1
-        nodeColors[i * 3 + 1] = 0.098
-        nodeColors[i * 3 + 2] = 0.3255
-      } else if(belief === 1 || belief === 2 || belief === 3) {
-        nodeColors[i * 3] = 0
-        nodeColors[i * 3 + 1] = 0.745
-        nodeColors[i * 3 + 2] = 0.99
-      } else {
-        nodeColors[i * 3] = 1
-        nodeColors[i * 3 + 1] = 1
-        nodeColors[i * 3 + 2] = 1
-      }
+      nodeColors[i * 3] = color[0]
+      nodeColors[i * 3 + 1] = color[1]
+      nodeColors[i * 3 + 2] = color[2]
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
