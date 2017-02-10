@@ -14,7 +14,7 @@ const g = graph(),
   maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
   defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
-  defaultNodeOpacity = 0.75
+  defaultNodeOpacity = 0.65
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
@@ -27,7 +27,7 @@ let layout, renderer, nodePositions, edgeVertices,
   nodeMaterial, edgeMaterial,
   steps = 0, controls,
   colorTimer = 1, colorIncrement = 0.01,
-  fadeOutFrames = 40,
+  fadeOutFrames = 40, nodeHoverTarget = -1,
   colors = {
     'conservative': [1, 0.098, 0.3255],
     'liberal': [0, 0.745, 0.99],
@@ -56,9 +56,14 @@ document.addEventListener("mousemove", e => {
   let intersects = raycaster.intersectObject(points, true)
 
   if(intersects.length) {
-    let index = [intersects[0].index]
+    nodeHoverTarget = [intersects[0].index]
     console.log(intersects[0])
-    // window.open(`http://twitter.com/${nodes[index].handle}`, '_blank')
+  }
+})
+
+document.addEventListener("click", e => {
+  if(nodeHoverTarget > -1) {
+    window.open(`http://twitter.com/${nodes[nodeHoverTarget].handle}`, '_blank')
   }
 })
 
