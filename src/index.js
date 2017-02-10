@@ -6,7 +6,7 @@ import renderer from './renderer'
 import { getData } from './api'
 import sharedState from './sharedState'
 import { debounce } from 'underscore'
-import { scaleLinear } from 'd3-scale'
+import { scaleLog } from 'd3-scale'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {
@@ -41,7 +41,7 @@ const textureLoader = new THREE.TextureLoader(),
             }
           }
 
-          const pageRankScale = scaleLinear().domain([minPageRank, maxPageRank]).range([5, 20])
+          const pageRankScale = scaleLog().domain([minPageRank, maxPageRank]).range([2, 18])
 
           for(let j=0; j<nodes.length; j++) {
             let rank = nodes[j].pagerank
