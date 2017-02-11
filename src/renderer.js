@@ -134,10 +134,10 @@ const renderLoop = () => {
     edgeVertices[i * 6 + 5] = target.z
   }
 
-  // var timer = Date.now() * 0.0002
-  // camera.position.x = Math.cos( timer ) * cameraDistance
-  // camera.position.z = Math.sin( timer ) * cameraDistance
-  // camera.lookAt(scene.position)
+  var timer = Date.now() * 0.0002
+  camera.position.x = Math.cos( timer ) * cameraDistance
+  camera.position.z = Math.sin( timer ) * cameraDistance
+  camera.lookAt(scene.position)
 
   nodeMaterial.uniforms.time.value = colorTimer
   edgeMaterial.uniforms.time.value = colorTimer
@@ -253,8 +253,8 @@ export default {
 
     layout = forceLayout3d(g)
 
-    camera.position.z = cameraDistance
-    camera.lookAt(scene.position)
+    // camera.position.z = cameraDistance
+    // camera.lookAt(scene.position)
 
     controls = new THREE.Controls(camera, renderer.domElement, group, minZoom, maxZoom)
 
