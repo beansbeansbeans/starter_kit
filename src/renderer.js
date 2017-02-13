@@ -3,6 +3,7 @@ import forceLayout3d from 'ngraph.forcelayout3d'
 import graph from 'ngraph.graph'
 import helpers from './helpers/helpers'
 const { decodeFloat } = helpers
+import { scaleLog } from 'd3-scale'
 
 const g = graph(),
   scene = new THREE.Scene(),
@@ -14,7 +15,8 @@ const g = graph(),
   maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
   defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
-  defaultNodeOpacity = 0.65
+  pageRankScale = scaleLog().range([2, 18]),
+  opacityScale = scaleLog().range([0.2, 0.7])
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
@@ -198,6 +200,9 @@ export default {
         fadeOutDur: { value: fadeOutFrames * colorIncrement }
       }
     })
+
+    pageRankScale.domain([opts.minPageRank, opts.maxPageRank])
+    opacityScale.domain([opts.minPageRank, opts.maxPageRank])
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -220,9 +225,9 @@ export default {
 
       nodeTimes[i * 3] = colorTimer + 0.75
       nodeTimes[i * 3 + 1] = 1
-      nodeTimes[i * 3 + 2] = defaultNodeOpacity
+      nodeTimes[i * 3 + 2] = opacityScale(node.pagerank)
 
-      nodeSizes[i] = node.pagerank
+      nodeSizes[i] = pageRankScale(node.pagerank)
     }
 
     for(let i=0; i<edgesLength; i++) {

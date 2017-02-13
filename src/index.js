@@ -30,23 +30,10 @@ const textureLoader = new THREE.TextureLoader(),
           nodes = data[0]
           edges = data[1]
 
-          let minPageRank = Infinity, maxPageRank = 0
-
           for(let j=0; j<nodes.length; j++) {
             let rank = nodes[j].pagerank
-            if(rank > maxPageRank) {
-              maxPageRank = rank
-            }
-            if(rank < minPageRank) {
-              minPageRank = rank
-            }
-          }
-
-          const pageRankScale = scaleLog().domain([minPageRank, maxPageRank]).range([2, 18])
-
-          for(let j=0; j<nodes.length; j++) {
-            let rank = nodes[j].pagerank
-            nodes[j].pagerank = pageRankScale(rank)
+            if(rank > maxPageRank) maxPageRank = rank
+            if(rank < minPageRank) minPageRank = rank
           }
 
           // must be multiples of 3 so webgl doesn't complain
@@ -55,7 +42,7 @@ const textureLoader = new THREE.TextureLoader(),
         })
   }
 
-let nodes, edges
+let nodes, edges, minPageRank = Infinity, maxPageRank = 0
 
 class App extends Component {
   render({}) {
@@ -73,6 +60,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   renderer.initialize({
     element: document.querySelector("#webgl-canvas"),
     nodes, edges,
+    minPageRank, maxPageRank,
     particleSprite: assets.particleSprite.data
   })
 })
