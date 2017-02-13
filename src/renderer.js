@@ -3,7 +3,7 @@ import forceLayout3d from 'ngraph.forcelayout3d'
 import graph from 'ngraph.graph'
 import helpers from './helpers/helpers'
 const { decodeFloat } = helpers
-import { scaleLog } from 'd3-scale'
+import { scaleLog, scaleLinear } from 'd3-scale'
 
 const g = graph(),
   scene = new THREE.Scene(),
@@ -16,7 +16,8 @@ const g = graph(),
   group = new THREE.Object3D(),
   defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
   pageRankScale = scaleLog().range([3, 18]),
-  opacityScale = scaleLog().range([0.2, 0.7])
+  opacityScale = scaleLog().range([0.2, 0.7]),
+  edgeOpacityScale = scaleLog().range([0.001, 0.03])
 
 let layout, renderer, nodePositions, edgeVertices, 
   nodeColors, nodeColorsBuffer,
@@ -205,6 +206,7 @@ export default {
 
     pageRankScale.domain([opts.minPageRank, opts.maxPageRank])
     opacityScale.domain([opts.minPageRank, opts.maxPageRank])
+    edgeOpacityScale.domain([opts.minPageRank, opts.maxPageRank])
   
     renderer.setSize(sharedState.get('windowWidth'), sharedState.get('windowHeight'))
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -233,14 +235,18 @@ export default {
     }
 
     for(let i=0; i<edgesLength; i++) {
-      edgeTimes[i * 6] = colorTimer
-      edgeTimes[i * 6 + 1] = 1
-      edgeTimes[i * 6 + 2] = defaultEdgeOpacity
-      edgeTimes[i * 6 + 3] = colorTimer
-      edgeTimes[i * 6 + 4] = 1
-      edgeTimes[i * 6 + 5] = defaultEdgeTargetOpacity
+      let { source, target } = getNodesForEdge(i)
 
-      resetEdgeColors(i)      
+      if(source && target) {
+        edgeTimes[i * 6] = colorTimer
+        edgeTimes[i * 6 + 1] = 1
+        edgeTimes[i * 6 + 2] = Math.min(edgeOpacityScale(source.pagerank), edgeOpacityScale(target.pagerank))
+        edgeTimes[i * 6 + 3] = colorTimer
+        edgeTimes[i * 6 + 4] = 1
+        edgeTimes[i * 6 + 5] = edgeOpacityScale(target.pagerank)
+
+        resetEdgeColors(i)              
+      }
     }
 
     lineSegments = new THREE.LineSegments(edgeGeometry, edgeMaterial)
