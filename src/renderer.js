@@ -15,7 +15,7 @@ const g = graph(),
   maxZoom = 0, minZoom = -1600,
   group = new THREE.Object3D(),
   defaultEdgeOpacity = 0.005, defaultEdgeTargetOpacity = 0.02,
-  pageRankScale = scaleLog().range([2, 18]),
+  pageRankScale = scaleLog().range([3, 18]),
   opacityScale = scaleLog().range([0.2, 0.7])
 
 let layout, renderer, nodePositions, edgeVertices, 
