@@ -69,31 +69,33 @@ document.addEventListener("click", e => {
   }
 })
 
-const resetEdgeColors = i => {
-  let sourceNode, targetNode,
-    edge = edges[i]
+const getNodesForEdge = i => {
+  let source, target, edge = edges[i]
 
   for(let j=0; j<nodesLength; j++) {
-    if(typeof sourceNode !== 'undefined' && typeof targetNode !== 'undefined') break
+    if(typeof source !== 'undefined' && typeof target !== 'undefined') break
 
     let node = nodes[j]
 
     if(node.id == edge.source) {
-      sourceNode = node
+      source = node
     } else if(node.id == edge.target) {
-      targetNode = node
+      target = node
     }
   }
 
-  let sourceColor = colors.neutral,
+  return { source, target }
+}
+
+const resetEdgeColors = i => {
+  const { source, target } = getNodesForEdge(i)
+  const edge = edges[i]
+
+  let sourceColor = colors.neutral, 
     targetColor = colors.neutral
 
-  if(sourceNode) {
-    sourceColor = colors[getOrientation(sourceNode.ideology)]
-  }
-  if(targetNode) {
-    targetColor = colors[getOrientation(targetNode.ideology)]
-  }
+  if(source) sourceColor = colors[getOrientation(source.ideology)]
+  if(target) targetColor = colors[getOrientation(target.ideology)]
 
   edgeColors[i * 6] = sourceColor[0]
   edgeColors[i * 6 + 1] = sourceColor[1]
