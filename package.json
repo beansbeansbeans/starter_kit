@@ -65,6 +65,7 @@
   "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit",
   "dependencies": {
     "d3-scale": "^1.0.4",
+    "ngraph.asyncforce": "^1.0.0",
     "ngraph.forcelayout3d": "0.0.15",
     "ngraph.graph": "0.0.12",
     "preact": "^7.1.0",

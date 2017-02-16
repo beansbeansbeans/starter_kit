@@ -1,9 +1,13 @@
 import sharedState from './sharedState'
-import forceLayout3d from 'ngraph.forcelayout3d'
+import forceLayout3d from 'ngraph.forceLayout3d'
 import graph from 'ngraph.graph'
 import helpers from './helpers/helpers'
 const { decodeFloat } = helpers
 import { scaleLog, scaleLinear } from 'd3-scale'
+
+var worker = new Worker('./src/layoutWorker.js')
+
+console.log(worker)
 
 const g = graph(),
   scene = new THREE.Scene(),
