@@ -3160,7 +3160,7 @@ function validateOptions(options) {
    * notifies the main thread with updated positions. This options defines
    * how many layout steps should web worker complete within one cycle.
    */
-  async.stepsPerCycle = typeof async.stepsPerCycle === 'number' ? async.stepsPerCycle : 5;
+  async.stepsPerCycle = typeof async.stepsPerCycle === 'number' ? async.stepsPerCycle : 1;
 
   /**
    * By default layout will be computed as long as each iteration brings too
