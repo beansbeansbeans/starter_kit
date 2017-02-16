@@ -1,13 +1,10 @@
 import sharedState from './sharedState'
 import forceLayout3d from 'ngraph.forceLayout3d'
+import asyncLayout from 'ngraph.asyncforce'
 import graph from 'ngraph.graph'
 import helpers from './helpers/helpers'
 const { decodeFloat } = helpers
 import { scaleLog, scaleLinear } from 'd3-scale'
-
-var worker = new Worker('./src/layoutWorker.js')
-
-console.log(worker)
 
 const g = graph(),
   scene = new THREE.Scene(),
@@ -268,7 +265,8 @@ export default {
       g.addLink(edges[i].source, edges[i].target, {}, edges[i].weight, edges[i].length)
     }
 
-    layout = forceLayout3d(g)
+    // layout = forceLayout3d(g)
+    layout = asyncLayout(g, { is3d: true })
 
     // camera.position.z = cameraDistance
     // camera.lookAt(scene.position)
