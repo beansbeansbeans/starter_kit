@@ -15,14 +15,7 @@ results
 npm-debug.log
 dist/
 
-!node_modules/
-
-node_modules/*
-!node_modules/ngraph.asyncforce/
-!node_modules/ngraph.forcelayout3d/
-!node_modules/ngraph.physics.simulator/
-!node_modules/ngraph.forcelayout/
-!node_modules/ngraph.graph/
+node_modules/
 
 coverage
 .DS_Store
