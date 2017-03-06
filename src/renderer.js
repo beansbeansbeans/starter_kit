@@ -32,33 +32,33 @@ export default {
 
     const arrowSize = opts.pxPerBlock / 3
 
-    for(let i=-5; i<5; i++) { // x
-      for(let j=-5; j<5; j++) { // y
-        let multiplier = ((i + 5) * opts.res + (j + 5)) * 18
+    for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
+      for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
+        let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
 
         arrowVertices[multiplier] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock)
         arrowVertices[multiplier + 1] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock)
         arrowVertices[multiplier + 2] = 0
 
-        arrowVertices[multiplier + 2] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + arrowSize
-        arrowVertices[multiplier + 2] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + arrowSize
-        arrowVertices[multiplier + 2] = 0
+        arrowVertices[multiplier + 3] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + arrowSize
+        arrowVertices[multiplier + 4] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + arrowSize
+        arrowVertices[multiplier + 5] = 0
         
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
+        arrowVertices[multiplier + 6] = 0
+        arrowVertices[multiplier + 7] = 0
+        arrowVertices[multiplier + 8] = 0
         
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
+        arrowVertices[multiplier + 9] = 0
+        arrowVertices[multiplier + 10] = 0
+        arrowVertices[multiplier + 11] = 0
         
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
+        arrowVertices[multiplier + 12] = 0
+        arrowVertices[multiplier + 13] = 0
+        arrowVertices[multiplier + 14] = 0
         
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
-        arrowVertices[multiplier + 2] = 0
+        arrowVertices[multiplier + 15] = 0
+        arrowVertices[multiplier + 16] = 0
+        arrowVertices[multiplier + 17] = 0
       }
     }
 
