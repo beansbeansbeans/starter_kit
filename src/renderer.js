@@ -1,6 +1,6 @@
 import sharedState from './sharedState'
 
-const camera = new THREE.PerspectiveCamera(75, sharedState.get('windowWidth') / sharedState.get('windowHeight'), 0.1, 3000),
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 500),
   scene = new THREE.Scene(),
   arrowGeometry = new THREE.BufferGeometry()
 
@@ -17,6 +17,7 @@ export default {
     renderer = new THREE.WebGLRenderer({ canvas: opts.element, alpha: true })
 
     renderer.setSize(opts.pxPerBlock * opts.res, opts.pxPerBlock * opts.res)
+    renderer.setPixelRatio(window.devicePixelRatio)
 
     const arrowVertices = new Float32Array(opts.res * opts.res * 3 * 2 * 3)
     const arrowVerticesBuffer = new THREE.BufferAttribute(arrowVertices, 3)
@@ -71,6 +72,6 @@ export default {
 
     requestAnimationFrame(renderLoop)
 
-    camera.position.z = 1
+    camera.position.z = 150
   }
 }
