@@ -35,32 +35,31 @@ export default {
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
         let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
-        let xBuffer = opts.pxPerBlock / 2 - arrowSize / 2
-        let baseX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock)
-        let baseY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock)
+        let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
+        let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
 
-        arrowVertices[multiplier] = baseX + xBuffer
-        arrowVertices[multiplier + 1] = baseY + opts.pxPerBlock / 2
+        arrowVertices[multiplier] = centerX - arrowSize / 2
+        arrowVertices[multiplier + 1] = centerY
         arrowVertices[multiplier + 2] = 0
 
-        arrowVertices[multiplier + 3] = baseX + arrowSize + xBuffer
-        arrowVertices[multiplier + 4] = baseY + opts.pxPerBlock / 2
+        arrowVertices[multiplier + 3] = centerX + arrowSize / 2
+        arrowVertices[multiplier + 4] = centerY
         arrowVertices[multiplier + 5] = 0
         
-        arrowVertices[multiplier + 6] = baseX + opts.pxPerBlock / 2
-        arrowVertices[multiplier + 7] = baseY + 13
+        arrowVertices[multiplier + 6] = centerX
+        arrowVertices[multiplier + 7] = centerY + 3
         arrowVertices[multiplier + 8] = 0
         
-        arrowVertices[multiplier + 9] = baseX + arrowSize + xBuffer
-        arrowVertices[multiplier + 10] = baseY + opts.pxPerBlock / 2
+        arrowVertices[multiplier + 9] = centerX + arrowSize / 2
+        arrowVertices[multiplier + 10] = centerY
         arrowVertices[multiplier + 11] = 0
         
-        arrowVertices[multiplier + 12] = baseX + opts.pxPerBlock / 2
-        arrowVertices[multiplier + 13] = baseY + 7
+        arrowVertices[multiplier + 12] = centerX
+        arrowVertices[multiplier + 13] = centerY - 3
         arrowVertices[multiplier + 14] = 0
         
-        arrowVertices[multiplier + 15] = baseX + arrowSize + xBuffer
-        arrowVertices[multiplier + 16] = baseY + opts.pxPerBlock / 2
+        arrowVertices[multiplier + 15] = centerX + arrowSize / 2
+        arrowVertices[multiplier + 16] = centerY
         arrowVertices[multiplier + 17] = 0
       }
     }
