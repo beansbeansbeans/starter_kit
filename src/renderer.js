@@ -11,6 +11,26 @@ const renderLoop = () => {
   requestAnimationFrame(renderLoop)
 }
 
+const getVector = (function() {
+  const result = new THREE.Vector2()
+
+  const func = ({ x, y }) => {
+    const i = [1, 0], j = [0, 1]
+
+    // field equation: -yi + xj
+    result.x = -y*i[0] + x*j[0]
+    result.y = -y*i[1] + x*j[1]
+
+    return { 
+      angle: result.angle(), 
+      mag: result.length() 
+    }
+  }
+  return func
+})()
+
+window.test = getVector
+
 export default {
   initialize(config) {
     opts = config
