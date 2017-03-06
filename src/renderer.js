@@ -44,7 +44,7 @@ export default {
     const arrowVerticesBuffer = new THREE.BufferAttribute(arrowVertices, 3)
     const dimBuffer = new THREE.BufferAttribute(dim, 2)
 
-    const imageAspect = opts.arrow.data.image.width / opts.arrow.data.image.height
+    const imageAspect = opts.arrow.image.width / opts.arrow.image.height
 
     const arrowMaterial = new THREE.ShaderMaterial({
       transparent: true,
