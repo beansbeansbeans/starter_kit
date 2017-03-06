@@ -40,6 +40,11 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
+  renderer.initialize({
+    element: document.querySelector("#webgl-canvas"),
+    res: 10,
+    pxPerBlock: 20
+  })
 })
 
 window.addEventListener("resize", debounce(() => {

@@ -2,3 +2,11 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
+canvas {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10rem;
+  display: block;
+  border: solid 1px #ccc;
+}
