@@ -35,13 +35,14 @@ export default {
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
         let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
+        let xBuffer = opts.pxPerBlock / 2 - arrowSize / 2
 
-        arrowVertices[multiplier] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock)
-        arrowVertices[multiplier + 1] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock)
+        arrowVertices[multiplier] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + xBuffer
+        arrowVertices[multiplier + 1] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         arrowVertices[multiplier + 2] = 0
 
-        arrowVertices[multiplier + 3] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + arrowSize
-        arrowVertices[multiplier + 4] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock)
+        arrowVertices[multiplier + 3] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + arrowSize + xBuffer
+        arrowVertices[multiplier + 4] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         arrowVertices[multiplier + 5] = 0
         
         arrowVertices[multiplier + 6] = 0
