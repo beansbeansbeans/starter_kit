@@ -65,12 +65,16 @@ export default {
     const lowerLeft = new THREE.Vector3()
     const lowerRight = new THREE.Vector3()
 
+    const quaternion = new THREE.Quaternion()
+
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
         let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
         let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let { angle, mag } = getVector({ x: i, y: j })
+
+        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
 
         upperRight.x = centerX + arrowWidth / 2
         upperRight.y = centerY + arrowHeight / 2
@@ -83,6 +87,11 @@ export default {
 
         lowerLeft.x = centerX - arrowWidth / 2
         lowerLeft.y = centerY - arrowHeight / 2
+
+        upperRight.applyQuaternion(quaternion)
+        lowerRight.applyQuaternion(quaternion)
+        upperLeft.applyQuaternion(quaternion)
+        lowerLeft.applyQuaternion(quaternion)
 
         arrowVertices[multiplier] = lowerRight.x
         arrowVertices[multiplier + 1] = lowerRight.y
