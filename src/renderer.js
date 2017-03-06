@@ -62,8 +62,6 @@ export default {
       }
     }
 
-    console.log(arrowVertices)
-
     arrowGeometry.addAttribute("position", arrowVerticesBuffer)
 
     scene.add(new THREE.LineSegments(arrowGeometry, arrowMaterial))
@@ -72,6 +70,6 @@ export default {
 
     requestAnimationFrame(renderLoop)
 
-    camera.position.z = 150
+    camera.position.z = 130 // this is the carefully calibrated position that exactly lines up with the border
   }
 }
