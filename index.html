@@ -8,69 +8,14 @@
   <link href="bundle.css" rel="stylesheet">
 </head>
 <body>
-  <script type="x-shader/x-vertex" id="node-vertex-shader">
-    uniform float cameraDistance;
-    attribute vec4 color;
-    attribute float size;
-    varying vec4 vColor;
-    attribute vec3 times;
-    uniform float time;
-    uniform float fadeOutDur;
-
+  <script type="x-shader/x-vertex" id="arrow-vertex-shader">
     void main() {
-      float minAlpha = 0.5;
-
-      float x = time - times.x;
-      float alpha = 0.;
-      if(times.y > 0.) { // fade in
-        alpha = min(times.z, minAlpha + (x / fadeOutDur) * (times.z - minAlpha));
-      } else { // fade out
-        alpha = max(minAlpha, times.z - (x / fadeOutDur) * (times.z - minAlpha));
-      }
-
-      vColor = vec4(color.r, color.g, color.b, alpha);
-      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-      gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = size * ( cameraDistance / -mvPosition.z );
-    }
-  </script>
-  <script type="x-shader/x-fragment" id="node-fragment-shader">
-    uniform sampler2D tex;
-    varying vec4 vColor;
-
-    void main() {
-      vec4 textureColor = texture2D(tex, gl_PointCoord);
-      gl_FragColor = vColor * textureColor;
-    }
-  </script>
-  <script type="x-shader/x-vertex" id="edge-vertex-shader">
-    attribute vec3 times;
-    uniform float time;
-    varying vec4 vColor;
-    attribute vec3 color;
-    uniform float fadeOutDur;
-
-    void main() {
-      float minAlpha = 0.001;
-
-      float x = time - times.x;
-      float alpha = 0.;
-      if(times.y > 0.) { // fade in
-        alpha = min(times.z, minAlpha + (x / fadeOutDur) * (times.z - minAlpha));
-      } else { // fade out
-        alpha = max(minAlpha, times.z - (x / fadeOutDur) * (times.z - minAlpha));
-      }
-
-      vColor = vec4(color, alpha);
-
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   </script>
-  <script type="x-shader/x-fragment" id="edge-fragment-shader">
-    varying vec4 vColor;
-
+  <script type="x-shader/x-fragment" id="arrow-fragment-shader">
     void main() {
-      gl_FragColor = vColor;
+      gl_FragColor = vec4(0.5, 0.5, 0.5, 1.);
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
