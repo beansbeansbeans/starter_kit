@@ -41,7 +41,7 @@ export default {
         arrowVertices[multiplier + 2] = 0
 
         arrowVertices[multiplier + 3] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + arrowSize
-        arrowVertices[multiplier + 4] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + arrowSize
+        arrowVertices[multiplier + 4] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock)
         arrowVertices[multiplier + 5] = 0
         
         arrowVertices[multiplier + 6] = 0
