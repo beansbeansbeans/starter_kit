@@ -29,10 +29,32 @@ export default {
       fragmentShader: document.getElementById("arrow-fragment-shader").textContent
     })
 
+    const arrowSize = opts.pxPerBlock / 3
+
     for(let i=0; i<opts.res; i++) { // x
       for(let j=0; j<opts.res; j++) { // y
         arrowVertices[(i * opts.res + j) * 18] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock)
         arrowVertices[(i * opts.res + j) * 18 + 1] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock)
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+
+        arrowVertices[(i * opts.res + j) * 18 + 2] = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + arrowSize
+        arrowVertices[(i * opts.res + j) * 18 + 2] = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + arrowSize
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
+        arrowVertices[(i * opts.res + j) * 18 + 2] = 0
         arrowVertices[(i * opts.res + j) * 18 + 2] = 0
       }
     }
@@ -47,6 +69,6 @@ export default {
 
     requestAnimationFrame(renderLoop)
 
-    camera.position.z = 1500
+    camera.position.z = 1
   }
 }
