@@ -60,6 +60,11 @@ export default {
     const arrowWidth = opts.pxPerBlock / 2
     const arrowHeight = Math.max(3, imageAspect / arrowWidth)
 
+    const upperRight = new THREE.Vector3()
+    const upperLeft = new THREE.Vector3()
+    const lowerLeft = new THREE.Vector3()
+    const lowerRight = new THREE.Vector3()
+
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
         let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
@@ -67,29 +72,41 @@ export default {
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let { angle, mag } = getVector({ x: i, y: j })
 
-        arrowVertices[multiplier] = centerX + arrowWidth / 2
-        arrowVertices[multiplier + 1] = centerY - arrowHeight / 2
-        arrowVertices[multiplier + 2] = 0
+        upperRight.x = centerX + arrowWidth / 2
+        upperRight.y = centerY + arrowHeight / 2
 
-        arrowVertices[multiplier + 3] = centerX - arrowWidth / 2
-        arrowVertices[multiplier + 4] = centerY + arrowHeight / 2
-        arrowVertices[multiplier + 5] = 0
-        
-        arrowVertices[multiplier + 6] = centerX - arrowWidth / 2
-        arrowVertices[multiplier + 7] = centerY - arrowHeight / 2
-        arrowVertices[multiplier + 8] = 0
-        
-        arrowVertices[multiplier + 9] = centerX - arrowWidth / 2
-        arrowVertices[multiplier + 10] = centerY + arrowHeight / 2
-        arrowVertices[multiplier + 11] = 0
-        
-        arrowVertices[multiplier + 12] = centerX + arrowWidth / 2
-        arrowVertices[multiplier + 13] = centerY - arrowHeight / 2
-        arrowVertices[multiplier + 14] = 0
+        lowerRight.x = centerX + arrowWidth / 2
+        lowerRight.y = centerY - arrowHeight / 2
 
-        arrowVertices[multiplier + 15] = centerX + arrowWidth / 2
-        arrowVertices[multiplier + 16] = centerY + arrowHeight / 2
-        arrowVertices[multiplier + 17] = 0
+        upperLeft.x = centerX - arrowWidth / 2
+        upperLeft.y = centerY + arrowHeight / 2
+
+        lowerLeft.x = centerX - arrowWidth / 2
+        lowerLeft.y = centerY - arrowHeight / 2
+
+        arrowVertices[multiplier] = lowerRight.x
+        arrowVertices[multiplier + 1] = lowerRight.y
+        arrowVertices[multiplier + 2] = lowerRight.z
+
+        arrowVertices[multiplier + 3] = upperLeft.x
+        arrowVertices[multiplier + 4] = upperLeft.y
+        arrowVertices[multiplier + 5] = upperLeft.z
+        
+        arrowVertices[multiplier + 6] = lowerLeft.x
+        arrowVertices[multiplier + 7] = lowerLeft.y
+        arrowVertices[multiplier + 8] = lowerLeft.z
+        
+        arrowVertices[multiplier + 9] = upperLeft.x
+        arrowVertices[multiplier + 10] = upperLeft.y
+        arrowVertices[multiplier + 11] = upperLeft.z
+        
+        arrowVertices[multiplier + 12] = lowerRight.x
+        arrowVertices[multiplier + 13] = lowerRight.y
+        arrowVertices[multiplier + 14] = lowerRight.z
+
+        arrowVertices[multiplier + 15] = upperRight.x
+        arrowVertices[multiplier + 16] = upperRight.y
+        arrowVertices[multiplier + 17] = upperRight.z
 
         let dimMultiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 12
         dim[dimMultiplier] = 1
