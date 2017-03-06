@@ -40,53 +40,78 @@ export default {
     renderer.setPixelRatio(window.devicePixelRatio)
 
     const arrowVertices = new Float32Array(opts.res * opts.res * 3 * 2 * 3)
+    const dim = new Float32Array(opts.res * opts.res * 3 * 2 * 2)
     const arrowVerticesBuffer = new THREE.BufferAttribute(arrowVertices, 3)
+    const dimBuffer = new THREE.BufferAttribute(dim, 2)
+
+    const imageAspect = opts.arrow.data.image.width / opts.arrow.data.image.height
 
     const arrowMaterial = new THREE.ShaderMaterial({
       transparent: true,
       depthTest: false,
       blending: THREE.AdditiveBlending,
       vertexShader: document.getElementById("arrow-vertex-shader").textContent,
-      fragmentShader: document.getElementById("arrow-fragment-shader").textContent
+      fragmentShader: document.getElementById("arrow-fragment-shader").textContent,
+      uniforms: {
+        tex: { type: 't', value: opts.arrow }
+      }
     })
 
-    const arrowSize = opts.pxPerBlock / 3
+    const arrowWidth = opts.pxPerBlock / 2
+    const arrowHeight = Math.max(3, imageAspect / arrowWidth)
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
         let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
         let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
+        let { angle, mag } = getVector({ x: i, y: j })
 
-        arrowVertices[multiplier] = centerX - arrowSize / 2
-        arrowVertices[multiplier + 1] = centerY
+        arrowVertices[multiplier] = centerX + arrowWidth / 2
+        arrowVertices[multiplier + 1] = centerY - arrowHeight / 2
         arrowVertices[multiplier + 2] = 0
 
-        arrowVertices[multiplier + 3] = centerX + arrowSize / 2
-        arrowVertices[multiplier + 4] = centerY
+        arrowVertices[multiplier + 3] = centerX - arrowWidth / 2
+        arrowVertices[multiplier + 4] = centerY + arrowHeight / 2
         arrowVertices[multiplier + 5] = 0
         
-        arrowVertices[multiplier + 6] = centerX
-        arrowVertices[multiplier + 7] = centerY + 3
+        arrowVertices[multiplier + 6] = centerX - arrowWidth / 2
+        arrowVertices[multiplier + 7] = centerY - arrowHeight / 2
         arrowVertices[multiplier + 8] = 0
         
-        arrowVertices[multiplier + 9] = centerX + arrowSize / 2
-        arrowVertices[multiplier + 10] = centerY
+        arrowVertices[multiplier + 9] = centerX - arrowWidth / 2
+        arrowVertices[multiplier + 10] = centerY + arrowHeight / 2
         arrowVertices[multiplier + 11] = 0
         
-        arrowVertices[multiplier + 12] = centerX
-        arrowVertices[multiplier + 13] = centerY - 3
+        arrowVertices[multiplier + 12] = centerX + arrowWidth / 2
+        arrowVertices[multiplier + 13] = centerY - arrowHeight / 2
         arrowVertices[multiplier + 14] = 0
-        
-        arrowVertices[multiplier + 15] = centerX + arrowSize / 2
-        arrowVertices[multiplier + 16] = centerY
+
+        arrowVertices[multiplier + 15] = centerX + arrowWidth / 2
+        arrowVertices[multiplier + 16] = centerY + arrowHeight / 2
         arrowVertices[multiplier + 17] = 0
+
+        let dimMultiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 12
+        dim[dimMultiplier] = 1
+        dim[dimMultiplier + 1] = 1
+        dim[dimMultiplier + 2] = 0.0
+        dim[dimMultiplier + 3] = 1.0
+        dim[dimMultiplier + 4] = 0
+        dim[dimMultiplier + 5] = 0
+
+        dim[dimMultiplier + 6] = 0.0
+        dim[dimMultiplier + 7] = 0.0
+        dim[dimMultiplier + 8] = 1.0
+        dim[dimMultiplier + 9] = 0
+        dim[dimMultiplier + 10] = 1.0
+        dim[dimMultiplier + 11] = 1
       }
     }
 
     arrowGeometry.addAttribute("position", arrowVerticesBuffer)
+    arrowGeometry.addAttribute("dim", dimBuffer)
 
-    scene.add(new THREE.LineSegments(arrowGeometry, arrowMaterial))
+    scene.add(new THREE.Mesh(arrowGeometry, arrowMaterial))
 
     arrowVerticesBuffer.needsUpdate = true
 

@@ -11,7 +11,8 @@ import './controls'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {
-    particleSprite: { filename: "particle.png" }
+    particleSprite: { filename: "particle.png" },
+    arrowSprite: { filename: "arrow.png" }
   },
   preload = {
     getTextures: () =>
@@ -41,6 +42,7 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
   renderer.initialize({
+    arrow: assets.arrowSprite,
     element: document.querySelector("#webgl-canvas"),
     res: 10,
     pxPerBlock: 20

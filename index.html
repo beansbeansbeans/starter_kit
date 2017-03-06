@@ -9,13 +9,21 @@
 </head>
 <body>
   <script type="x-shader/x-vertex" id="arrow-vertex-shader">
+    attribute vec2 dim;
+    varying vec2 vDim;
     void main() {
+      vDim = dim;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
     }
   </script>
   <script type="x-shader/x-fragment" id="arrow-fragment-shader">
+    uniform sampler2D tex;
+    varying vec2 vDim;
+
     void main() {
-      gl_FragColor = vec4(0.5, 0.5, 0.5, 1.);
+      vec4 tex = texture2D(tex, vDim);
+      // gl_FragColor = vec4(tex);
+      gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0);
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r83/three.min.js"></script>
