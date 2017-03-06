@@ -92,19 +92,19 @@ export default {
         arrowVertices[multiplier + 17] = 0
 
         let dimMultiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 12
-        dim[dimMultiplier] = 0.0
-        dim[dimMultiplier + 1] = 0.0
-        dim[dimMultiplier + 2] = 0.0
-        dim[dimMultiplier + 3] = 1.0
-        dim[dimMultiplier + 4] = 1.0
-        dim[dimMultiplier + 5] = 1.0
+        dim[dimMultiplier] = 1
+        dim[dimMultiplier + 1] = 1
+        dim[dimMultiplier + 2] = 0
+        dim[dimMultiplier + 3] = 0
+        dim[dimMultiplier + 4] = 0
+        dim[dimMultiplier + 5] = 1
 
-        dim[dimMultiplier + 6] = 0.0
-        dim[dimMultiplier + 7] = 0.0
-        dim[dimMultiplier + 8] = 1.0
-        dim[dimMultiplier + 9] = 1.0
-        dim[dimMultiplier + 10] = 1.0
-        dim[dimMultiplier + 11] = 0.0
+        dim[dimMultiplier + 6] = 0
+        dim[dimMultiplier + 7] = 0
+        dim[dimMultiplier + 8] = 1
+        dim[dimMultiplier + 9] = 1
+        dim[dimMultiplier + 10] = 1
+        dim[dimMultiplier + 11] = 0
       }
     }
 
