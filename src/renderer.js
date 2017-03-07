@@ -64,8 +64,8 @@ export default {
     const upperLeft = new THREE.Vector3()
     const lowerLeft = new THREE.Vector3()
     const lowerRight = new THREE.Vector3()
-
     const quaternion = new THREE.Quaternion()
+    const m = new THREE.Matrix4()
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
@@ -74,24 +74,32 @@ export default {
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let { angle, mag } = getVector({ x: i, y: j })
 
-        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
+        console.log(i, j, centerX, centerY)
 
-        upperRight.x = centerX + arrowWidth / 2
-        upperRight.y = centerY + arrowHeight / 2
+        // quaternion.setFromAxisAngle( new THREE.Vector3( centerX, centerY, 0 ).normalize(), angle )
+        m.makeTranslation(centerX, centerY, 0)
 
-        lowerRight.x = centerX + arrowWidth / 2
-        lowerRight.y = centerY - arrowHeight / 2
+        upperRight.x = arrowWidth / 2
+        upperRight.y = arrowHeight / 2
 
-        upperLeft.x = centerX - arrowWidth / 2
-        upperLeft.y = centerY + arrowHeight / 2
+        lowerRight.x = arrowWidth / 2
+        lowerRight.y = -arrowHeight / 2
 
-        lowerLeft.x = centerX - arrowWidth / 2
-        lowerLeft.y = centerY - arrowHeight / 2
+        upperLeft.x = -arrowWidth / 2
+        upperLeft.y = arrowHeight / 2
 
-        upperRight.applyQuaternion(quaternion)
-        lowerRight.applyQuaternion(quaternion)
-        upperLeft.applyQuaternion(quaternion)
-        lowerLeft.applyQuaternion(quaternion)
+        lowerLeft.x = -arrowWidth / 2
+        lowerLeft.y = -arrowHeight / 2
+
+        // upperRight.applyQuaternion(quaternion)
+        // lowerRight.applyQuaternion(quaternion)
+        // upperLeft.applyQuaternion(quaternion)
+        // lowerLeft.applyQuaternion(quaternion)
+
+        upperRight.applyMatrix4(m)
+        lowerRight.applyMatrix4(m)
+        upperLeft.applyMatrix4(m)
+        lowerLeft.applyMatrix4(m)
 
         arrowVertices[multiplier] = lowerRight.x
         arrowVertices[multiplier + 1] = lowerRight.y
