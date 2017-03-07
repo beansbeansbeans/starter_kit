@@ -142,6 +142,6 @@ export default {
 
     requestAnimationFrame(renderLoop)
 
-    camera.position.z = 535 // this is the carefully calibrated position that exactly lines up with the border
+    camera.position.z = 400 // this is the carefully calibrated position that exactly lines up with the border
   }
 }

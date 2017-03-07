@@ -45,7 +45,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     arrow: assets.arrowSprite.data,
     element: document.querySelector("#webgl-canvas"),
     res: 20,
-    pxPerBlock: 40
+    pxPerBlock: 30
   })
 })
 

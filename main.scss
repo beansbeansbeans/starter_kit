@@ -1,6 +1,5 @@
 body {
   margin: 0;
-  overflow: hidden;
 }
 
 canvas {
@@ -8,4 +7,7 @@ canvas {
   margin-right: auto;
   display: block;
   border: solid 1px #ccc;
+  transform: translateY(-50%);
+  top: 50vh;
+  position: relative;
 }
