@@ -1,6 +1,6 @@
 import sharedState from './sharedState'
 
-const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 500),
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   scene = new THREE.Scene(),
   arrowGeometry = new THREE.BufferGeometry()
 
@@ -55,7 +55,7 @@ export default {
       }
     })
 
-    const arrowSize = opts.pxPerBlock / 6
+    const arrowSize = opts.pxPerBlock / 8
 
     const upperRight = new THREE.Vector3()
     const upperLeft = new THREE.Vector3()
@@ -142,6 +142,6 @@ export default {
 
     requestAnimationFrame(renderLoop)
 
-    camera.position.z = 200 // this is the carefully calibrated position that exactly lines up with the border
+    camera.position.z = 535 // this is the carefully calibrated position that exactly lines up with the border
   }
 }
