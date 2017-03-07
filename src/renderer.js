@@ -74,8 +74,6 @@ export default {
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let { angle, mag } = getVector({ x: i, y: j })
 
-        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
-        // m.makeRotationFromQuaternion(quaternion)
 
         upperRight.x = arrowWidth / 2
         upperRight.y = arrowHeight / 2
@@ -89,7 +87,9 @@ export default {
         lowerLeft.x = -arrowWidth / 2
         lowerLeft.y = -arrowHeight / 2
 
-        m.makeRotationZ(angle)
+        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
+        m.makeRotationFromQuaternion(quaternion)
+        
         upperRight.applyMatrix4(m)
         lowerRight.applyMatrix4(m)
         upperLeft.applyMatrix4(m)
