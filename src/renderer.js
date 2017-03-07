@@ -57,7 +57,7 @@ export default {
       }
     })
 
-    const arrowWidth = opts.pxPerBlock / 2
+    const arrowWidth = opts.pxPerBlock / 4
     const arrowHeight = Math.max(3, imageAspect / arrowWidth)
 
     const upperRight = new THREE.Vector3()
@@ -74,8 +74,6 @@ export default {
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let { angle, mag } = getVector({ x: i, y: j })
 
-        console.log(mag)
-
         upperRight.x = arrowWidth / 2
         upperRight.y = arrowHeight / 2
 
@@ -90,7 +88,7 @@ export default {
 
         quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
 
-        m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1))
+        m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1).multiplyScalar(mag))
 
         upperRight.applyMatrix4(m)
         lowerRight.applyMatrix4(m)
