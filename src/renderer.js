@@ -44,8 +44,6 @@ export default {
     const arrowVerticesBuffer = new THREE.BufferAttribute(arrowVertices, 3)
     const dimBuffer = new THREE.BufferAttribute(dim, 2)
 
-    const imageAspect = opts.arrow.image.width / opts.arrow.image.height
-
     const arrowMaterial = new THREE.ShaderMaterial({
       transparent: true,
       depthTest: false,
@@ -57,8 +55,7 @@ export default {
       }
     })
 
-    const arrowWidth = opts.pxPerBlock / 4
-    const arrowHeight = Math.max(3, imageAspect / arrowWidth)
+    const arrowSize = opts.pxPerBlock / 6
 
     const upperRight = new THREE.Vector3()
     const upperLeft = new THREE.Vector3()
@@ -74,17 +71,17 @@ export default {
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let { angle, mag } = getVector({ x: i, y: j })
 
-        upperRight.x = arrowWidth / 2
-        upperRight.y = arrowHeight / 2
+        upperRight.x = arrowSize / 2
+        upperRight.y = arrowSize / 2
 
-        lowerRight.x = arrowWidth / 2
-        lowerRight.y = -arrowHeight / 2
+        lowerRight.x = arrowSize / 2
+        lowerRight.y = -arrowSize / 2
 
-        upperLeft.x = -arrowWidth / 2
-        upperLeft.y = arrowHeight / 2
+        upperLeft.x = -arrowSize / 2
+        upperLeft.y = arrowSize / 2
 
-        lowerLeft.x = -arrowWidth / 2
-        lowerLeft.y = -arrowHeight / 2
+        lowerLeft.x = -arrowSize / 2
+        lowerLeft.y = -arrowSize / 2
 
         quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
 
