@@ -1,4 +1,5 @@
 import sharedState from './sharedState'
+import { scaleLinear } from 'd3-scale'
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   scene = new THREE.Scene(),
@@ -29,8 +30,6 @@ const getVector = (function() {
   return func
 })()
 
-window.test = getVector
-
 export default {
   initialize(config) {
     opts = config
@@ -55,8 +54,6 @@ export default {
       }
     })
 
-    const arrowSize = opts.pxPerBlock / 8
-
     const upperRight = new THREE.Vector3()
     const upperLeft = new THREE.Vector3()
     const lowerLeft = new THREE.Vector3()
@@ -64,12 +61,27 @@ export default {
     const quaternion = new THREE.Quaternion()
     const m = new THREE.Matrix4()
 
+    let arrowSize, maxMag = 0, minMag = Infinity
+
+    for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
+      for(let j=-(opts.res / 2); j<opts.res / 2; j++) { 
+        let { mag } = getVector({ x: i, y: j })
+
+        if(mag > maxMag) maxMag = mag
+        if(mag < minMag) minMag = mag
+      }
+    }
+
+    const magScale = scaleLinear().domain([ minMag, maxMag ]).range([1, opts.pxPerBlock])
+
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
+        let { angle, mag } = getVector({ x: i, y: j })
         let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
         let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
         let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
-        let { angle, mag } = getVector({ x: i, y: j })
+
+        arrowSize = magScale(mag)
 
         upperRight.x = arrowSize / 2
         upperRight.y = arrowSize / 2
@@ -85,7 +97,7 @@ export default {
 
         quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
 
-        m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1).multiplyScalar(mag))
+        m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1))
 
         upperRight.applyMatrix4(m)
         lowerRight.applyMatrix4(m)
