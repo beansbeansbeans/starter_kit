@@ -2,8 +2,13 @@ import sharedState from './sharedState'
 import { scaleLinear } from 'd3-scale'
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
+  cameraDistance = 400, // this is the carefully calibrated position that exactly lines up with the border
   scene = new THREE.Scene(),
-  arrowGeometry = new THREE.BufferGeometry()
+  arrowGeometry = new THREE.BufferGeometry(),
+  particlesCount = 100,
+  particleGeometry = new THREE.BufferGeometry(),
+  particleVertices = new Float32Array(particlesCount * 3),
+  particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3)
 
 let opts = {}
 
@@ -71,10 +76,24 @@ export default {
     renderer.setSize(opts.pxPerBlock * opts.res, opts.pxPerBlock * opts.res)
     renderer.setPixelRatio(window.devicePixelRatio)
 
+    const particleMaterial = new THREE.ShaderMaterial({
+      vertexShader: document.getElementById("particle-vertex-shader").textContent,
+      fragmentShader: document.getElementById("particle-fragment-shader").textContent,
+      transparent: true,
+      depthTest: false,
+      blending: THREE.AdditiveBlending,
+      uniforms: {
+        tex: { value: opts.particleSprite },
+        cameraDistance: { value: cameraDistance }
+      }
+    })
+
+    particleGeometry.addAttribute("position", particleVerticesBuffer)
+
+    scene.add(new THREE.Points(particleGeometry, particleMaterial))
+
     const arrowVertices = new Float32Array(opts.res * opts.res * 3 * 2 * 3)
     const dim = new Float32Array(opts.res * opts.res * 3 * 2 * 2)
-    const arrowVerticesBuffer = new THREE.BufferAttribute(arrowVertices, 3)
-    const dimBuffer = new THREE.BufferAttribute(dim, 2)
 
     const arrowMaterial = new THREE.ShaderMaterial({
       transparent: true,
@@ -178,15 +197,13 @@ export default {
       }
     }
 
-    arrowGeometry.addAttribute("position", arrowVerticesBuffer)
-    arrowGeometry.addAttribute("dim", dimBuffer)
+    arrowGeometry.addAttribute("position", new THREE.BufferAttribute(arrowVertices, 3))
+    arrowGeometry.addAttribute("dim", new THREE.BufferAttribute(dim, 2))
 
     scene.add(new THREE.Mesh(arrowGeometry, arrowMaterial))
 
-    arrowVerticesBuffer.needsUpdate = true
-
     requestAnimationFrame(renderLoop)
 
-    camera.position.z = 400 // this is the carefully calibrated position that exactly lines up with the border
+    camera.position.z = cameraDistance
   }
 }

@@ -43,6 +43,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
   renderer.initialize({
     arrow: assets.arrowSprite.data,
+    particleSprite: assets.particleSprite.data,
     element: document.querySelector("#webgl-canvas"),
     res: 20,
     pxPerBlock: 30
