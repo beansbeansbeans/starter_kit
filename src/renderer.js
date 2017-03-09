@@ -43,7 +43,7 @@ const getVector = (function() {
   return func
 })()
 
-const stepSize = 1
+const stepSize = 0.5
 
 document.addEventListener("click", e => {
   const positions = [[
