@@ -12,15 +12,23 @@ const renderLoop = () => {
   requestAnimationFrame(renderLoop)
 }
 
+const fieldAt = (x, y) => {
+  const i = [1, 0], j = [0, 1]
+
+  // field equation: -yi + xj
+  return { 
+    x: -y*i[0] + x*j[0],
+    y: -y*i[1] + x*j[1]
+  }
+}
+
 const getVector = (function() {
   const result = new THREE.Vector2()
 
   const func = ({ x, y }) => {
-    const i = [1, 0], j = [0, 1]
-
-    // field equation: -yi + xj
-    result.x = -y*i[0] + x*j[0]
-    result.y = -y*i[1] + x*j[1]
+    const vec = fieldAt(x, y)
+    result.x = vec.x
+    result.y = vec.y
 
     return { 
       angle: result.angle(), 
@@ -29,6 +37,25 @@ const getVector = (function() {
   }
   return func
 })()
+
+const stepSize = 1
+
+document.addEventListener("click", e => {
+  const positions = [[
+    e.clientX - sharedState.get("windowWidth") / 2,
+    (sharedState.get("windowHeight") - e.clientY) - sharedState.get("windowHeight") / 2
+  ]]
+
+  setInterval(() => {
+    const currentPosition = positions[positions.length - 1],
+      currentVelocity = fieldAt(currentPosition[0], currentPosition[1])
+
+    positions.push([
+      currentPosition[0] + stepSize * currentVelocity.x,
+      currentPosition[1] + stepSize * currentVelocity.y
+    ])
+  }, 1000)
+})
 
 export default {
   initialize(config) {
