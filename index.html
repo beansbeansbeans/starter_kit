@@ -14,7 +14,7 @@
     void main() {
       vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
       gl_Position = projectionMatrix * mvPosition;
-      gl_PointSize = 10. * ( cameraDistance / -mvPosition.z );
+      gl_PointSize = 100. * ( cameraDistance / -mvPosition.z );
     }
   </script>
   <script type="x-shader/x-fragment" id="particle-fragment-shader">
@@ -22,7 +22,7 @@
 
     void main() {
       vec4 textureColor = texture2D(tex, gl_PointCoord);
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0) * textureColor;
+      gl_FragColor = vec4(0.5, 0.5, 0.5, 1.0) * textureColor;
     }
   </script>
   <script type="x-shader/x-vertex" id="arrow-vertex-shader">
