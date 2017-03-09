@@ -52,7 +52,7 @@ document.addEventListener("click", e => {
   ]]
 
   // rk-2
-  setInterval(() => {
+  const integrate = () => {
     particleVertices[0] = positions[positions.length - 1][0]
     particleVertices[0 + 1] = positions[positions.length - 1][1]
 
@@ -70,7 +70,11 @@ document.addEventListener("click", e => {
       currentPosition[0] + stepSize * (currentVelocity.x + nextVelocity.x) / 2,
       currentPosition[1] + stepSize * (currentVelocity.y + nextVelocity.y) / 2
     ])
-  }, 1000)
+  }
+
+  integrate()
+
+  setInterval(integrate, 500)
 })
 
 export default {
