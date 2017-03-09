@@ -46,13 +46,19 @@ document.addEventListener("click", e => {
     (sharedState.get("windowHeight") - e.clientY) - sharedState.get("windowHeight") / 2
   ]]
 
+  // rk-2
   setInterval(() => {
     const currentPosition = positions[positions.length - 1],
-      currentVelocity = fieldAt(currentPosition[0], currentPosition[1])
+      currentVelocity = fieldAt(currentPosition[0], currentPosition[1]),
+      nextPosition = [ 
+        currentPosition[0] + stepSize * currentVelocity.x, 
+        currentPosition[1] + stepSize * currentVelocity.y 
+      ],
+      nextVelocity = fieldAt(nextPosition[0], nextPosition[1])
 
     positions.push([
-      currentPosition[0] + stepSize * currentVelocity.x,
-      currentPosition[1] + stepSize * currentVelocity.y
+      currentPosition[0] + stepSize * (currentVelocity.x + nextVelocity.x) / 2,
+      currentPosition[1] + stepSize * (currentVelocity.y + nextVelocity.y) / 2
     ])
   }, 1000)
 })
