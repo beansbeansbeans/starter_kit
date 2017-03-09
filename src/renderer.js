@@ -13,6 +13,8 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
 let opts = {}
 
 const renderLoop = () => {
+  particleVerticesBuffer.needsUpdate = true
+
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
@@ -44,19 +46,15 @@ const getVector = (function() {
 })()
 
 const stepSize = 0.5
+let spawnIterator = 0
 
-document.addEventListener("click", e => {
-  const positions = [[
-    e.clientX - sharedState.get("windowWidth") / 2,
-    (sharedState.get("windowHeight") - e.clientY) - sharedState.get("windowHeight") / 2
-  ]]
+// rk-2
+const createIntegrator = (index, initialPosition) => {
+  const positions = [initialPosition]
 
-  // rk-2
-  const integrate = () => {
-    particleVertices[0] = positions[positions.length - 1][0]
-    particleVertices[0 + 1] = positions[positions.length - 1][1]
-
-    particleVerticesBuffer.needsUpdate = true
+  return function() {
+    particleVertices[index * 3] = positions[positions.length - 1][0]
+    particleVertices[index * 3 + 1] = positions[positions.length - 1][1]
 
     const currentPosition = positions[positions.length - 1],
       currentVelocity = fieldAt(currentPosition[0], currentPosition[1]),
@@ -71,10 +69,18 @@ document.addEventListener("click", e => {
       currentPosition[1] + stepSize * (currentVelocity.y + nextVelocity.y) / 2
     ])
   }
+}
+
+document.addEventListener("click", e => {
+  const integrate = createIntegrator(spawnIterator, [
+    e.clientX - sharedState.get("windowWidth") / 2,
+    (sharedState.get("windowHeight") - e.clientY) - sharedState.get("windowHeight") / 2
+  ])
 
   integrate()
-
   setInterval(integrate, 500)
+
+  spawnIterator++
 })
 
 export default {
