@@ -22,7 +22,7 @@
 
     void main() {
       vec4 textureColor = texture2D(tex, gl_PointCoord);
-      gl_FragColor = textureColor;
+      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0) * textureColor;
     }
   </script>
   <script type="x-shader/x-vertex" id="arrow-vertex-shader">
