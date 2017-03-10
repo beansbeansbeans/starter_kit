@@ -28,6 +28,7 @@
   <script type="x-shader/x-vertex" id="arrow-vertex-shader">
     attribute vec2 dim;
     varying vec2 vDim;
+
     void main() {
       vDim = dim;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);

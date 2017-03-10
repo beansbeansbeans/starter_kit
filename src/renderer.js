@@ -3,7 +3,7 @@ import { scaleLinear } from 'd3-scale'
 import './controls'
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
-  cameraDistance = 400, // this is the carefully calibrated position that exactly lines up with the border
+  cameraDistance = 975, // this is the carefully calibrated position that exactly lines up with the border
   scene = new THREE.Scene(),
   arrowGeometry = new THREE.BufferGeometry(),
   particlesCount = 100,
@@ -112,7 +112,7 @@ export default {
 
     scene.add(new THREE.Points(particleGeometry, particleMaterial))
 
-    const arrowVertices = new Float32Array(opts.res * opts.res * opts.res * 3 * 2 * 3)
+    const arrowVertices = new Float32Array(opts.res * opts.res * opts.res * 3 * 2 * 3) // 3 * 2 ==> 2 triangles, the final * 3 is for the x, y, z coordinates
     const dim = new Float32Array(opts.res * opts.res * opts.res * 3 * 2 * 2)
 
     const arrowMaterial = new THREE.ShaderMaterial({
@@ -150,11 +150,12 @@ export default {
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
-        for(let k=-(opts.res / 2); k<opts.res / 2; k++) { // z
-          let { mag, vector } = getVector({ x: i, y: j })
-          let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
+        for(let k=0; k<opts.res; k++) { // z
+          let { mag, vector } = getVector({ x: i, y: j, z: k })
+          let multiplier = (((i + opts.res / 2) * opts.res * opts.res) + ((j + opts.res / 2) * opts.res) + k) * 18
           let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
           let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
+          let centerZ = opts.pxPerBlock * k % (opts.res * opts.pxPerBlock)
 
           arrowSize = magScale(mag)
 
@@ -176,7 +177,7 @@ export default {
 
           quaternion.setFromUnitVectors( new THREE.Vector3(1, 0, 0), vector )
 
-          m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1))
+          m.compose(new THREE.Vector3(centerX, centerY, centerZ), quaternion, new THREE.Vector3(1, 1, 1))
 
           upperRight.applyMatrix4(m)
           lowerRight.applyMatrix4(m)
@@ -207,7 +208,7 @@ export default {
           arrowVertices[multiplier + 16] = upperRight.y
           arrowVertices[multiplier + 17] = upperRight.z
 
-          let dimMultiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 12
+          let dimMultiplier = (((i + opts.res / 2) * opts.res * opts.res) + ((j + opts.res / 2) * opts.res) + k) * 12
           dim[dimMultiplier] = 1
           dim[dimMultiplier + 1] = 1
           dim[dimMultiplier + 2] = 0
