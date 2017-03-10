@@ -22,26 +22,26 @@ const renderLoop = () => {
 const fieldAt = (x, y) => {
   const i = [1, 0, 0], j = [0, 1, 0], k = [0, 0, 1]
 
-  // field equation: -yi + xj
   // field equation: 2xi + 6yj - 2xk
   return { 
-    x: 2 * x * i[0] + 6 * y * j[0] - 2 * x * k[0],
-    y: 2 * x * i[1] + 6 * y * j[1] - 2 * x * k[1],
-    z: 2 * x * i[2] + 6 * y * j[2] - 2 * x * k[2]
+    x: 2*x*i[0] + 6*y*j[0] - 2*x*k[0],
+    y: 2*x*i[1] + 6*y*j[1] - 2*x*k[1],
+    z: 2*x*i[2] + 6*y*j[2] - 2*x*k[2]
   }
 }
 
 const getVector = (function() {
-  const result = new THREE.Vector2()
+  const result = new THREE.Vector3()
 
-  const func = ({ x, y }) => {
-    const vec = fieldAt(x, y)
+  const func = ({ x, y, z }) => {
+    const vec = fieldAt(x, y, z)
     result.x = vec.x
     result.y = vec.y
+    result.z = vec.z
 
     return { 
-      angle: result.angle(), 
-      mag: result.length() 
+      mag: result.length(),
+      vector: result.normalize()
     }
   }
   return func
@@ -109,8 +109,8 @@ export default {
 
     scene.add(new THREE.Points(particleGeometry, particleMaterial))
 
-    const arrowVertices = new Float32Array(opts.res * opts.res * 3 * 2 * 3)
-    const dim = new Float32Array(opts.res * opts.res * 3 * 2 * 2)
+    const arrowVertices = new Float32Array(opts.res * opts.res * opts.res * 3 * 2 * 3)
+    const dim = new Float32Array(opts.res * opts.res * opts.res * 3 * 2 * 2)
 
     const arrowMaterial = new THREE.ShaderMaterial({
       transparent: true,
@@ -134,10 +134,12 @@ export default {
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { 
-        let { mag } = getVector({ x: i, y: j })
+        for(let k=-(opts.res / 2); k<opts.res / 2; k++) {
+          let { mag } = getVector({ x: i, y: j, z: k })
 
-        if(mag > maxMag) maxMag = mag
-        if(mag < minMag) minMag = mag
+          if(mag > maxMag) maxMag = mag
+          if(mag < minMag) minMag = mag          
+        }
       }
     }
 
@@ -145,72 +147,78 @@ export default {
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
-        let { angle, mag } = getVector({ x: i, y: j })
-        let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
-        let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
-        let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
+        for(let k=-(opts.res / 2); k<opts.res / 2; k++) { // z
+          let { mag, vector } = getVector({ x: i, y: j })
+          let multiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 18
+          let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
+          let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
 
-        arrowSize = magScale(mag)
+          arrowSize = magScale(mag)
 
-        upperRight.x = arrowSize / 2
-        upperRight.y = arrowSize / 2
+          upperRight.x = arrowSize / 2
+          upperRight.y = arrowSize / 2
+          upperRight.z = 0
 
-        lowerRight.x = arrowSize / 2
-        lowerRight.y = -arrowSize / 2
+          lowerRight.x = arrowSize / 2
+          lowerRight.y = -arrowSize / 2
+          lowerRight.z = 0
 
-        upperLeft.x = -arrowSize / 2
-        upperLeft.y = arrowSize / 2
+          upperLeft.x = -arrowSize / 2
+          upperLeft.y = arrowSize / 2
+          upperLeft.z = 0
 
-        lowerLeft.x = -arrowSize / 2
-        lowerLeft.y = -arrowSize / 2
+          lowerLeft.x = -arrowSize / 2
+          lowerLeft.y = -arrowSize / 2
+          lowerLeft.z = 0
 
-        quaternion.setFromAxisAngle( new THREE.Vector3( 0, 0, 1 ), angle )
+          quaternion.setFromUnitVectors( new THREE.Vector3(1, 0, 0), vector )
 
-        m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1))
+          m.compose(new THREE.Vector3(centerX, centerY, 0), quaternion, new THREE.Vector3(1, 1, 1))
 
-        upperRight.applyMatrix4(m)
-        lowerRight.applyMatrix4(m)
-        upperLeft.applyMatrix4(m)
-        lowerLeft.applyMatrix4(m)
+          upperRight.applyMatrix4(m)
+          lowerRight.applyMatrix4(m)
+          upperLeft.applyMatrix4(m)
+          lowerLeft.applyMatrix4(m)
 
-        arrowVertices[multiplier] = lowerRight.x
-        arrowVertices[multiplier + 1] = lowerRight.y
-        arrowVertices[multiplier + 2] = lowerRight.z
+          arrowVertices[multiplier] = lowerRight.x
+          arrowVertices[multiplier + 1] = lowerRight.y
+          arrowVertices[multiplier + 2] = lowerRight.z
 
-        arrowVertices[multiplier + 3] = upperLeft.x
-        arrowVertices[multiplier + 4] = upperLeft.y
-        arrowVertices[multiplier + 5] = upperLeft.z
-        
-        arrowVertices[multiplier + 6] = lowerLeft.x
-        arrowVertices[multiplier + 7] = lowerLeft.y
-        arrowVertices[multiplier + 8] = lowerLeft.z
-        
-        arrowVertices[multiplier + 9] = upperLeft.x
-        arrowVertices[multiplier + 10] = upperLeft.y
-        arrowVertices[multiplier + 11] = upperLeft.z
-        
-        arrowVertices[multiplier + 12] = lowerRight.x
-        arrowVertices[multiplier + 13] = lowerRight.y
-        arrowVertices[multiplier + 14] = lowerRight.z
+          arrowVertices[multiplier + 3] = upperLeft.x
+          arrowVertices[multiplier + 4] = upperLeft.y
+          arrowVertices[multiplier + 5] = upperLeft.z
+          
+          arrowVertices[multiplier + 6] = lowerLeft.x
+          arrowVertices[multiplier + 7] = lowerLeft.y
+          arrowVertices[multiplier + 8] = lowerLeft.z
+          
+          arrowVertices[multiplier + 9] = upperLeft.x
+          arrowVertices[multiplier + 10] = upperLeft.y
+          arrowVertices[multiplier + 11] = upperLeft.z
+          
+          arrowVertices[multiplier + 12] = lowerRight.x
+          arrowVertices[multiplier + 13] = lowerRight.y
+          arrowVertices[multiplier + 14] = lowerRight.z
 
-        arrowVertices[multiplier + 15] = upperRight.x
-        arrowVertices[multiplier + 16] = upperRight.y
-        arrowVertices[multiplier + 17] = upperRight.z
+          arrowVertices[multiplier + 15] = upperRight.x
+          arrowVertices[multiplier + 16] = upperRight.y
+          arrowVertices[multiplier + 17] = upperRight.z
 
-        let dimMultiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 12
-        dim[dimMultiplier] = 1
-        dim[dimMultiplier + 1] = 1
-        dim[dimMultiplier + 2] = 0
-        dim[dimMultiplier + 3] = 0
-        dim[dimMultiplier + 4] = 0
-        dim[dimMultiplier + 5] = 1
+          let dimMultiplier = ((i + opts.res / 2) * opts.res + (j + opts.res / 2)) * 12
+          dim[dimMultiplier] = 1
+          dim[dimMultiplier + 1] = 1
+          dim[dimMultiplier + 2] = 0
+          dim[dimMultiplier + 3] = 0
+          dim[dimMultiplier + 4] = 0
+          dim[dimMultiplier + 5] = 1
 
-        dim[dimMultiplier + 6] = 0
-        dim[dimMultiplier + 7] = 0
-        dim[dimMultiplier + 8] = 1
-        dim[dimMultiplier + 9] = 1
-        dim[dimMultiplier + 10] = 1
-        dim[dimMultiplier + 11] = 0
+          dim[dimMultiplier + 6] = 0
+          dim[dimMultiplier + 7] = 0
+          dim[dimMultiplier + 8] = 1
+          dim[dimMultiplier + 9] = 1
+          dim[dimMultiplier + 10] = 1
+          dim[dimMultiplier + 11] = 0
+        }
       }
     }
 
