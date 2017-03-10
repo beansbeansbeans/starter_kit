@@ -1,5 +1,6 @@
 import sharedState from './sharedState'
 import { scaleLinear } from 'd3-scale'
+import './controls'
 
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   cameraDistance = 400, // this is the carefully calibrated position that exactly lines up with the border
@@ -8,13 +9,15 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   particlesCount = 100,
   particleGeometry = new THREE.BufferGeometry(),
   particleVertices = new Float32Array(particlesCount * 3),
-  particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3)
+  particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3),
+  controls = new THREE.TrackballControls( camera )
 
 let opts = {}
 
 const renderLoop = () => {
   particleVerticesBuffer.needsUpdate = true
 
+  controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }

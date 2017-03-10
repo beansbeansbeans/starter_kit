@@ -7,7 +7,6 @@ import { getData } from './api'
 import sharedState from './sharedState'
 import { debounce } from 'underscore'
 import { scaleLog } from 'd3-scale'
-import './controls'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {
