@@ -22,10 +22,12 @@ const renderLoop = () => {
   requestAnimationFrame(renderLoop)
 }
 
-const fieldAt = (x, y) => {
+const fieldAt = (x, y, z) => {
+  // z = Math.max(1, z) // to prevent division by 0
+
   const i = [1, 0, 0], j = [0, 1, 0], k = [0, 0, 1]
 
-  // field equation: 2xi + 6yj - 2xk
+  // field equation: (y/z)i + (-x/z)j + 0k
   return { 
     x: 2*x*i[0] + 6*y*j[0] - 2*x*k[0],
     y: 2*x*i[1] + 6*y*j[1] - 2*x*k[1],
@@ -141,7 +143,7 @@ export default {
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { 
-        for(let k=-(opts.res / 2); k<opts.res / 2; k++) {
+        for(let k=0; k<opts.res; k++) {
           let { mag } = getVector({ x: i, y: j, z: k })
 
           if(mag > maxMag) maxMag = mag
@@ -150,7 +152,7 @@ export default {
       }
     }
 
-    const magScale = scaleLinear().domain([ minMag, maxMag ]).range([1, opts.pxPerBlock])
+    const magScale = scaleLinear().domain([ minMag, maxMag ]).range([1, opts.pxPerBlock]).clamp(true)
 
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
@@ -159,7 +161,7 @@ export default {
           let multiplier = (((i + opts.res / 2) * opts.res * opts.res) + ((j + opts.res / 2) * opts.res) + k) * 18
           let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
           let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
-          let centerZ = opts.pxPerBlock * k % (opts.res * opts.pxPerBlock)
+          let centerZ = opts.pxPerBlock * k % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
 
           arrowSize = magScale(mag)
 
