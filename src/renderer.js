@@ -60,18 +60,21 @@ const createIntegrator = (index, initialPosition) => {
   return function() {
     particleVertices[index * 3] = positions[positions.length - 1][0]
     particleVertices[index * 3 + 1] = positions[positions.length - 1][1]
+    particleVertices[index * 3 + 2] = positions[positions.length - 1][2]
 
     const currentPosition = positions[positions.length - 1],
-      currentVelocity = fieldAt(currentPosition[0], currentPosition[1]),
+      currentVelocity = fieldAt(currentPosition[0], currentPosition[1], currentPosition[2]),
       nextPosition = [ 
         currentPosition[0] + stepSize * currentVelocity.x, 
-        currentPosition[1] + stepSize * currentVelocity.y 
+        currentPosition[1] + stepSize * currentVelocity.y,
+        currentPosition[2] + stepSize * currentVelocity.z
       ],
-      nextVelocity = fieldAt(nextPosition[0], nextPosition[1])
+      nextVelocity = fieldAt(nextPosition[0], nextPosition[1], nextPosition[2])
 
     positions.push([
       currentPosition[0] + stepSize * (currentVelocity.x + nextVelocity.x) / 2,
-      currentPosition[1] + stepSize * (currentVelocity.y + nextVelocity.y) / 2
+      currentPosition[1] + stepSize * (currentVelocity.y + nextVelocity.y) / 2,
+      currentPosition[2] + stepSize * (currentVelocity.z + nextVelocity.z) / 2
     ])
   }
 }
@@ -79,7 +82,8 @@ const createIntegrator = (index, initialPosition) => {
 document.addEventListener("click", e => {
   const integrate = createIntegrator(spawnIterator, [
     e.clientX - sharedState.get("windowWidth") / 2,
-    (sharedState.get("windowHeight") - e.clientY) - sharedState.get("windowHeight") / 2
+    (sharedState.get("windowHeight") - e.clientY) - sharedState.get("windowHeight") / 2,
+    Math.random() * opts.res
   ])
 
   integrate()
