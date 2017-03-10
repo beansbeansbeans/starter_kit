@@ -20,12 +20,14 @@ const renderLoop = () => {
 }
 
 const fieldAt = (x, y) => {
-  const i = [1, 0], j = [0, 1]
+  const i = [1, 0, 0], j = [0, 1, 0], k = [0, 0, 1]
 
   // field equation: -yi + xj
+  // field equation: 2xi + 6yj - 2xk
   return { 
-    x: -y*i[0] + x*j[0],
-    y: -y*i[1] + x*j[1]
+    x: 2 * x * i[0] + 6 * y * j[0] - 2 * x * k[0],
+    y: 2 * x * i[1] + 6 * y * j[1] - 2 * x * k[1],
+    z: 2 * x * i[2] + 6 * y * j[2] - 2 * x * k[2]
   }
 }
 
@@ -45,7 +47,7 @@ const getVector = (function() {
   return func
 })()
 
-const stepSize = 0.5
+const stepSize = 0.1
 let spawnIterator = 0
 
 // rk-2
