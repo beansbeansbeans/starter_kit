@@ -18,7 +18,7 @@ let opts = {}
 const renderLoop = () => {
   particleVerticesBuffer.needsUpdate = true
 
-  var timer = Date.now() * 0.001
+  var timer = Date.now() * 0.0001
   camera.position.x = center.x + Math.cos( timer ) * cameraDistance
   camera.position.z = center.z + Math.sin( timer ) * cameraDistance
   camera.lookAt(center)
