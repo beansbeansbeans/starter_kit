@@ -10,6 +10,7 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   particleGeometry = new THREE.BufferGeometry(),
   particleVertices = new Float32Array(particlesCount * 3),
   particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3),
+  center = new THREE.Vector3(),
   controls = new THREE.TrackballControls( camera )
 
 let opts = {}
@@ -17,7 +18,12 @@ let opts = {}
 const renderLoop = () => {
   particleVerticesBuffer.needsUpdate = true
 
-  controls.update()
+  var timer = Date.now() * 0.001
+  camera.position.x = center.x + Math.cos( timer ) * cameraDistance
+  camera.position.z = center.z + Math.sin( timer ) * cameraDistance
+  camera.lookAt(center)
+
+  // controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
@@ -106,6 +112,7 @@ export default {
       vertexShader: document.getElementById("particle-vertex-shader").textContent,
       fragmentShader: document.getElementById("particle-fragment-shader").textContent,
       transparent: true,
+      side: THREE.DoubleSide,
       depthTest: false,
       blending: THREE.AdditiveBlending,
       uniforms: {
@@ -124,6 +131,7 @@ export default {
     const arrowMaterial = new THREE.ShaderMaterial({
       transparent: true,
       depthTest: false,
+      side: THREE.DoubleSide,
       blending: THREE.AdditiveBlending,
       vertexShader: document.getElementById("arrow-vertex-shader").textContent,
       fragmentShader: document.getElementById("arrow-fragment-shader").textContent,
@@ -154,6 +162,8 @@ export default {
 
     const magScale = scaleLinear().domain([ minMag, maxMag ]).range([1, opts.pxPerBlock]).clamp(true)
 
+    let minX = Infinity, maxX = 0, minY = Infinity, maxY = 0, minZ = Infinity, maxZ = 0
+
     for(let i=-(opts.res / 2); i<opts.res / 2; i++) { // x
       for(let j=-(opts.res / 2); j<opts.res / 2; j++) { // y
         for(let k=0; k<opts.res; k++) { // z
@@ -162,6 +172,13 @@ export default {
           let centerX = opts.pxPerBlock * i % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
           let centerY = opts.pxPerBlock * j % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
           let centerZ = opts.pxPerBlock * k % (opts.res * opts.pxPerBlock) + opts.pxPerBlock / 2
+
+          if(centerX < minX) minX = centerX
+          if(centerX > maxX) maxX = centerX
+          if(centerY < minY) minY = centerY
+          if(centerY > maxY) maxY = centerY
+          if(centerZ < minZ) minZ = centerZ
+          if(centerZ > maxZ) maxZ = centerZ
 
           arrowSize = magScale(mag)
 
@@ -231,6 +248,10 @@ export default {
         }
       }
     }
+
+    center.x = minX + (maxX - minX) / 2
+    center.y = minY + (maxY - minY) / 2
+    center.z = minZ + (maxZ - minZ) / 2
 
     arrowGeometry.addAttribute("position", new THREE.BufferAttribute(arrowVertices, 3))
     arrowGeometry.addAttribute("dim", new THREE.BufferAttribute(dim, 2))
