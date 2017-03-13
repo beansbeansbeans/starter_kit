@@ -10,20 +10,13 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   particleGeometry = new THREE.BufferGeometry(),
   particleVertices = new Float32Array(particlesCount * 3),
   particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3),
-  center = new THREE.Vector3(),
-  controls = new THREE.TrackballControls( camera )
+  center = new THREE.Vector3()
 
-let opts = {}
+let opts = {}, controls
 
 const renderLoop = () => {
   particleVerticesBuffer.needsUpdate = true
-
-  var timer = Date.now() * 0.0001
-  camera.position.x = center.x + Math.cos( timer ) * cameraDistance
-  camera.position.z = center.z + Math.sin( timer ) * cameraDistance
-  camera.lookAt(center)
-
-  // controls.update()
+  controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
 }
@@ -257,6 +250,9 @@ export default {
     arrowGeometry.addAttribute("dim", new THREE.BufferAttribute(dim, 2))
 
     scene.add(new THREE.Mesh(arrowGeometry, arrowMaterial))
+
+    controls = new THREE.TrackballControls( camera )
+    controls.target = center
 
     requestAnimationFrame(renderLoop)
 
