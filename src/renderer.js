@@ -7,6 +7,8 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   scene = new THREE.Scene(),
   arrowGeometry = new THREE.BufferGeometry(),
   particlesCount = 100,
+  particleColors = new Float32Array(particlesCount * 4),
+  particleColorsBuffer = new THREE.BufferAttribute(particleColors, 4),
   particleGeometry = new THREE.BufferGeometry(),
   particleVertices = new Float32Array(particlesCount * 3),
   particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3),
@@ -38,6 +40,7 @@ const particle = index => {
     ])
 
     if(currentPosition[0] < center.x - size || currentPosition[0] > center.x + size || currentPosition[1] < center.y - size || currentPosition[1] > center.y + size || currentPosition[2] < center.z - size || currentPosition[2] > center.z + size) { // here determine whether out of bounds
+      particleColors[index * 4 + 3] = 0
       window.clearInterval(advectInterval)
     }
   }
@@ -46,6 +49,7 @@ const particle = index => {
     spawn: initialPosition => {
       window.clearInterval(advectInterval)
 
+      particleColors[index * 4 + 3] = 1
       positions = [initialPosition]
       
       advectInterval = setInterval(advect, 500)
@@ -59,6 +63,8 @@ let opts = {}, controls, size
 
 const renderLoop = () => {
   particleVerticesBuffer.needsUpdate = true
+  particleColorsBuffer.needsUpdate = true
+
   controls.update()
   renderer.render(scene, camera)
   requestAnimationFrame(renderLoop)
@@ -118,6 +124,14 @@ export default {
       }
     })
 
+    for(let i=0; i<particlesCount; i++) {
+      particleColors[i * 4] = 0.5
+      particleColors[i * 4 + 1] = 0.5
+      particleColors[i * 4 + 2] = 0.5
+      particleColors[i * 4 + 3] = 1
+    }
+
+    particleGeometry.addAttribute("color", particleColorsBuffer)
     particleGeometry.addAttribute("position", particleVerticesBuffer)
 
     scene.add(new THREE.Points(particleGeometry, particleMaterial))
