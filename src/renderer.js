@@ -10,7 +10,7 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   particleGeometry = new THREE.BufferGeometry(),
   particleVertices = new Float32Array(particlesCount * 3),
   particleVerticesBuffer = new THREE.BufferAttribute(particleVertices, 3),
-  center = new THREE.Vector3(),
+  center = new THREE.Vector3(), 
   particles = []
 
 const particle = index => {
@@ -55,7 +55,7 @@ const particle = index => {
 
 for(let i=0; i<particlesCount; i++) particles.push(particle(i))
 
-let opts = {}, controls
+let opts = {}, controls, size
 
 const renderLoop = () => {
   particleVerticesBuffer.needsUpdate = true
@@ -246,6 +246,7 @@ export default {
       }
     }
 
+    size = maxZ - minZ
     center.x = minX + (maxX - minX) / 2
     center.y = minY + (maxY - minY) / 2
     center.z = minZ + (maxZ - minZ) / 2
@@ -264,9 +265,9 @@ export default {
   },
   spawn() {
     particles[spawnIterator].spawn([
-      -300 + Math.random() * 600,
-      -300 + Math.random() * 600,
-      Math.random() * 600
+      center.x - (size / 2) + Math.random() * size,
+      center.y - (size / 2) + Math.random() * size,
+      center.z - (size / 2) + Math.random() * size
     ])
 
     spawnIterator = (spawnIterator + 1) % particlesCount
