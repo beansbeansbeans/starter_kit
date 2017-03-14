@@ -37,7 +37,7 @@ const particle = index => {
       currentPosition[2] + stepSize * (currentVelocity.z + nextVelocity.z) / 2
     ])
 
-    if(false) { // here determine whether out of bounds
+    if(currentPosition[0] < center.x - size || currentPosition[0] > center.x + size || currentPosition[1] < center.y - size || currentPosition[1] > center.y + size || currentPosition[2] < center.z - size || currentPosition[2] > center.z + size) { // here determine whether out of bounds
       window.clearInterval(advectInterval)
     }
   }
