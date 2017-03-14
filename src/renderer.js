@@ -80,31 +80,6 @@ const createIntegrator = (index, initialPosition) => {
   }
 }
 
-document.addEventListener("click", e => {
-  var vector = new THREE.Vector3()
-  vector.set(
-    ( e.clientX / sharedState.get("windowWidth") ) * 2 - 1,
-      - ( e.clientY / sharedState.get("windowHeight") ) * 2 + 1,
-      Math.random() )
-
-  vector.unproject(camera)
-
-  var dir = vector.sub(camera.position).normalize()
-  var distance = -camera.position.z / dir.z 
-  var pos = camera.position.clone().add(dir.multiplyScalar(distance))
-
-  const integrate = createIntegrator(spawnIterator, [
-    pos.x,
-    pos.y,
-    pos.z
-  ])
-
-  integrate()
-  setInterval(integrate, 500)
-
-  spawnIterator++
-})
-
 export default {
   initialize(config) {
     opts = config
@@ -269,5 +244,17 @@ export default {
     requestAnimationFrame(renderLoop)
 
     camera.position.z = cameraDistance
+  },
+  spawn() {
+    const integrate = createIntegrator(spawnIterator, [
+      -300 + Math.random() * 600,
+      -300 + Math.random() * 600,
+      Math.random() * 600
+    ])
+
+    integrate()
+    setInterval(integrate, 500)
+
+    spawnIterator++
   }
 }

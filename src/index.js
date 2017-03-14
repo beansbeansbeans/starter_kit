@@ -32,6 +32,7 @@ class App extends Component {
   render({}) {
     return (
       <app>
+        <button onClick={renderer.spawn}>spawn</button>
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
