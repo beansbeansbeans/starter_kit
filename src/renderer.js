@@ -23,6 +23,7 @@ const particle = index => {
     nextPosition = new THREE.Vector3(),
     desiredVelocity = new THREE.Vector3(),
     currentVelocity = new THREE.Vector3(),
+    steering = new THREE.Vector3(),
     rafID = null, frameIterator = 0
 
   const move = () => {
@@ -30,7 +31,7 @@ const particle = index => {
 
     const scaledCurrentVelocity = currentVelocity.clone().multiplyScalar(desiredVelocity.length() / currentVelocity.length())
 
-    const steering = desiredVelocity.clone().sub(scaledCurrentVelocity)
+    steering.subVectors(desiredVelocity, scaledCurrentVelocity)
 
     const adjustedCurrentVelocity = scaledCurrentVelocity.addScaledVector(steering, elapsedPercentage)
 
