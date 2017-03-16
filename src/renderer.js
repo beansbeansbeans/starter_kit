@@ -29,11 +29,7 @@ const particle = index => {
   const move = () => {
     const elapsedPercentage = frameIterator / framesPerIntegration
 
-    const scaledCurrentVelocity = currentVelocity.clone().multiplyScalar(desiredVelocity.length() / currentVelocity.length())
-
-    steering.subVectors(desiredVelocity, scaledCurrentVelocity)
-
-    const adjustedCurrentVelocity = scaledCurrentVelocity.addScaledVector(steering, elapsedPercentage).multiplyScalar(elapsedPercentage)
+    const adjustedCurrentVelocity = currentVelocity.clone().addScaledVector(steering, elapsedPercentage).multiplyScalar(elapsedPercentage)
 
     particleVertices[index * 3] = currentPosition.x + adjustedCurrentVelocity.x
     particleVertices[index * 3 + 1] = currentPosition.y + adjustedCurrentVelocity.y
@@ -63,7 +59,11 @@ const particle = index => {
       .multiplyScalar(stepSize / 2)
       .add(currentPosition)
 
+    currentVelocity.multiplyScalar(desiredVelocity.length() / currentVelocity.length())
+
     desiredVelocity.subVectors(targetPosition, currentPosition)
+
+    steering.subVectors(desiredVelocity, currentVelocity)
 
     if(targetPosition.x < center.x - size || targetPosition.x > center.x + size || targetPosition.y < center.y - size || targetPosition.y > center.y + size || targetPosition.z < center.z - size || targetPosition.z > center.z + size) { // here determine whether out of bounds
       particleColors[index * 4 + 3] = 0
