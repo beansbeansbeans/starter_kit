@@ -33,13 +33,11 @@ const particle = index => {
 
     steering.subVectors(desiredVelocity, scaledCurrentVelocity)
 
-    const adjustedCurrentVelocity = scaledCurrentVelocity.addScaledVector(steering, elapsedPercentage)
+    const adjustedCurrentVelocity = scaledCurrentVelocity.addScaledVector(steering, elapsedPercentage).multiplyScalar(elapsedPercentage)
 
-    const mag = adjustedCurrentVelocity.clone().multiplyScalar(elapsedPercentage)
-
-    particleVertices[index * 3] = currentPosition.x + mag.x
-    particleVertices[index * 3 + 1] = currentPosition.y + mag.y
-    particleVertices[index * 3 + 2] = currentPosition.z + mag.z
+    particleVertices[index * 3] = currentPosition.x + adjustedCurrentVelocity.x
+    particleVertices[index * 3 + 1] = currentPosition.y + adjustedCurrentVelocity.y
+    particleVertices[index * 3 + 2] = currentPosition.z + adjustedCurrentVelocity.z
     
     frameIterator++
 
