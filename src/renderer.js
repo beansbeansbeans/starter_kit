@@ -15,44 +15,71 @@ const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 3000),
   center = new THREE.Vector3(), 
   particles = []
 
+const framesPerIntegration = 15
+
 const particle = index => {
-  let positions = [],
-    advectInterval = null
+  let targetPosition = new THREE.Vector3(), 
+    currentPosition = new THREE.Vector3(),
+    nextPosition = new THREE.Vector3(),
+    desiredVelocity = new THREE.Vector3(),
+    currentVelocity = new THREE.Vector3(),
+    rafID = null, frameIterator = 0
+
+  const move = () => {
+    const elapsedPercentage = frameIterator / framesPerIntegration
+
+    const scaledCurrentVelocity = currentVelocity.clone().multiplyScalar(desiredVelocity.length() / currentVelocity.length())
+
+    const steering = desiredVelocity.clone().sub(scaledCurrentVelocity)
+
+    const adjustedCurrentVelocity = scaledCurrentVelocity.addScaledVector(steering, elapsedPercentage)
+
+    const mag = adjustedCurrentVelocity.clone().multiplyScalar(elapsedPercentage)
+
+    particleVertices[index * 3] = currentPosition.x + mag.x
+    particleVertices[index * 3 + 1] = currentPosition.y + mag.y
+    particleVertices[index * 3 + 2] = currentPosition.z + mag.z
+    
+    frameIterator++
+
+    if(frameIterator === framesPerIntegration) advect()
+
+    rafID = requestAnimationFrame(move)
+  }
 
   const advect = () => { // rk-2
-    particleVertices[index * 3] = positions[positions.length - 1][0]
-    particleVertices[index * 3 + 1] = positions[positions.length - 1][1]
-    particleVertices[index * 3 + 2] = positions[positions.length - 1][2]
+    frameIterator = 0
 
-    const currentPosition = positions[positions.length - 1],
-      currentVelocity = fieldAt(currentPosition[0], currentPosition[1], currentPosition[2]),
-      nextPosition = [ 
-        currentPosition[0] + stepSize * currentVelocity.x, 
-        currentPosition[1] + stepSize * currentVelocity.y,
-        currentPosition[2] + stepSize * currentVelocity.z
-      ],
-      nextVelocity = fieldAt(nextPosition[0], nextPosition[1], nextPosition[2])
+    const currentField = fieldAt(targetPosition.x, targetPosition.y, targetPosition.z)
+    currentVelocity.set(currentField.x, currentField.y, currentField.z)
 
-    positions.push([
-      currentPosition[0] + stepSize * (currentVelocity.x + nextVelocity.x) / 2,
-      currentPosition[1] + stepSize * (currentVelocity.y + nextVelocity.y) / 2,
-      currentPosition[2] + stepSize * (currentVelocity.z + nextVelocity.z) / 2
-    ])
+    nextPosition.set(targetPosition.x + stepSize * currentVelocity.x, 
+      targetPosition.y + stepSize * currentVelocity.y,
+      targetPosition.z + stepSize * currentVelocity.z)
 
-    if(currentPosition[0] < center.x - size || currentPosition[0] > center.x + size || currentPosition[1] < center.y - size || currentPosition[1] > center.y + size || currentPosition[2] < center.z - size || currentPosition[2] > center.z + size) { // here determine whether out of bounds
+    currentPosition.copy(targetPosition)
+
+    targetPosition
+      .addVectors(currentVelocity, fieldAt(nextPosition.x, nextPosition.y, nextPosition.z))
+      .multiplyScalar(stepSize / 2)
+      .add(currentPosition)
+
+    desiredVelocity.subVectors(targetPosition, currentPosition)
+
+    if(targetPosition.x < center.x - size || targetPosition.x > center.x + size || targetPosition.y < center.y - size || targetPosition.y > center.y + size || targetPosition.z < center.z - size || targetPosition.z > center.z + size) { // here determine whether out of bounds
       particleColors[index * 4 + 3] = 0
-      window.clearInterval(advectInterval)
     }
   }
 
   return {
-    spawn: initialPosition => {
-      window.clearInterval(advectInterval)
+    spawn: (x, y, z) => {
+      window.cancelAnimationFrame(rafID)
 
       particleColors[index * 4 + 3] = 1
-      positions = [initialPosition]
+      targetPosition.set(x, y, z)
       
-      advectInterval = setInterval(advect, 500)
+      advect()
+      rafID = requestAnimationFrame(move)
     }
   }
 }
@@ -75,11 +102,10 @@ const fieldAt = (x, y, z) => {
 
   const i = [1, 0, 0], j = [0, 1, 0], k = [0, 0, 1]
 
-  // field equation: (y/z)i + (-x/z)j + 0k
   return { 
-    x: 2*x*i[0] + 6*y*j[0] - 2*x*k[0],
-    y: 2*x*i[1] + 6*y*j[1] - 2*x*k[1],
-    z: 2*x*i[2] + 6*y*j[2] - 2*x*k[2]
+    x: 0.5*x*i[0] + 1.5*y*j[0] - 0.5*x*k[0],
+    y: 0.5*x*i[1] + 1.5*y*j[1] - 0.5*x*k[1],
+    z: 0.5*x*i[2] + 1.5*y*j[2] - 0.5*x*k[2]
   }
 }
 
@@ -278,11 +304,11 @@ export default {
     camera.position.z = cameraDistance
   },
   spawn() {
-    particles[spawnIterator].spawn([
+    particles[spawnIterator].spawn(
       center.x - (size / 2) + Math.random() * size,
       center.y - (size / 2) + Math.random() * size,
       center.z - (size / 2) + Math.random() * size
-    ])
+    )
 
     spawnIterator = (spawnIterator + 1) % particlesCount
   }
