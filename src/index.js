@@ -2,17 +2,12 @@ import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
 const { roundDown } = helpers
 import "../main.scss"
-import renderer from './renderer'
 import { getData } from './api'
-import sharedState from './sharedState'
 import { debounce } from 'underscore'
-import { scaleLog } from 'd3-scale'
+import sharedState from './sharedState'
 
 const textureLoader = new THREE.TextureLoader(),
-  assets = {
-    particleSprite: { filename: "particle.png" },
-    arrowSprite: { filename: "arrow.png" }
-  },
+  assets = {},
   preload = {
     getTextures: () =>
       Promise.all(Object.keys(assets).map(k =>
@@ -32,7 +27,6 @@ class App extends Component {
   render({}) {
     return (
       <app>
-        <button onClick={renderer.spawn}>spawn</button>
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
@@ -41,13 +35,6 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body);
-  renderer.initialize({
-    arrow: assets.arrowSprite.data,
-    particleSprite: assets.particleSprite.data,
-    element: document.querySelector("#webgl-canvas"),
-    res: 20,
-    pxPerBlock: 30
-  })
 })
 
 window.addEventListener("resize", debounce(() => {
