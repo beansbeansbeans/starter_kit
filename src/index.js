@@ -1,4 +1,3 @@
-import "./GLBoilerplate"
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
 const { roundDown } = helpers
@@ -47,7 +46,7 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   setTimeout(() => {
     render(<App />, document.body)
-    renderer.initialize()
+    renderer.initialize({ shaders })
   }, 1000)
 })
 

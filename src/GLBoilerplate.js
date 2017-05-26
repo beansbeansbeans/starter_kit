@@ -68,28 +68,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
  *     script tag.
  * @return {!WebGLShader} A shader.
  */
-function createShaderFromScript(gl, scriptId, opt_shaderType) {
-  // look up the script tag by id.
-  var shaderScript = document.getElementById(scriptId);
-  if (!shaderScript) {
-    throw("*** Error: unknown script element" + scriptId);
-  }
-
-  // extract the contents of the script tag.
-  var shaderSource = shaderScript.text;
-
-  // If we didn't pass in a type, use the 'type' from
-  // the script tag.
-  if (!opt_shaderType) {
-    if (shaderScript.type == "x-shader/x-vertex") {
-      opt_shaderType = gl.VERTEX_SHADER;
-    } else if (shaderScript.type == "x-shader/x-fragment") {
-      opt_shaderType = gl.FRAGMENT_SHADER;
-    } else if (!opt_shaderType) {
-      throw("*** Error: shader type not set");
-    }
-  }
-
+function createShaderFromScript(gl, shaderSource, opt_shaderType) {
   return compileShader(gl, shaderSource, opt_shaderType);
 }
 
@@ -102,8 +81,8 @@ function createShaderFromScript(gl, scriptId, opt_shaderType) {
  * @return {!WebGLProgram} A program
  */
 function createProgramFromScripts(
-    gl, vertexShaderId, fragmentShaderId) {
-  var vertexShader = createShaderFromScript(gl, vertexShaderId);
-  var fragmentShader = createShaderFromScript(gl, fragmentShaderId);
+    gl, vertexShader, fragmentShader) {
+  var vertexShader = createShaderFromScript(gl, vertexShader, gl.VERTEX_SHADER);
+  var fragmentShader = createShaderFromScript(gl, fragmentShader, gl.FRAGMENT_SHADER);
   return createProgram(gl, vertexShader, fragmentShader);
 }

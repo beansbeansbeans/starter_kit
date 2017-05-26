@@ -1,1 +1,3 @@
-rofl
+void main() {
+  
+}
