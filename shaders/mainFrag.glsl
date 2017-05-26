@@ -14,7 +14,7 @@ void main() {
     return;
   }
 
-  vec4 average = vec4(0., 0., 0., 1.0);
+  vec4 average = currentState;
   vec4 north = texture2D(u_image, v_texCoord + vec2(0., onePixel.y));
   vec4 south = texture2D(u_image, v_texCoord + vec2(0., onePixel.y * -1.));
   vec4 east = texture2D(u_image, v_texCoord + vec2(onePixel.x, 0.));
@@ -25,7 +25,7 @@ void main() {
   average += east;
   average += west;
 
-  average /= 4.;
+  average /= 5.;
 
   gl_FragColor = average;
 }

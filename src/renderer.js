@@ -25,8 +25,7 @@ const render = () => {
   gl.bindTexture(gl.TEXTURE_2D, lastState)
   gl.drawArrays(gl.TRIANGLES, 0, 6)
 
-  setInterval(render, 1000)
-  // requestAnimationFrame(render)
+  requestAnimationFrame(render)
 }
 
 const step = () => {
