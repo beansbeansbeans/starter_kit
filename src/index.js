@@ -7,20 +7,8 @@ import { debounce } from 'underscore'
 import sharedState from './sharedState'
 import renderer from './renderer'
 
-const textureLoader = new THREE.TextureLoader(),
-  assets = {},
-  shaders = {},
+const shaders = {},
   preload = {
-    getTextures: () =>
-      Promise.all(Object.keys(assets).map(k =>
-        new Promise((resolve, reject) => {
-          textureLoader.load(`images/${assets[k].filename}`, data => {
-            assets[k].data = data
-            resolve(data)
-          })
-          }, () => {},
-          xhr => reject(new Error(`could not load ${k}`)))        
-      )),
     getShaders: () => {
       Promise.all(['mainFrag', 'mainVert'].map(d =>
         fetch(`shaders/${d}.glsl`).then(data => data.text()).then(data => {
