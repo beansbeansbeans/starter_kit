@@ -41,10 +41,12 @@ export default {
   },
 
   makeRandomArray: function(rgba, width, height) {
-    for(let x = width/2 - 100; x < width / 2 + 100; x++) {
-      for(let y = height / 2 - 100; y < height / 2 + 100; y++) {
-        var ii = (y * width + x) * 4
-      }
+    const numPixels = rgba.length / 4
+    for(let i=0; i<numPixels; i++) {
+      rgba[i * 4] = Math.random()
+      rgba[i * 4 + 1] = Math.random()
+      rgba[i * 4 + 2] = Math.random()
+      rgba[i * 4 + 3] = 1
     }
     return rgba
   }

@@ -41,7 +41,7 @@ const step = () => {
 const onResize = () => {
   canvas.width = width
   canvas.height = height
-  
+
   gl.viewport(0, 0, width, height)
 
   gl.uniform2f(textureSizeLocation, width, height)
@@ -52,7 +52,7 @@ const onResize = () => {
   resizedLastState = makeTexture(gl)
 
   let rgba = new Float32Array(width * height * 4)
-  rgba = makeFlatArray(rgba)
+  rgba = makeRandomArray(rgba)
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, makeRandomArray(rgba, width, height))
 }
 
