@@ -1,13 +1,42 @@
 import helpers from './helpers/helpers'
-const { makeTexture, makeFlatArray } = helpers
+const { makeTexture, makeFlatArray, makeRandomArray } = helpers
 
-let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState
+let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState
 
 const render = () => {
-  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
-  // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, currentState, 0)
+  if(resizedLastState) {
+    lastState = resizedLastState
+    resizedLastState = null
+  }
 
+  if(resizedCurrentState) {
+    currentState = resizedCurrentState
+    resizedCurrentState = null
+  }
+
+  console.log(renderFlagLocation)
+  gl.uniform1f(renderFlagLocation, 0)
+
+  step()
+
+  gl.uniform1f(renderFlagLocation, 1)
+  gl.bindTexture(gl.TEXTURE_2D, lastState)
+
+  gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+  gl.bindTexture(gl.TEXTURE_2D, lastState)
   gl.drawArrays(gl.TRIANGLES, 0, 6)
+}
+
+const step = () => {
+  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, currentState, 0)
+
+  gl.bindTexture(gl.TEXTURE_2D, lastState)
+  gl.drawArrays(gl.TRIANGLES, 0, 6)
+
+  let temp = lastState
+  lastState = currentState
+  currentState = temp
 }
 
 const onResize = () => {
@@ -22,6 +51,7 @@ const onResize = () => {
 
   let rgba = new Float32Array(width * height * 4)
   rgba = makeFlatArray(rgba)
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, makeRandomArray(rgba, width, height))
 }
 
 export default {
@@ -67,7 +97,7 @@ export default {
       1.0, 1.0]), gl.STATIC_DRAW)
 
     // constants
-    renderFlagLocation = gl.getAttribLocation(program, "u_renderFlag")
+    renderFlagLocation = gl.getUniformLocation(program, "u_renderFlag")
 
     const texCoordLocation = gl.getAttribLocation(program, "a_texCoord")
     const texCoordBuffer = gl.createBuffer()
