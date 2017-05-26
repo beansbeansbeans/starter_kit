@@ -14,7 +14,6 @@ const render = () => {
     resizedCurrentState = null
   }
 
-  console.log(renderFlagLocation)
   gl.uniform1f(renderFlagLocation, 0)
 
   step()
@@ -113,6 +112,8 @@ export default {
     gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0)
 
     frameBuffer = gl.createFramebuffer()
+
+    gl.bindTexture(gl.TEXTURE_2D, lastState)
 
     render()
   }
