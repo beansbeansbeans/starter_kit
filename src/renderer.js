@@ -21,7 +21,6 @@ const render = () => {
     step()
 
     gl.uniform1f(renderFlagLocation, 1)
-    gl.bindTexture(gl.TEXTURE_2D, lastState)
 
     gl.bindFramebuffer(gl.FRAMEBUFFER, null)
     gl.bindTexture(gl.TEXTURE_2D, lastState)
@@ -33,6 +32,8 @@ const render = () => {
 
 const step = () => {
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
+
+  // attaches texture to a framebuffer
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, currentState, 0)
 
   gl.bindTexture(gl.TEXTURE_2D, lastState)
@@ -87,7 +88,7 @@ export default {
     // obtain the location of the position attribute in the program
     const positionLocation = gl.getAttribLocation(program, "a_position")
 
-    // create a webgl buffer
+    // create a webgl buffer, which is just a data object
     const bufferPos = gl.createBuffer()
     
     // bind the buffer to a target
