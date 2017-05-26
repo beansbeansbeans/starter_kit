@@ -5,6 +5,7 @@ import "../main.scss"
 import { getData } from './api'
 import { debounce } from 'underscore'
 import sharedState from './sharedState'
+import renderer from './renderer'
 
 const textureLoader = new THREE.TextureLoader(),
   assets = {},
@@ -34,7 +35,8 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  render(<App />, document.body);
+  render(<App />, document.body)
+  renderer.initialize()
 })
 
 window.addEventListener("resize", debounce(() => {
