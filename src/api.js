@@ -1,2 +1,2 @@
 export const getData = url =>
-  fetch(`data/${url}.json`).then(data=>data.json())
+  fetch(`data/${url}.json`).then(data => data.json())
