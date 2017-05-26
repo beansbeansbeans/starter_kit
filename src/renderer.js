@@ -1,29 +1,32 @@
 import helpers from './helpers/helpers'
+import sharedState from './sharedState'
 const { makeTexture, makeFlatArray, makeRandomArray } = helpers
 
-let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState, textureSizeLocation
+let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState, textureSizeLocation, paused = false
 
 const render = () => {
-  if(resizedLastState) {
-    lastState = resizedLastState
-    resizedLastState = null
+  if(!paused) {
+    if(resizedLastState) {
+      lastState = resizedLastState
+      resizedLastState = null
+    }
+
+    if(resizedCurrentState) {
+      currentState = resizedCurrentState
+      resizedCurrentState = null
+    }
+
+    gl.uniform1f(renderFlagLocation, 0)
+
+    step()
+
+    gl.uniform1f(renderFlagLocation, 1)
+    gl.bindTexture(gl.TEXTURE_2D, lastState)
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null)
+    gl.bindTexture(gl.TEXTURE_2D, lastState)
+    gl.drawArrays(gl.TRIANGLES, 0, 6)
   }
-
-  if(resizedCurrentState) {
-    currentState = resizedCurrentState
-    resizedCurrentState = null
-  }
-
-  gl.uniform1f(renderFlagLocation, 0)
-
-  step()
-
-  gl.uniform1f(renderFlagLocation, 1)
-  gl.bindTexture(gl.TEXTURE_2D, lastState)
-
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null)
-  gl.bindTexture(gl.TEXTURE_2D, lastState)
-  gl.drawArrays(gl.TRIANGLES, 0, 6)
 
   requestAnimationFrame(render)
 }
@@ -41,6 +44,9 @@ const step = () => {
 }
 
 const onResize = () => {
+  paused = true
+  width = sharedState.get("windowWidth")
+  height = sharedState.get("windowHeight")
   canvas.width = width
   canvas.height = height
 
@@ -56,12 +62,14 @@ const onResize = () => {
   let rgba = new Float32Array(width * height * 4)
   rgba = makeRandomArray(rgba)
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, makeRandomArray(rgba, width, height))
+
+  paused = false
 }
 
 export default {
   initialize(opts) {
-    width = window.innerWidth
-    height = window.innerHeight
+    width = sharedState.get("windowWidth")
+    height = sharedState.get("windowHeight")
     config = opts
 
     canvas = document.getElementById("webgl-canvas")
@@ -128,5 +136,9 @@ export default {
     gl.bindTexture(gl.TEXTURE_2D, lastState)
 
     render()
+  },
+
+  resize() {
+    onResize()
   }
 }

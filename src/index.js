@@ -41,4 +41,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 window.addEventListener("resize", debounce(() => {
   sharedState.set("windowWidth", window.innerWidth)
   sharedState.set("windowHeight", window.innerHeight)
+
+  renderer.resize()
 }, 250))
