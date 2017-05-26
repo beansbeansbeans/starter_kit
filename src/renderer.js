@@ -1,7 +1,7 @@
 import helpers from './helpers/helpers'
 const { makeTexture, makeFlatArray, makeRandomArray } = helpers
 
-let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState
+let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState, textureSizeLocation
 
 const render = () => {
   if(resizedLastState) {
@@ -39,6 +39,9 @@ const step = () => {
 }
 
 const onResize = () => {
+  canvas.width = width
+  canvas.height = height
+  
   gl.viewport(0, 0, width, height)
 
   gl.uniform2f(textureSizeLocation, width, height)
@@ -63,7 +66,7 @@ export default {
     canvas.width = width
     canvas.height = height
 
-    gl = canvas.getContext("webgl", { antialias: false })
+    gl = canvas.getContext("webgl", { antialias: false }) || canvas.getContext("experimental-webgl", { antialias: false})
 
     gl.disable(gl.DEPTH_TEST)
     gl.getExtension('OES_texture_float')
@@ -110,6 +113,13 @@ export default {
       1.0, 1.0]), gl.STATIC_DRAW)
     gl.enableVertexAttribArray(texCoordLocation)
     gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0)
+
+    onResize()
+
+    lastState = resizedLastState
+    currentState = resizedCurrentState
+    resizedLastState = null
+    resizedCurrentState = null
 
     frameBuffer = gl.createFramebuffer()
 
