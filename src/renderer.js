@@ -1,7 +1,27 @@
-let config, canvas, width, height
+import helpers from './helpers/helpers'
+const { makeTexture, makeFlatArray } = helpers
+
+let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState
 
 const render = () => {
+  gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer)
+  // gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, currentState, 0)
 
+  gl.drawArrays(gl.TRIANGLES, 0, 6)
+}
+
+const onResize = () => {
+  gl.viewport(0, 0, width, height)
+
+  gl.uniform2f(textureSizeLocation, width, height)
+
+  resizedCurrentState = makeTexture(gl)
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null)
+
+  resizedLastState = makeTexture(gl)
+
+  let rgba = new Float32Array(width * height * 4)
+  rgba = makeFlatArray(rgba)
 }
 
 export default {
@@ -22,7 +42,47 @@ export default {
     const program = createProgramFromScripts(gl, config.shaders.mainVert, config.shaders.mainFrag)
     gl.useProgram(program)
 
-    console.log(gl)
+    // obtain the location of the position attribute in the program
+    const positionLocation = gl.getAttribLocation(program, "a_position")
+
+    // create a webgl buffer
+    const bufferPos = gl.createBuffer()
+    
+    // bind the buffer to a target
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferPos)
+
+    // turn the generic vertex attribute array on at a given position
+    gl.enableVertexAttribArray(positionLocation)
+
+    // specify memory layout of the buffer
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
+
+    // initialize and create the buffer object's data store
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      -1.0, -1.0,
+      1.0, -1.0,
+      -1.0, 1.0,
+      -1.0, 1.0,
+      1.0, -1.0,
+      1.0, 1.0]), gl.STATIC_DRAW)
+
+    // constants
+    renderFlagLocation = gl.getAttribLocation(program, "u_renderFlag")
+
+    const texCoordLocation = gl.getAttribLocation(program, "a_texCoord")
+    const texCoordBuffer = gl.createBuffer()
+    gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+      0.0, 0.0,
+      1.0, 0.0,
+      0.0, 1.0,
+      0.0, 1.0,
+      1.0, 0.0,
+      1.0, 1.0]), gl.STATIC_DRAW)
+    gl.enableVertexAttribArray(texCoordLocation)
+    gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0)
+
+    frameBuffer = gl.createFramebuffer()
 
     render()
   }
