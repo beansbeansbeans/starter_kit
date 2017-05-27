@@ -2,7 +2,7 @@ import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 const { makeTexture, makeFlatArray, makeRandomArray } = helpers
 
-let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState, textureSizeLocation, paused = false
+let config, canvas, width, height, renderFlagLocation, frameBuffer, resizedCurrentState, resizedLastState, lastState, currentState, textureSizeLocation, paused = false, glBoilerplate
 
 const render = () => {
   if(!paused) {
@@ -69,6 +69,8 @@ const onResize = () => {
 
 export default {
   initialize(opts) {
+    glBoilerplate = initBoilerPlate();
+
     width = sharedState.get("windowWidth")
     height = sharedState.get("windowHeight")
     config = opts
@@ -82,7 +84,7 @@ export default {
     gl.disable(gl.DEPTH_TEST)
     gl.getExtension('OES_texture_float')
 
-    const program = createProgramFromScripts(gl, config.shaders.mainVert, config.shaders.mainFrag)
+    const program = glBoilerplate.createProgramFromScripts(gl, config.shaders.mainVert, config.shaders.mainFrag)
     gl.useProgram(program)
 
     // obtain the location of the position attribute in the program

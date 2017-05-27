@@ -18,12 +18,19 @@ GRADIENT TEXTURE:
 
 MOVEMENT:
 - with some randomness, move unhappy particles in the direction of the highest gradient
-- with some randomness, move happy particles in direction of equal happiness
+- with some randomness, move happy particles in direction of equal happiness (without stepping on existing particles)
 - after moves are made, resolve conflicts so particles don't occupy the same space
 
 
 FIRST CUT:
-- particles of 2 orientations randomly moving and not colliding
+- particles of 2 orientations randomly moving 
+- and not colliding
+
+alpha: orientation
+
+structure:
+
+a particles texture controls the positions of the particles
 
 
 ---
