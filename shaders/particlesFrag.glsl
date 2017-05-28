@@ -3,6 +3,7 @@ precision mediump float;
 uniform sampler2D u_particles;
 
 uniform vec2 u_textureSize;
+uniform float u_offset;
 
 float eps = 0.0001;
 
@@ -12,7 +13,7 @@ float rand(vec2 co) {
 
 void main() {
   vec2 fragCoord = gl_FragCoord.xy;
-  float nextDir = rand(fragCoord);
+  float nextDir = rand(vec2(mod(fragCoord.x + u_offset, u_textureSize.x), fragCoord.y));
 
   if(nextDir < 1./8.) {
     nextDir = 1.;
