@@ -7,7 +7,7 @@ function initGPUMath() {
 
 var glBoilerplate = initBoilerPlate();
 
-var canvas = document.getElementById("glcanvas");
+var canvas = document.getElementById("webgl-canvas");
 var gl = canvas.getContext("webgl", {antialias:false}) || canvas.getContext("experimental-webgl", {antialias:false});
 gl.getExtension('OES_texture_float');
 gl.disable(gl.DEPTH_TEST);

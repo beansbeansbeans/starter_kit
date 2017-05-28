@@ -5,12 +5,12 @@ import "../main.scss"
 import { getData } from './api'
 import { debounce } from 'underscore'
 import sharedState from './sharedState'
-import renderer from './renderer'
+import renderer from './GPURenderer'
 
 const shaders = {},
   preload = {
     getShaders: () => {
-      Promise.all(['mainFrag', 'mainVert'].map(d =>
+      Promise.all(['renderFrag', 'renderVert', 'particlesFrag'].map(d =>
         fetch(`shaders/${d}.glsl`).then(data => data.text()).then(data => {
           shaders[d] = data
           return data
