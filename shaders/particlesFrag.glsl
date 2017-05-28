@@ -1,13 +1,13 @@
 precision mediump float;
 
-uniform sampler2D u_positions;
+uniform sampler2D u_particles;
 
 uniform vec2 u_textureSize;
 
 void main() {
   vec2 fragCoord = gl_FragCoord.xy;
 
-  vec2 currentPosition = texture2D(u_positions, fragCoord/u_textureSize).xy;
+  vec2 current = texture2D(u_particles, fragCoord/u_textureSize).xy;
 
-  gl_FragColor = vec4(currentPosition, 0, 0);
+  gl_FragColor = vec4(current, 0, 0);
 }
