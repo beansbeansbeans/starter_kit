@@ -105,7 +105,16 @@ GPUMath.prototype.step = function(programName, inputTextures, outputTexture){
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffers[outputTexture]);
     for (var i=0;i<inputTextures.length;i++){
         gl.activeTexture(gl.TEXTURE0 + i);
+
         gl.bindTexture(gl.TEXTURE_2D, this.textures[inputTextures[i]]);
+
+        if(programName === "particles") {
+            // var width = window.innerWidth
+            // var height = window.innerHeight
+            // var test = new Float32Array(width * height * 4)
+            // gl.readPixels(0, 0, width, height, gl.RGBA, gl.FLOAT, test )
+            // debugger            
+        }
     }
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);//draw to framebuffer
 };

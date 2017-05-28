@@ -32,6 +32,24 @@ const onResize = () => {
         } else {
           particles[index] = -1
         }
+        const nextDirection = Math.random()
+        if(nextDirection < 1/8) {
+          particles[index + 1] = 1
+        } else if(nextDirection < 2/8) {
+          particles[index + 1] = 2
+        } else if(nextDirection < 3/8) {
+          particles[index + 1] = 3
+        } else if(nextDirection < 4/8) {
+          particles[index + 1] = 4
+        } else if(nextDirection < 5/8) {
+          particles[index + 1] = 5
+        } else if(nextDirection < 6/8) {
+          particles[index + 1] = 6
+        } else if(nextDirection < 7/8) {
+          particles[index + 1] = 7
+        } else {
+          particles[index + 1] = 8
+        }
       }
     }
   }
