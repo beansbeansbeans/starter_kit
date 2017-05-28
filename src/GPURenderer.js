@@ -74,7 +74,7 @@ const render = () => {
 
   GPU.step("render", ["material", "particles"])
 
-  GPU.swapTextures("particles", "nextParticles")
+  GPU.swapTextures("nextParticles", "particles")
 
   requestAnimationFrame(render)
 }

@@ -45,11 +45,11 @@ void main() {
   if(right > u_textureSize.x) {
     right = 0.;
   }
-  if(above < 0.) {
-    above = u_textureSize.y;
-  }
   if(above > u_textureSize.y) {
     above = 0.;
+  }
+  if(below < 0.) {
+    below = u_textureSize.y;
   }
 
   vec4 w = texture2D(u_particles, vec2(left, fragCoord.y) / u_textureSize);
