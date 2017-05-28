@@ -23,8 +23,8 @@ MOVEMENT:
 
 
 FIRST CUT:
-- particles of 2 orientations randomly moving 
-- and not colliding
+1: particles of 2 orientations randomly moving 
+2: and not colliding
 
 alpha: orientation
 
