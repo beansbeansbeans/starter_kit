@@ -25,9 +25,13 @@ const onResize = () => {
   for(let i=0; i<height; i++) {
     for(let j=0; j<width; j++) {
       const index = 4 * (i * width + j)
-      
-      if(Math.random() < 0.5) {
-        particles[index] = 1
+
+      if(Math.random() < 0.25) {
+        if(Math.random() < 0.5) {
+          particles[index] = 1
+        } else {
+          particles[index] = -1
+        }
       }
     }
   }
