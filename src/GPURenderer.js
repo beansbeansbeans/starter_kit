@@ -1,7 +1,7 @@
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 
-let width, height, paused = false, GPU, config, canvas, offset = 0
+let width, height, paused = false, GPU, config, canvas
 
 const onResize = () => {
   canvas.width = width
@@ -66,20 +66,14 @@ const onResize = () => {
 const render = () => {
   GPU.setSize(width, height)
 
-  // GPU.setProgram("particles") // ?
-
-  GPU.setUniformForProgram("particles", "u_offset", offset, "1f")
+  GPU.setUniformForProgram("particles", "u_offset", Math.random() * 1000, "1f")
   GPU.step("particles", ["particles"], "nextParticles")
-
-  // GPU.setProgram("render") // ?
 
   GPU.step("render", ["material", "particles"])
 
   GPU.swapTextures("nextParticles", "particles")
 
   requestAnimationFrame(render)
-
-  offset++
 }
 
 export default {
@@ -94,7 +88,7 @@ export default {
 
     GPU.createProgram("particles", config.shaders.renderVert, config.shaders.particlesFrag)
     GPU.setUniformForProgram("particles", "u_particles", 0, "1i")
-    GPU.setUniformForProgram("particles", "u_offset", offset, "1f")
+    GPU.setUniformForProgram("particles", "u_offset", 1, "1f")
 
     GPU.createProgram("render", config.shaders.renderVert, config.shaders.renderFrag)
     GPU.setUniformForProgram("render", "u_material", 0, "1i")
