@@ -1,6 +1,5 @@
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
-const { makeTexture, makeFlatArray, makeRandomArray } = helpers
 
 let width, height, paused = false, GPU, config, canvas
 
@@ -12,7 +11,7 @@ const onResize = () => {
   for(let i=0; i<height; i++) {
     for(let j=0; j<width; j++) {
       const index = 4 * (i * width + j)
-      if(Math.random() < 0.1) {
+      if(Math.random() < 0.5) {
         particles[index] = 1
       }
     }
@@ -44,9 +43,14 @@ const onResize = () => {
 const render = () => {
   GPU.setSize(width, height)
 
-  GPU.step("particles", ["nextParticles"])
+  GPU.setProgram("particles") // ?
 
-  GPU.step("render", ["material"])
+  GPU.step("particles", ["particles"], "nextParticles")
+
+  GPU.setProgram("render") // ?
+
+  // GPU.step("render", ["nextParticles", "material"])
+  GPU.step("render", ["material", "nextParticles"])
 
   GPU.swapTextures("nextParticles", "particles")
 
@@ -67,6 +71,7 @@ export default {
     GPU.setUniformForProgram("particles", "u_particles", 0, "1i")
 
     GPU.createProgram("render", config.shaders.renderVert, config.shaders.renderFrag)
+    GPU.setUniformForProgram("render", "u_particles", 0, "1i")
     GPU.setUniformForProgram("render", "u_material", 0, "1i")
 
     onResize()
