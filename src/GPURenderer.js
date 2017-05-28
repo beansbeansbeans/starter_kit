@@ -25,23 +25,19 @@ const onResize = () => {
   for(let i=0; i<height; i++) {
     for(let j=0; j<width; j++) {
       const index = 4 * (i * width + j)
-      // if(Math.random() < 0.5) {
-        // particles[index] = 10
-
+      
+      if(Math.random() < 0.5) {
         particles[index] = 1
-        particles[index + 1] = 0
-        particles[index + 2] = 0
-        particles[index + 3] = 1  
-      // }
+      }
     }
   }
 
   GPU.initTextureFromData("particles", width, height, "FLOAT", particles, true)
   GPU.initFrameBufferForTexture("particles", true)
-  // GPU.initTextureFromData("nextParticles", width, height, "FLOAT", particles, true)
-  // GPU.initFrameBufferForTexture("nextParticles", true)
+  GPU.initTextureFromData("nextParticles", width, height, "FLOAT", particles, true)
+  GPU.initFrameBufferForTexture("nextParticles", true)
 
-  // GPU.setUniformForProgram("particles", "u_textureSize", [width, height], "2f")
+  GPU.setUniformForProgram("particles", "u_textureSize", [width, height], "2f")
   GPU.setUniformForProgram("render", "u_textureSize", [width, height], "2f")
 }
 
@@ -50,13 +46,13 @@ const render = () => {
 
   // GPU.setProgram("particles") // ?
 
-  // GPU.step("particles", ["particles"], "nextParticles")
+  GPU.step("particles", ["particles"], "nextParticles")
 
   // GPU.setProgram("render") // ?
 
   GPU.step("render", ["material", "particles"])
 
-  // GPU.swapTextures("particles", "nextParticles")
+  GPU.swapTextures("particles", "nextParticles")
 
   requestAnimationFrame(render)
 }
@@ -71,8 +67,8 @@ export default {
 
     GPU = initGPUMath()
 
-    // GPU.createProgram("particles", config.shaders.renderVert, config.shaders.particlesFrag)
-    // GPU.setUniformForProgram("particles", "u_particles", 0, "1i")
+    GPU.createProgram("particles", config.shaders.renderVert, config.shaders.particlesFrag)
+    GPU.setUniformForProgram("particles", "u_particles", 0, "1i")
 
     GPU.createProgram("render", config.shaders.renderVert, config.shaders.renderFrag)
     GPU.setUniformForProgram("render", "u_material", 0, "1i")
