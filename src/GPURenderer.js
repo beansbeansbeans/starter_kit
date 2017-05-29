@@ -7,20 +7,6 @@ const onResize = () => {
   canvas.width = width
   canvas.height = height
 
-  const material = new Float32Array(width * height * 4)
-  for(let i=0; i<height; i++) {
-    for(let j=0; j<width; j++) {
-      const index = 4 * (i * width + j)
-      material[index] = 0.5
-      material[index + 1] = 0.5
-      material[index + 2] = 0.5
-      material[index + 3] = 1        
-    }
-  }
-
-  GPU.initTextureFromData("material", width, height, "FLOAT", material, true)
-  GPU.initFrameBufferForTexture("material", true)
-
   const particles = new Float32Array(width * height * 4)
   for(let i=0; i<height; i++) {
     for(let j=0; j<width; j++) {
@@ -69,7 +55,7 @@ const render = () => {
   GPU.setUniformForProgram("particles", "u_offset", Math.random() * 1000, "1f")
   GPU.step("particles", ["particles"], "nextParticles")
 
-  GPU.step("render", ["material", "particles"])
+  GPU.step("render", ["particles"])
 
   GPU.swapTextures("nextParticles", "particles")
 
@@ -91,8 +77,7 @@ export default {
     GPU.setUniformForProgram("particles", "u_offset", 1, "1f")
 
     GPU.createProgram("render", config.shaders.renderVert, config.shaders.renderFrag)
-    GPU.setUniformForProgram("render", "u_material", 0, "1i")
-    GPU.setUniformForProgram("render", "u_particles", 1, "1i")
+    GPU.setUniformForProgram("render", "u_particles", 0, "1i")
 
     onResize()
 

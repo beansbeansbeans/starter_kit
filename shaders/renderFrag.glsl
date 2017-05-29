@@ -1,6 +1,5 @@
 precision mediump float;
 
-uniform sampler2D u_material;
 uniform sampler2D u_particles;
 uniform vec2 u_textureSize;
 
