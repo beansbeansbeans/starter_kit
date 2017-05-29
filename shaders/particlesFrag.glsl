@@ -12,77 +12,48 @@ float rand(vec2 co) {
 }
 
 void main() {
+  vec2 onePixel = vec2(1.0, 1.0)/u_textureSize;
   vec2 fragCoord = gl_FragCoord.xy;
-  float nextDir = rand(vec2(mod(fragCoord.x + u_offset, u_textureSize.x), fragCoord.y));
+  float random = rand(vec2(mod(fragCoord.x + u_offset, u_textureSize.x), fragCoord.y));
 
-  if(nextDir < 1./8.) {
-    nextDir = 1.;
-  } else if(nextDir < 2./8.) {
-    nextDir = 2.;
-  } else if(nextDir < 3./8.) {
-    nextDir = 3.;
-  } else if(nextDir < 4./8.) {
-    nextDir = 4.;
-  } else if(nextDir < 5./8.) {
-    nextDir = 5.;
-  } else if(nextDir < 6./8.) {
-    nextDir = 6.;
-  } else if(nextDir < 7./8.) {
-    nextDir = 7.;
+  vec4 current = texture2D(u_particles, vec2(fragCoord.x, fragCoord.y) / u_textureSize);
+  float newX = current.g;
+  float newY = current.b;
+
+  if(random < 1./8.) {
+    newX -= onePixel.x;
+    newY += onePixel.y;
+  } else if(random < 2./8.) {
+    newY += onePixel.y;
+  } else if(random < 3./8.) {
+    newX += onePixel.x;
+    newY += onePixel.y;
+  } else if(random < 4./8.) {
+    newX += onePixel.x;
+  } else if(random < 5./8.) {
+    newX += onePixel.x;
+    newY -= onePixel.y;
+  } else if(random < 6./8.) {
+    newY -= onePixel.y;
+  } else if(random < 7./8.) {
+    newX -= onePixel.x;
+    newY -= onePixel.y;
   } else {
-    nextDir = 8.;
+    newX -= onePixel.x;
   }
 
-  float current = 0.;
-
-  float left = fragCoord.x - 1.;
-  float right = fragCoord.x + 1.;
-  float above = fragCoord.y + 1.;
-  float below = fragCoord.y - 1.;
-  
-  if(left < 0.) {
-    left = u_textureSize.x;
+  if(newX > 1.) {
+    newX = 0.;
   }
-  if(right > u_textureSize.x) {
-    right = 0.;
+  if(newX < 0.) {
+    newX = 1.;
   }
-  if(above > u_textureSize.y) {
-    above = 0.;
+  if(newY > 1.) {
+    newY = 0.;
   }
-  if(below < 0.) {
-    below = u_textureSize.y;
+  if(newY < 0.) {
+    newY = 1.;
   }
 
-  vec4 w = texture2D(u_particles, vec2(left, fragCoord.y) / u_textureSize);
-  vec4 nw = texture2D(u_particles, vec2(left, above) / u_textureSize);
-  vec4 n = texture2D(u_particles, vec2(fragCoord.x, above) / u_textureSize);
-  vec4 ne = texture2D(u_particles, vec2(right, above) / u_textureSize);
-  vec4 e = texture2D(u_particles, vec2(right, fragCoord.y) / u_textureSize);
-  vec4 se = texture2D(u_particles, vec2(right, below) / u_textureSize);
-  vec4 s = texture2D(u_particles, vec2(fragCoord.x, below) / u_textureSize);
-  vec4 sw = texture2D(u_particles, vec2(left, below) / u_textureSize);
-
-  if(abs(w.y - 4.) < eps) {
-    current = w.x;
-  } else if(abs(nw.y - 5.) < eps) {
-    current = nw.x;
-  } else if(abs(n.y - 6.) < eps) {
-    current = n.x;
-  } else if(abs(ne.y - 7.) < eps) {
-    current = ne.x;
-  } else if(abs(e.y - 8.) < eps) {
-    current = e.x;
-  } else if(abs(se.y - 1.) < eps) {
-    current = se.x;
-  } else if(abs(s.y - 2.) < eps) {
-    current = s.x;
-  } else if(abs(sw.y - 3.) < eps) {
-    current = sw.x;
-  }
-
-  if(abs(current - 0.) < eps) {
-    nextDir = 0.;
-  }
-
-  gl_FragColor = vec4(current, nextDir, 0, 0);
+  gl_FragColor = vec4(current.r, newX, newY, 0.);
 }

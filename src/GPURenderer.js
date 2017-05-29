@@ -1,7 +1,7 @@
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 
-let width, height, paused = false, GPU, config, canvas
+let width, height, paused = false, GPU, config, canvas, debug = false
 
 const onResize = () => {
   canvas.width = width
@@ -18,25 +18,10 @@ const onResize = () => {
         } else {
           particles[index] = -1
         }
-        const nextDirection = Math.random()
-        if(nextDirection < 1/8) {
-          particles[index + 1] = 1
-        } else if(nextDirection < 2/8) {
-          particles[index + 1] = 2
-        } else if(nextDirection < 3/8) {
-          particles[index + 1] = 3
-        } else if(nextDirection < 4/8) {
-          particles[index + 1] = 4
-        } else if(nextDirection < 5/8) {
-          particles[index + 1] = 5
-        } else if(nextDirection < 6/8) {
-          particles[index + 1] = 6
-        } else if(nextDirection < 7/8) {
-          particles[index + 1] = 7
-        } else {
-          particles[index + 1] = 8
-        }
       }
+
+      particles[index + 1] = i / height;
+      particles[index + 2] = j / width;
     }
   }
 
@@ -44,6 +29,13 @@ const onResize = () => {
   GPU.initFrameBufferForTexture("particles", true)
   GPU.initTextureFromData("nextParticles", width, height, "FLOAT", particles, true)
   GPU.initFrameBufferForTexture("nextParticles", true)
+
+  if(debug) {
+    GPU.initTextureFromData("debugMaterial", width, height, "FLOAT", new Float32Array(width * height * 4), true)
+    GPU.initFrameBufferForTexture("debugMaterial", true)
+    GPU.initTextureFromData("nextDebugMaterial", width, height, "FLOAT", new Float32Array(width * height * 4), true)
+    GPU.initFrameBufferForTexture("nextDebugMaterial", true)    
+  }
 
   GPU.setProgram("particles")
   GPU.setUniformForProgram("particles", "u_textureSize", [width, height], "2f")
@@ -61,7 +53,17 @@ const render = () => {
   GPU.setProgram("render")
   GPU.step("render", ["particles"])
 
-  GPU.swapTextures("nextParticles", "particles")
+  if(debug) {
+    GPU.step("render", ["nextParticles", "debugMaterial"], "nextDebugMaterial", true)
+  } else {
+    GPU.step("render", ["nextParticles"], null, true)
+  }
+
+  GPU.swapTextures("particles", "nextParticles")
+
+  if(debug) {
+    GPU.swapTextures("debugMaterial", "nextDebugMaterial")
+  }
 
   requestAnimationFrame(render)
 }
@@ -74,14 +76,15 @@ export default {
     width = sharedState.get("windowWidth")
     height = sharedState.get("windowHeight")
 
-    GPU = initGPUMath()
+    GPU = initGPUMath({ width, height })
 
     GPU.createProgram("particles", config.shaders.renderVert, config.shaders.particlesFrag)
     GPU.setUniformForProgram("particles", "u_particles", 0, "1i")
     GPU.setUniformForProgram("particles", "u_offset", 1, "1f")
 
-    GPU.createProgram("render", config.shaders.renderVert, config.shaders.renderFrag)
+    GPU.createProgram("render", config.shaders.mainVert, config.shaders.renderFrag, true)
     GPU.setUniformForProgram("render", "u_particles", 0, "1i")
+    GPU.setUniformForProgram("render", "u_debugMaterial", 1, "1i")
 
     onResize()
 

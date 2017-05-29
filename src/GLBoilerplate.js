@@ -102,12 +102,35 @@ function initBoilerPlate(){
 
     function loadVertexData(gl, program) {
         gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ -1,-1, 1,-1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([ -1,-1, 1,-1, -1, 1, 1, 1 ]), gl.STATIC_DRAW);
 
         // look up where the vertex data needs to go.
         var positionLocation = gl.getAttribLocation(program, "a_position");
         gl.enableVertexAttribArray(positionLocation);
         gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    function loadDynamicVertexData(gl, program, width, height) {
+      var positions = new Float32Array(width * height * 2)
+      for(var i=0; i<height; i++) {
+        for(var j=0; j<width; j++) {
+          const index = 2 * (i * width + j)
+          positions[index] = (i / height) * 2 - 1
+          positions[index + 1] = (j / width) * 2 - 1
+        }
+      }
+
+      var input = [-1,-1, 1,-1, -1, 1, 1, 1]
+      for(var i=0; i<width * height * 2; i++) {
+        input.push(positions[i])
+      }
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer())
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(input), gl.STATIC_DRAW)
+
+      var positionLocation = gl.getAttribLocation(program, "a_position")
+      gl.enableVertexAttribArray(positionLocation)
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
     }
 
     function makeTexture(gl, width, height, type, data){
@@ -130,6 +153,7 @@ function initBoilerPlate(){
         createProgramFromSource: createProgramFromSource,
         createProgramFromScripts: createProgramFromScripts,
         loadVertexData: loadVertexData,
+        loadDynamicVertexData: loadDynamicVertexData,
         makeTexture: makeTexture
     }
 };

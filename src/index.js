@@ -10,7 +10,7 @@ import renderer from './GPURenderer'
 const shaders = {},
   preload = {
     getShaders: () => {
-      Promise.all(['renderFrag', 'renderVert', 'particlesFrag'].map(d =>
+      Promise.all(['renderFrag', 'renderVert', 'particlesFrag', 'mainVert'].map(d =>
         fetch(`shaders/${d}.glsl`).then(data => data.text()).then(data => {
           shaders[d] = data
           return data

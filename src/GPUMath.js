@@ -3,7 +3,9 @@
 */
 
 
-function initGPUMath() {
+function initGPUMath(opts) {
+    var width = opts.width
+    var height = opts.height
 
 var glBoilerplate = initBoilerPlate();
 
@@ -20,7 +22,7 @@ function GPUMath(){
     this.reset();
 }
 
-GPUMath.prototype.createProgram = function(programName, vertexShader, fragmentShader){
+GPUMath.prototype.createProgram = function(programName, vertexShader, fragmentShader, dynamic){
     var programs = this.programs;
     var program = programs[programName];
     if (program) {
@@ -29,7 +31,12 @@ GPUMath.prototype.createProgram = function(programName, vertexShader, fragmentSh
     }
     program = glBoilerplate.createProgramFromScripts(gl, vertexShader, fragmentShader);
     gl.useProgram(program);
-    glBoilerplate.loadVertexData(gl, program);
+    if(dynamic) {
+        glBoilerplate.loadDynamicVertexData(gl, program, width, height);
+    } else {
+        glBoilerplate.loadVertexData(gl, program);
+    }
+
     programs[programName] = {
         program: program,
         uniforms: {}
@@ -99,7 +106,14 @@ GPUMath.prototype.setProgram = function(programName){
     gl.useProgram(this.programs[programName].program);
 };
 
-GPUMath.prototype.step = function(programName, inputTextures, outputTexture){
+var debugIndices = []
+for(var i=0; i<width*height*4; i++) {
+    if(Math.random() < 0.001) {
+        debugIndices.push(i)
+    }
+}
+
+GPUMath.prototype.step = function(programName, inputTextures, outputTexture, points) {
 
     gl.useProgram(this.programs[programName].program);
     gl.bindFramebuffer(gl.FRAMEBUFFER, this.frameBuffers[outputTexture]);
@@ -109,14 +123,31 @@ GPUMath.prototype.step = function(programName, inputTextures, outputTexture){
         gl.bindTexture(gl.TEXTURE_2D, this.textures[inputTextures[i]]);
 
         if(programName === "particles") {
-            // var width = window.innerWidth
-            // var height = window.innerHeight
             // var test = new Float32Array(width * height * 4)
             // gl.readPixels(0, 0, width, height, gl.RGBA, gl.FLOAT, test )
+            // var output = []
+            // for(var i=0; i<height; i++) {
+            //   for(var j=0; j<width; j++) {
+            //     const index = 4 * (i * width + j)
+            //     if(debugIndices.indexOf(index) > -1) {
+            //         output.push(+test[index + 1].toFixed(2))
+            //         output.push(+test[index + 2].toFixed(2))
+            //     }
+            //   }
+            // }
+
+            // console.log("--------")
+            // console.log(programName)
+            // console.log(JSON.stringify(output))
             // debugger            
         }
     }
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);//draw to framebuffer
+
+    if(points) {
+        gl.drawArrays(gl.POINTS, 0, 4 + width * height)
+    } else {
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);//draw to framebuffer
+    }
 };
 
 GPUMath.prototype.swapTextures = function(texture1Name, texture2Name){

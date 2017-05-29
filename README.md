@@ -21,10 +21,12 @@ MOVEMENT:
 - with some randomness, move happy particles in direction of equal happiness (without stepping on existing particles)
 - after moves are made, resolve conflicts so particles don't occupy the same space
 
-
 FIRST CUT:
 1: particles of 2 orientations randomly moving 
-2: and not colliding
+(2: and not colliding)
+
+NEXT CUT:
+
 
 alpha: orientation
 
