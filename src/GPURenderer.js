@@ -45,16 +45,20 @@ const onResize = () => {
   GPU.initTextureFromData("nextParticles", width, height, "FLOAT", particles, true)
   GPU.initFrameBufferForTexture("nextParticles", true)
 
+  GPU.setProgram("particles")
   GPU.setUniformForProgram("particles", "u_textureSize", [width, height], "2f")
+  GPU.setProgram("render")
   GPU.setUniformForProgram("render", "u_textureSize", [width, height], "2f")
 }
 
 const render = () => {
   GPU.setSize(width, height)
 
+  GPU.setProgram("particles")
   GPU.setUniformForProgram("particles", "u_offset", Math.random() * 1000, "1f")
   GPU.step("particles", ["particles"], "nextParticles")
 
+  GPU.setProgram("render")
   GPU.step("render", ["particles"])
 
   GPU.swapTextures("nextParticles", "particles")
