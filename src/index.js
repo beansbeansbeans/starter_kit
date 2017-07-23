@@ -27,6 +27,7 @@ class App extends Component {
   render({}) {
     return (
       <app>
+        <h1>hi</h1>
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
