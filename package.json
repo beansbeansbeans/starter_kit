@@ -67,6 +67,7 @@
     "d3-scale": "^1.0.4",
     "preact": "^7.1.0",
     "rollup-plugin-babel": "^2.7.1",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "uuid": "^3.1.0"
   }
 }

@@ -6,6 +6,7 @@ import { getData, getShader } from './api'
 import { debounce } from 'underscore'
 import sharedState from './sharedState'
 import renderer from './GPURenderer'
+import './tree'
 
 let shaderFiles = []
 
