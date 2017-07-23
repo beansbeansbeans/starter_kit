@@ -2,21 +2,23 @@ import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
 const { roundDown } = helpers
 import "../main.scss"
-import { getData } from './api'
+import { getData, getShader } from './api'
 import { debounce } from 'underscore'
 import sharedState from './sharedState'
 import renderer from './GPURenderer'
 
+let shaderFiles = []
+
 const shaders = {},
   preload = {
-    getShaders: () => {
-      Promise.all(['renderFrag', 'renderVert', 'particlesFrag', 'mainVert'].map(d =>
-        fetch(`shaders/${d}.glsl`).then(data => data.text()).then(data => {
-          shaders[d] = data
-          return data
-        })
-      ))
-    },
+    getShaders: () =>
+      Promise.all(shaderFiles.map(getShader)).then(data => {
+        for(let i=0; i<data.length; i++) {
+          shaders[shaderFiles[i]] = data[i]
+        }
+        return data
+      })
+    ,
     getData: () =>
       Promise.all([].map(getData))
   }
