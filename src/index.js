@@ -56,12 +56,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   web.add(nestedSupportNode, supportNode)
   web.add(new Node('it is wrong because'), supportNode)
 
-  console.log(web)
-
-  // retrieve the nested 'it is wrong because' node
-  const match = web.find('it is wrong because')
-  console.log(match)
-
   if(debug) {
     DebugVisualizer.initialize(web)
     DebugVisualizer.draw()    

@@ -15,7 +15,7 @@ export default {
     svg.attr("width", width)
     svg.attr("height", height)
 
-    g = svg.append("g").attr("transform", "translate(0, 0)")
+    g = svg.append("g").attr("transform", "translate(40, 0)")
 
     let processedData = []
 
@@ -30,7 +30,7 @@ export default {
 
     var root = stratify(processedData)
 
-    tree = cluster().size([ height, width ])(root)
+    tree = cluster().size([ height, width - 160 /*to accommodate labels*/ ])(root)
 
     const link = g.selectAll(".link")
         .data(root.descendants().slice(1))
