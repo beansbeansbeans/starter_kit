@@ -8,6 +8,7 @@ import sharedState from './sharedState'
 import renderer from './GPURenderer'
 import treeData from './tree'
 const { Tree, Node } = treeData
+import DebugVisualizer from './debugVisualizer'
 
 let shaderFiles = []
 
@@ -28,7 +29,6 @@ class App extends Component {
   render({}) {
     return (
       <app>
-        <svg id="debug-tree"></svg>
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
@@ -39,6 +39,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
   renderer.initialize({ shaders })
 
+  // create web
   const web = new Tree('climate change is a hoax')
   web.add(new Node('no it is not'), web._root)
 
@@ -54,6 +55,9 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   // retrieve the nested 'it is wrong because' node
   const match = web.find('it is wrong because')
   console.log(match)
+
+  DebugVisualizer.initialize(web)
+  DebugVisualizer.draw()
 })
 
 window.addEventListener("resize", debounce(() => {
