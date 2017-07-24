@@ -62,29 +62,4 @@ Tree.prototype.remove = function(node) {
   children.splice(index, 1)
 }
 
-const web = new Tree('climate change is a hoax')
-web.add(new Node('no it is not'), web._root)
-
-const supportNode = new Node('that is right')
-web.add(supportNode, web._root)
-
-const nestedSupportNode = new Node('it is right because')
-web.add(nestedSupportNode, supportNode)
-web.add(new Node('it is wrong because'), supportNode)
-
-console.log(web)
-
-// retrieve the nested 'it is wrong because' node
-const match = web.find('it is wrong because')
-console.log(match)
-
-// fail to retrieve a node that doesn't exist
-
-const failed = web.find('whatever')
-console.log(failed)
-
-
-
-
-
-
+export default { Tree, Node }

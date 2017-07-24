@@ -6,7 +6,8 @@ import { getData, getShader } from './api'
 import { debounce } from 'underscore'
 import sharedState from './sharedState'
 import renderer from './GPURenderer'
-import './tree'
+import treeData from './tree'
+const { Tree, Node } = treeData
 
 let shaderFiles = []
 
@@ -20,15 +21,14 @@ const shaders = {},
         return data
       })
     ,
-    getData: () =>
-      Promise.all([].map(getData))
+    getData: () => Promise.all([].map(getData))
   }
 
 class App extends Component {
   render({}) {
     return (
       <app>
-        <h1>hi</h1>
+        <svg id="debug-tree"></svg>
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
@@ -36,10 +36,24 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  setTimeout(() => {
-    render(<App />, document.body)
-    renderer.initialize({ shaders })
-  }, 1000)
+  render(<App />, document.body)
+  renderer.initialize({ shaders })
+
+  const web = new Tree('climate change is a hoax')
+  web.add(new Node('no it is not'), web._root)
+
+  const supportNode = new Node('that is right')
+  web.add(supportNode, web._root)
+
+  const nestedSupportNode = new Node('it is right because')
+  web.add(nestedSupportNode, supportNode)
+  web.add(new Node('it is wrong because'), supportNode)
+
+  console.log(web)
+
+  // retrieve the nested 'it is wrong because' node
+  const match = web.find('it is wrong because')
+  console.log(match)
 })
 
 window.addEventListener("resize", debounce(() => {
