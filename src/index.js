@@ -29,6 +29,7 @@ class App extends Component {
   render({}) {
     return (
       <app>
+        <svg id="debug-svg"></svg>
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
