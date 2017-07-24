@@ -12,21 +12,16 @@ Tree.prototype.traverseDF = function() {
 
 }
 
-Tree.prototype.traverseBF = function() {
-
-}
-
-Tree.prototype.find = function(data, property = 'data') {
+Tree.prototype.traverseBF = function(matchFn) {
   let match, toSearch = [this._root]
 
-  // breadth-first
   function walk() {
     let newToSearch = []
 
     for(let i=0; i<toSearch.length; i++) {
       let node = toSearch[i]
 
-      if(node[property] === data) {
+      if(matchFn(node)) {
         match = node
         break
       }
@@ -44,6 +39,10 @@ Tree.prototype.find = function(data, property = 'data') {
   walk()
 
   return match
+}
+
+Tree.prototype.find = function(data, property = 'data') {
+  return this.traverseBF(node => node[property] === data)
 }
 
 Tree.prototype.add = function(n, parent) {
