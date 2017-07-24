@@ -2,13 +2,17 @@ body {
   margin: 0;
 }
 
+app {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
 canvas {
-  margin-left: auto;
-  margin-right: auto;
   display: block;
   border: solid 1px #ccc;
-  transform: translateY(-50%);
-  top: 50vh;
   position: relative;
 }
 
