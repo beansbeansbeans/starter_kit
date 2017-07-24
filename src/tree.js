@@ -1,22 +1,25 @@
-function Node(val) {
+function Node(val, supports) {
   this.data = val
   this.children = []
   this._id = uuid.v4()
+  this.supports = supports
 }
 
 function Tree(val) {
   this._root = new Node(val)
 }
 
-Tree.prototype.traverseDF = function(matchFn) {
+Tree.prototype.traverseDF = function(matchFn, seed) {
+  if(typeof seed === 'undefined') seed = this._root
+
   const find = node => node.children.reduce((acc, curr) => {
     if(matchFn(curr)) return curr
     return find(curr)
   }, false)
 
-  if(matchFn(this._root)) return this._root
+  if(matchFn(seed)) return seed
 
-  return find(this._root)
+  return find(seed)
 }
 
 Tree.prototype.traverseBF = function(matchFn) {
@@ -62,4 +65,18 @@ Tree.prototype.remove = function(node) {
   children.splice(index, 1)
 }
 
+Tree.prototype.solve = function(node, value) {
+  node.value = value
+
+  // propagate downwards
+  this.traverseDF(n => {
+    if(typeof n.value !== 'undefined') return
+
+    n.value = n.parent.value ? n.supports : !n.supports
+  }, node)
+}
+
 export default { Tree, Node }
+
+
+

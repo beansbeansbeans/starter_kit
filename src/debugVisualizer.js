@@ -25,7 +25,6 @@ export default {
         name: node._id,
         value: node
       })
-      return false
     })
 
     var root = stratify(processedData)

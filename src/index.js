@@ -47,19 +47,23 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   // create web
   const web = new Tree('climate change is a hoax')
-  web.add(new Node('no it is not'), web._root)
+  web.add(new Node('no it is not', false), web._root)
 
-  const supportNode = new Node('that is right')
+  const supportNode = new Node('that is right', true)
   web.add(supportNode, web._root)
 
-  const nestedSupportNode = new Node('it is right because')
+  const nestedSupportNode = new Node('it is right because', true)
   web.add(nestedSupportNode, supportNode)
-  web.add(new Node('it is wrong because'), supportNode)
+  web.add(new Node('it is wrong because', false), supportNode)
 
   if(debug) {
     DebugVisualizer.initialize(web)
     DebugVisualizer.draw()    
   }
+
+  web.solve(supportNode, true)
+
+  console.log(web)
 })
 
 window.addEventListener("resize", debounce(() => {
