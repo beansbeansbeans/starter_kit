@@ -5,11 +5,26 @@ function Node(val) {
 }
 
 function Tree(val) {
-  this._root = new Node(val, null)
+  this._root = new Node(val)
 }
 
-Tree.prototype.traverseDF = function() {
+Tree.prototype.traverseDF = function(matchFn) {
+  let match
 
+  function find(node) {
+    return node.children.reduce((acc, curr) => {
+      if(matchFn(curr)) return curr
+      return find(curr)
+    }, false)
+  }
+
+  if(matchFn(this._root)) {
+    match = this._root
+  } else {
+    match = find(this._root)
+  }
+
+  return match
 }
 
 Tree.prototype.traverseBF = function(matchFn) {
