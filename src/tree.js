@@ -9,22 +9,14 @@ function Tree(val) {
 }
 
 Tree.prototype.traverseDF = function(matchFn) {
-  let match
+  const find = node => node.children.reduce((acc, curr) => {
+    if(matchFn(curr)) return curr
+    return find(curr)
+  })
 
-  function find(node) {
-    return node.children.reduce((acc, curr) => {
-      if(matchFn(curr)) return curr
-      return find(curr)
-    }, false)
-  }
+  if(matchFn(this._root)) return this._root
 
-  if(matchFn(this._root)) {
-    match = this._root
-  } else {
-    match = find(this._root)
-  }
-
-  return match
+  return find(this._root)
 }
 
 Tree.prototype.traverseBF = function(matchFn) {
@@ -57,7 +49,7 @@ Tree.prototype.traverseBF = function(matchFn) {
 }
 
 Tree.prototype.find = function(data, property = 'data') {
-  return this.traverseBF(node => node[property] === data)
+  return this.traverseDF(node => node[property] === data)
 }
 
 Tree.prototype.add = function(n, parent) {
