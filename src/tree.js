@@ -12,7 +12,7 @@ Tree.prototype.traverseDF = function(matchFn) {
   const find = node => node.children.reduce((acc, curr) => {
     if(matchFn(curr)) return curr
     return find(curr)
-  })
+  }, false)
 
   if(matchFn(this._root)) return this._root
 
@@ -33,9 +33,7 @@ Tree.prototype.traverseBF = function(matchFn) {
         break
       }
 
-      if(node.children.length) {
-        newToSearch = newToSearch.concat(node.children)
-      }
+      node.children.forEach(c => newToSearch.push(c))
     }
 
     toSearch = newToSearch
@@ -81,6 +79,9 @@ const match = web.find('it is wrong because')
 console.log(match)
 
 // fail to retrieve a node that doesn't exist
+
+const failed = web.find('whatever')
+console.log(failed)
 
 
 
