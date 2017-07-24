@@ -52,7 +52,7 @@ export default {
     node.append("text")
       .attr("dy", 3)
       .attr("x", d => d.children ? -8 : 8)
-      .text(d => d.value)
+      .text(d => d.data.value.data)
   },
 
   draw() {
