@@ -65,6 +65,7 @@
   "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit",
   "dependencies": {
     "d3-scale": "^1.0.4",
+    "d3-selection": "^1.1.0",
     "preact": "^7.1.0",
     "rollup-plugin-babel": "^2.7.1",
     "underscore": "^1.8.3",
