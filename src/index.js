@@ -10,7 +10,7 @@ import treeData from './tree'
 const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 
-let shaderFiles = []
+let shaderFiles = [], debug = true
 
 const shaders = {},
   preload = {
@@ -27,9 +27,14 @@ const shaders = {},
 
 class App extends Component {
   render({}) {
+    let debugDOM = null
+    if(debug) {
+      debugDOM = <svg id="debug-svg"></svg>
+    }
+
     return (
       <app>
-        <svg id="debug-svg"></svg>
+        {debugDOM}
         <canvas id="webgl-canvas"></canvas>
       </app>
     )
@@ -57,8 +62,10 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   const match = web.find('it is wrong because')
   console.log(match)
 
-  DebugVisualizer.initialize(web)
-  DebugVisualizer.draw()
+  if(debug) {
+    DebugVisualizer.initialize(web)
+    DebugVisualizer.draw()    
+  }
 })
 
 window.addEventListener("resize", debounce(() => {
