@@ -44,7 +44,7 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
-  renderer.initialize({ shaders })
+  renderer.initialize({ container: document.querySelector("app"), shaders })
 
   // create web
   const web = new Tree('climate change is a hoax')

@@ -10,7 +10,10 @@ const onResize = () => {
 
 export default {
   initialize(opts) {
-    regl = reglImport({ extensions: ['angle_instanced_arrays'] })
+    regl = reglImport({ 
+      extensions: ['angle_instanced_arrays'],
+      container: opts.container
+    })
 
     config = opts
 
