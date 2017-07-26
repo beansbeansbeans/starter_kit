@@ -1,0 +1,19 @@
+{
+  "data": "climate change is a hoax",
+  "supports": [
+    {
+      "data": "yes it is",
+      "supports": [
+      ]
+    }
+  ],
+  "rejects": [
+    {
+      "data": "no it is not",
+      "supports": [
+      ],
+      "rejects": [
+      ]
+    }
+  ]
+}

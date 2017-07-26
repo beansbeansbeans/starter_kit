@@ -10,7 +10,7 @@ import treeData from './tree'
 const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 
-let shaderFiles = [], debug = true
+let shaderFiles = [], argument, debug = true
 
 const shaders = {},
   preload = {
@@ -22,7 +22,9 @@ const shaders = {},
         return data
       })
     ,
-    getData: () => Promise.all([].map(getData))
+    getData: () => 
+      Promise.all(['argument'].map(getData))
+        .then(data => argument = data)
   }
 
 class App extends Component {

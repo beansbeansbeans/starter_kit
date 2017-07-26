@@ -90,8 +90,9 @@ Tree.prototype.solve = function(node, value) {
   - if it's true, then we can narrow down the domains of its attackers (they are all rejected)
   - if it's false, that's all we can do, unless it only has one attacker (then it is true)
 
-  - i think you keep moving down and up until you no longer can
-  - then you start solving the tree from the top, assigning provisional values to everything, and backtracking / reassigning when you come up against a constraint
+  - propagate fixed values outward as far as you can
+
+  - then you start solving the tree from the top, assigning provisional values to everything, and backtracking / reassigning when you come up against a violated constraint
 
   then:
   - figure out how to output multiple solutions
@@ -129,7 +130,6 @@ Tree.prototype.solve = function(node, value) {
       } else if(attackers.some(n => n.value === true)) {
         n.value = false
       }
-
     }, node.parent)
 
     // traverse down from root
@@ -138,6 +138,42 @@ Tree.prototype.solve = function(node, value) {
 
   // THEN (finally), output solutions with backtracking
 
+  return
+  this.traverseDF(n => {
+    if(typeof n.value === 'undefined') {
+
+      if(n.parent) {
+        if(n.parent.value === true || n.parent.provisionalValue === true) {
+          if(!n.supports) {
+            n.provisionalValue = false
+          }
+        } else if(n.parent.value === false || n.parent.provisionalValue === false) { // one of the attackers must be true
+          if(n.parent.children.filter(n => !n.supports)
+            .filter(n => n.value === true || n.provisionalValue === true).length < 1) {
+            n.provisionalValue = true
+          }
+        }
+      }
+
+      if(typeof n.provisionalValue === 'undefined') { // if still no value...
+        n.provisionalValue = Math.random() < 0.5 ? 0 : 1
+      }
+
+    }
+
+    // if there's a conflict, should return true
+    // how could a conflict occur? a parent dictates one thing, but a child dictates another
+    // it would be discovered if the child already has a value assigned to it, but its parent's provisional value wants the child's value to be something else
+
+    // PROCESS:
+    // x: what does the parent want me to be?
+    // if i already have a value, and it's different from x, then we have a constraint violation
+    // else, assign x to provisionalValue
+
+    // once we have a constraint violation, we need to start over from the last node, and try a different value. if we still have a constraint violation, then we need to go up another node. 
+
+    return false
+  })
 }
 
 export default { Tree, Node }
