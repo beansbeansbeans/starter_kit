@@ -1,30 +1,55 @@
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
+import reglImport from 'regl'
 
-let width, height, paused = false, GPU, config, canvas, debug = false
+let width, height, config, regl
 
 const onResize = () => {
-  canvas.width = width
-  canvas.height = height
-}
 
-const render = () => {
-  requestAnimationFrame(render)
 }
 
 export default {
   initialize(opts) {
-    canvas = document.getElementById("webgl-canvas")
+    regl = reglImport()
+
+    regl.clear({
+      color: [0, 0, 0, 1],
+      depth: 1
+    })
+
     config = opts
 
-    width = sharedState.get("windowWidth")
-    height = sharedState.get("windowHeight")
+    regl({
 
-    GPU = initGPUMath({ width, height })
+      // In a draw call, we can pass the shader source code to regl
+      frag: `
+      precision mediump float;
+      uniform vec4 color;
+      void main () {
+        gl_FragColor = color;
+      }`,
 
-    onResize()
+      vert: `
+      precision mediump float;
+      attribute vec2 position;
+      void main () {
+        gl_Position = vec4(position, 0, 1);
+      }`,
 
-    render()
+      attributes: {
+        position: [
+          [-1, 0],
+          [0, -1],
+          [1, 1]
+        ]
+      },
+
+      uniforms: {
+        color: [1, 0, 0, 1]
+      },
+
+      count: 3
+    })()
   },
 
   resize() {

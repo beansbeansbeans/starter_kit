@@ -10,7 +10,7 @@ import treeData from './tree'
 const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 
-let shaderFiles = [], argument, debug = true
+let shaderFiles = [], argument, debug = false
 
 const shaders = {},
   preload = {
@@ -37,7 +37,6 @@ class App extends Component {
     return (
       <app>
         {debugDOM}
-        <canvas id="webgl-canvas"></canvas>
       </app>
     )
   }
