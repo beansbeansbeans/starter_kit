@@ -25,7 +25,6 @@ export default {
       // angle[i] = Math.random() * (2 * Math.PI)
       angle[i] = 0
       indices[i] = i % 2 ? 1 : -1
-      // indices[i] = 1
     }
 
     // This buffer stores the angles of all
@@ -60,9 +59,13 @@ export default {
       attribute float index;
       varying vec3 vColor;
       void main() {
+        float offsetY = offset.y;
+
+        if(index > 0.) offsetY += 0.1;
+
         gl_Position = vec4(
-          cos(angle) * position.x + sin(angle) * position.y + offset.x,
-            index * (-sin(angle) * position.x + cos(angle) * position.y + offset.y), 0, 1);
+          index * (cos(angle) * position.x + sin(angle) * position.y + offset.x),
+            index * (-sin(angle) * position.x + cos(angle) * position.y + offsetY), 0, 1);
         vColor = color;
       }`,
 
