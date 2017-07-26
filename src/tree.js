@@ -9,6 +9,18 @@ function Tree(val) {
   this._root = new Node(val)
 }
 
+Tree.prototype.traverseUp = function(fn, seed) {
+  if(typeof seed === 'undefined') seed = this._root
+
+  const apply = n => {
+    fn(n)
+
+    if(n.parent) apply(n.parent)
+  }
+
+  apply(seed)
+}
+
 Tree.prototype.traverseDF = function(matchFn, seed) {
   if(typeof seed === 'undefined') seed = this._root
 
@@ -68,12 +80,64 @@ Tree.prototype.remove = function(node) {
 Tree.prototype.solve = function(node, value) {
   node.value = value
 
-  // propagate downwards
-  this.traverseDF(n => {
-    if(typeof n.value !== 'undefined') return
+  /*
+  there are two constraints: 
+  1) if a attacks b, then they can't both be true.
+  2) if a is false, then one of its attackers must be true
 
-    n.value = n.parent.value ? n.supports : !n.supports
-  }, node)
+  so the solution process is: 
+  - we fix the value of the argument node. 
+  - if it's true, then we can narrow down the domains of its attackers (they are all rejected)
+  - if it's false, that's all we can do, unless it only has one attacker (then it is true)
+
+  - i think you keep moving down and up until you no longer can
+  - then you start solving the tree from the top, assigning provisional values to everything, and backtracking / reassigning when you come up against a constraint
+
+  then:
+  - figure out how to output multiple solutions
+  */
+
+  const resolve = n => {
+    if(typeof n.value !== 'undefined') return false // already assigned
+
+    if(n.parent) {
+      if(n.parent.value === true) { 
+        if(!n.supports) n.value = false // constraint 1
+      } else if(n.parent.value === false) {
+        if(n.supports && n.parent.children.length === 1) {
+          n.value = true // constraint 2
+        }
+      }      
+    }
+
+    return false
+  }
+
+  // traverse down from seed
+  this.traverseDF(resolve, node)
+
+  if(node.parent) {
+    // traverse up from seed
+    this.traverseUp(n => {
+      const attackers = n.children.filter(n => !n.supports)
+
+      // if the attackers of n are all false (or there are no attackers), then n is true
+      if(!attackers.length || attackers.every(n => n.value === false)) {
+        n.value = true
+
+      // if one of the attackers of n is true, then n is false
+      } else if(attackers.some(n => n.value === true)) {
+        n.value = false
+      }
+
+    }, node.parent)
+
+    // traverse down from root
+    this.traverseDF(resolve)    
+  }
+
+  // THEN (finally), output solutions with backtracking
+
 }
 
 export default { Tree, Node }
