@@ -42,32 +42,9 @@ export default {
     })
 
     const draw = regl({
-      frag: `
-      precision mediump float;
-      varying vec3 vColor;
-      void main() {
-        gl_FragColor = vec4(vColor, 1.0);
-      }`,
+      frag: opts.shaders['drawRect.fs'],
 
-      vert: `
-      precision mediump float;
-      attribute vec2 position;
-      // These three are instanced attributes.
-      attribute vec3 color;
-      attribute vec2 offset;
-      attribute float angle;
-      attribute float index;
-      varying vec3 vColor;
-      void main() {
-        float offsetY = offset.y;
-
-        if(index > 0.) offsetY += 0.1;
-
-        gl_Position = vec4(
-          index * (cos(angle) * position.x + sin(angle) * position.y + offset.x),
-            index * (-sin(angle) * position.x + cos(angle) * position.y + offsetY), 0, 1);
-        vColor = color;
-      }`,
+      vert: opts.shaders['drawRect.vs'],
 
       attributes: {
         position: [[0.0, -0.1], [0, 0.0], [0.19, 0.0]],
