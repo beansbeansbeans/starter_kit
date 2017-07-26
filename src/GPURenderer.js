@@ -19,17 +19,25 @@ export default {
 
     var N = 10 // N triangles on the width, N triangles on the height.
 
-    var angle = []
+    var angle = [], indices = []
     for (var i = 0; i < N * N; i++) {
       // generate random initial angle.
       // angle[i] = Math.random() * (2 * Math.PI)
       angle[i] = 0
+      indices[i] = i % 2 ? 1 : -1
+      // indices[i] = 1
     }
 
     // This buffer stores the angles of all
     // the instanced triangles.
     const angleBuffer = regl.buffer({
       length: angle.length * 4,
+      type: 'float',
+      usage: 'dynamic'
+    })
+
+    const indicesBuffer = regl.buffer({
+      length: indices.length * 4,
       type: 'float',
       usage: 'dynamic'
     })
@@ -49,11 +57,12 @@ export default {
       attribute vec3 color;
       attribute vec2 offset;
       attribute float angle;
+      attribute float index;
       varying vec3 vColor;
       void main() {
         gl_Position = vec4(
           cos(angle) * position.x + sin(angle) * position.y + offset.x,
-            -sin(angle) * position.x + cos(angle) * position.y + offset.y, 0, 1);
+            index * (-sin(angle) * position.x + cos(angle) * position.y + offset.y), 0, 1);
         vColor = color;
       }`,
 
@@ -63,7 +72,7 @@ export default {
         offset: {
           buffer: regl.buffer(
             Array(N * N).fill().map((_, i) => {
-              var x = -1 + 2 * Math.floor(i / N) / N + 0.1
+              var x = -1 + 2 * Math.floor(i / N) / N
               var y = -1 + 2 * (i % N) / N + 0.1
               return [x, y]
             })),
@@ -83,6 +92,11 @@ export default {
         angle: {
           buffer: angleBuffer,
           divisor: 1 // one separate angle for every triangle
+        },
+
+        index: {
+          buffer: indicesBuffer,
+          divisor: 1
         }
       },
 
@@ -106,7 +120,7 @@ export default {
       // for (var i = 0; i < N * N; i++) {
       //   angle[i] += 0.01
       // }
-      // angleBuffer.subdata(angle)
+      indicesBuffer.subdata(indices)
 
       draw()
     })
