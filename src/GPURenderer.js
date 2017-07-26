@@ -22,7 +22,8 @@ export default {
     var angle = []
     for (var i = 0; i < N * N; i++) {
       // generate random initial angle.
-      angle[i] = Math.random() * (2 * Math.PI)
+      // angle[i] = Math.random() * (2 * Math.PI)
+      angle[i] = 0
     }
 
     // This buffer stores the angles of all
@@ -57,7 +58,7 @@ export default {
       }`,
 
       attributes: {
-        position: [[0.0, -0.05], [-0.05, 0.0], [0.05, 0.05]],
+        position: [[0.0, -0.1], [0, 0.0], [0.19, 0.0]],
 
         offset: {
           buffer: regl.buffer(
@@ -102,10 +103,10 @@ export default {
       })
 
       // rotate the triangles every frame.
-      for (var i = 0; i < N * N; i++) {
-        angle[i] += 0.01
-      }
-      angleBuffer.subdata(angle)
+      // for (var i = 0; i < N * N; i++) {
+      //   angle[i] += 0.01
+      // }
+      // angleBuffer.subdata(angle)
 
       draw()
     })
