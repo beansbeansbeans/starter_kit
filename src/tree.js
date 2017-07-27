@@ -9,6 +9,26 @@ function Tree(val) {
   this._root = new Node(val)
 }
 
+function forwardProp(n) {
+  if(n.parent) {
+    if(n.parent.value === true) { 
+      if(!n.supports) {
+        return { value: false } // constraint 1
+      }
+    } else if(n.parent.value === false) {
+      if(n.supports && n.parent.children.length === 1) {
+        return { value: true } // constraint 2
+      }
+    }      
+  }
+
+  return false
+}
+
+function backProp(n) {
+  
+}
+
 Tree.prototype.traverseUp = function(fn, seed) {
   if(typeof seed === 'undefined') seed = this._root
 
@@ -101,14 +121,9 @@ Tree.prototype.solve = function(node, value) {
   const resolve = n => {
     if(typeof n.value !== 'undefined') return false // already assigned
 
-    if(n.parent) {
-      if(n.parent.value === true) { 
-        if(!n.supports) n.value = false // constraint 1
-      } else if(n.parent.value === false) {
-        if(n.supports && n.parent.children.length === 1) {
-          n.value = true // constraint 2
-        }
-      }      
+    const constrainedValue = forwardProp(n)
+    if(constrainedValue) {
+      n.value = constrainedValue.value
     }
 
     return false
