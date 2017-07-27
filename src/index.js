@@ -10,7 +10,7 @@ import treeData from './tree'
 const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = false
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = true
 
 const shaders = {},
   preload = {
@@ -44,7 +44,6 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
-  renderer.initialize({ container: document.querySelector("app"), shaders })
 
   // create web
   const web = new Tree('climate change is a hoax')
@@ -60,6 +59,8 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   if(debug) {
     DebugVisualizer.initialize(web)
     DebugVisualizer.draw()    
+  } else {
+    renderer.initialize({ container: document.querySelector("app"), shaders })
   }
 
   web.solve(supportNode, true)
