@@ -170,7 +170,7 @@ Tree.prototype.solve = function(node, value) {
       }
 
       if(typeof n.provisionalValue === 'undefined') { // if still no value...
-        n.provisionalValue = Math.random() < 0.5 ? 0 : 1
+        n.provisionalValue = Math.random() < 0.5 ? false : true
       }
     }
 

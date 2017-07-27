@@ -64,7 +64,8 @@ export default {
         .attr("x", 0)
         .text(d => {
           const data = d.data.value
-          return `${typeof data.value === 'undefined' ? '' : data.value}`
+          return `${typeof data.value === 'undefined' ? 
+            (typeof data.provisionalValue === 'undefined' ? '' : '(' + data.provisionalValue + ')') : data.value}`
         })
   },
 
