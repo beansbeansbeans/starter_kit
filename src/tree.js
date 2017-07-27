@@ -223,6 +223,8 @@ Tree.prototype.solve = function(arr) {
 
       console.log(conflict)
     }
+  } else {
+    console.log("INCONSISTENT")
   }
 }
 

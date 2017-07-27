@@ -54,9 +54,13 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   const nestedSupportNode = new Node('it is right because', true)
   web.add(nestedSupportNode, supportNode)
-  web.add(new Node('it is wrong because', false), supportNode)
+  const nestedAttackNode = new Node('it is wrong because', false)
+  web.add(nestedAttackNode, supportNode)
 
-  web.solve([ { node: supportNode, value: true } ])
+  web.solve([ 
+    { node: supportNode, value: true },
+    { node: nestedAttackNode, value: true }
+  ])
 
   if(debug) {
     DebugVisualizer.initialize(web)
