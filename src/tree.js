@@ -17,6 +17,12 @@ function value(n, fn, strict) {
 const isTrue = val => val === true
 const isFalse = val => val === false
 
+/*
+there are two constraints: 
+1) if a attacks b, then they can't both be true.
+2) if a is false, then one of its attackers must be true
+*/
+
 function forwardProp(n, strict) {
   if(n.parent) {
     if(value(n.parent, isTrue, strict)) { 
@@ -122,18 +128,14 @@ Tree.prototype.solve = function(node, value) {
   node.value = value
 
   /*
-  there are two constraints: 
-  1) if a attacks b, then they can't both be true.
-  2) if a is false, then one of its attackers must be true
-
   so the solution process is: 
   - we fix the value of the argument node. 
   - if it's true, then we can narrow down the domains of its attackers (they are all rejected)
   - if it's false, that's all we can do, unless it only has one attacker (then it is true)
 
   - propagate fixed values outward as far as you can
-
-  - then you start solving the tree from the top, assigning provisional values to everything, and backtracking / reassigning when you come up against a violated constraint
+  
+  - (here) then you start solving the tree from the top, assigning provisional values to everything, and backtracking / reassigning when you come up against a violated constraint
 
   then:
   - figure out how to output multiple solutions
@@ -149,17 +151,14 @@ Tree.prototype.solve = function(node, value) {
 
     return false
   }
+  
+  this.traverseDF(resolve, node) // traverse down from seed
 
-  // traverse down from seed
-  this.traverseDF(resolve, node)
+  this.traverseUp(backProp, node.parent) // traverse up from seed
+  
+  this.traverseDF(resolve) // traverse down from root  
 
-  // traverse up from seed
-  this.traverseUp(backProp, node.parent)
-
-  // traverse down from root
-  this.traverseDF(resolve)    
-
-  // THEN (finally), output solutions with backtracking
+  // output solutions with backtracking
   this.traverseDF(n => {
     if(typeof n.value === 'undefined') {
       const constrainedValue = forwardProp(n, false)
