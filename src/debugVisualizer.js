@@ -51,7 +51,9 @@ export default {
     const text = node.selectAll(".argument")
       .data(d => [d])
       .enter().append("text")
-        .attr("class", "argument")
+        .attr("class", d => {
+          return `argument ${d.data.value.supports ? 'support' : 'attack'}`
+        })
         .attr("dy", 3)
         .attr("x", 0)
         .text(d => d.data.value.data)
