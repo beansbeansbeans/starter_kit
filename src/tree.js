@@ -9,14 +9,26 @@ function Tree(val) {
   this._root = new Node(val)
 }
 
-function forwardProp(n) {
+function value(n, fn, strict) {
+  if(strict) return fn(n.value)
+  return fn(n.value) || fn(n.provisionalValue)
+}
+
+const isTrue = val => val === true
+const isFalse = val => val === false
+
+function forwardProp(n, strict) {
   if(n.parent) {
-    if(n.parent.value === true) { 
+    if(value(n.parent, isTrue, strict)) { 
       if(!n.supports) {
         return { value: false } // constraint 1
       }
-    } else if(n.parent.value === false) {
-      if(n.supports && n.parent.children.length === 1) {
+    } else if(value(n.parent, isFalse, strict)) {
+      if(!n.supports && 
+        n.parent.children
+          .filter(n => !n.supports)
+          .filter(n => value(n, isTrue, strict))
+          .length < 1) {
         return { value: true } // constraint 2
       }
     }      
@@ -26,7 +38,7 @@ function forwardProp(n) {
 }
 
 function backProp(n) {
-  
+
 }
 
 Tree.prototype.traverseUp = function(fn, seed) {
