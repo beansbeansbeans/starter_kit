@@ -153,13 +153,11 @@ Tree.prototype.solve = function(node, value) {
   // traverse down from seed
   this.traverseDF(resolve, node)
 
-  if(node.parent) {
-    // traverse up from seed
-    this.traverseUp(backProp, node.parent)
+  // traverse up from seed
+  this.traverseUp(backProp, node.parent)
 
-    // traverse down from root
-    this.traverseDF(resolve)    
-  }
+  // traverse down from root
+  this.traverseDF(resolve)    
 
   // THEN (finally), output solutions with backtracking
   this.traverseDF(n => {
