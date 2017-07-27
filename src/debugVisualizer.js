@@ -27,7 +27,10 @@ export default {
       })
     })
 
-    var root = stratify(processedData)
+    const root = stratify(processedData.sort((a, b) => {
+      if(a.value.supports) return -1
+      return 1
+    }))
 
     tree = cluster().size([ height, width - 160 /*to accommodate labels*/ ])(root)
 
