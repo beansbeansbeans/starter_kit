@@ -48,12 +48,24 @@ export default {
 
     node.append("circle").attr("r", 2.5)
 
-    const text = node.selectAll("text")
+    const text = node.selectAll(".argument")
       .data(d => [d])
       .enter().append("text")
+        .attr("class", "argument")
         .attr("dy", 3)
         .attr("x", 0)
         .text(d => d.data.value.data)
+
+    const value = node.selectAll(".value")
+      .data(d => [d])
+      .enter().append("text")
+        .attr("class", "value")
+        .attr("dy", 14)
+        .attr("x", 0)
+        .text(d => {
+          const data = d.data.value
+          return `${typeof data.value === 'undefined' ? '' : data.value}`
+        })
   },
 
   draw() {
