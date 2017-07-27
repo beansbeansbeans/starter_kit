@@ -142,14 +142,20 @@ Tree.prototype.solve = function(arr) {
   let consistent = true
 
   const resolve = n => {
-    if(typeof n.value !== 'undefined') return false // already assigned
-
+    let pass = true
     const constrainedValue = forwardProp(n, true)
+
     if(constrainedValue) {
-      n.value = constrainedValue.value
+      if(typeof n.value === 'undefined') {
+        n.value = constrainedValue.value
+      } else {
+        if(constrainedValue.value !== n.value) {
+          pass = false
+        }
+      }
     }
 
-    return false
+    return !pass
   }
 
   for(let i=0; i<arr.length; i++) {
