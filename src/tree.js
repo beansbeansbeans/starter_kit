@@ -124,9 +124,7 @@ Tree.prototype.remove = function(node) {
   children.splice(index, 1)
 }
 
-Tree.prototype.solve = function(node, value) {
-  node.value = value
-
+Tree.prototype.solve = function(arr) {
   /*
   so the solution process is: 
   - we fix the value of the argument node. 
@@ -151,23 +149,36 @@ Tree.prototype.solve = function(node, value) {
 
     return false
   }
-  
-  this.traverseDF(resolve, node) // traverse down from seed
 
-  this.traverseUp(backProp, node.parent) // traverse up from seed
+  arr.forEach(({ node, value }) => {
+    node.value = value
+    
+    this.traverseDF(resolve, node) // traverse down from seed
+
+    this.traverseUp(backProp, node.parent) // traverse up from seed    
+  })
   
   this.traverseDF(resolve) // traverse down from root  
 
   // output solutions with backtracking
   this.traverseDF(n => {
+    const constrainedValue = forwardProp(n, false)
+
+    let conflict = false
+
     if(typeof n.value === 'undefined') {
-      const constrainedValue = forwardProp(n, false)
       if(constrainedValue) {
         n.provisionalValue = constrainedValue.value
       }
 
       if(typeof n.provisionalValue === 'undefined') { // if still no value...
         n.provisionalValue = Math.random() < 0.5 ? false : true
+      }
+    } else {
+      if(constrainedValue) {
+        if(constrainedValue.value !== n.value) {
+          conflict = true
+        }
       }
     }
 
@@ -182,7 +193,7 @@ Tree.prototype.solve = function(node, value) {
 
     // once we have a constraint violation, we need to start over from the last node, and try a different value. if we still have a constraint violation, then we need to go up another node. 
 
-    return false
+    return conflict
   })
 }
 
