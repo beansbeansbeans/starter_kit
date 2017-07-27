@@ -60,12 +60,14 @@ Tree.prototype.traverseUp = function(fn, seed) {
   if(typeof seed === 'undefined') seed = this._root
 
   const apply = n => {
-    fn(n)
+    if(fn(n)) return n
 
-    if(n.parent) apply(n.parent)
+    if(n.parent) return apply(n.parent)
+
+    return false
   }
 
-  apply(seed)
+  return apply(seed)
 }
 
 Tree.prototype.traverseDF = function(matchFn, seed) {
@@ -158,6 +160,23 @@ Tree.prototype.solve = function(arr) {
     return !pass
   }
 
+  const resolveBack = n => {
+    let pass = true
+    const constrainedValue = backProp(n, true)
+
+    if(constrainedValue) {
+      if(typeof n.value === 'undefined') {
+        n.value = constrainedValue.value
+      } else {
+        if(constrainedValue.value !== n.value) {
+          pass = false
+        }
+      }
+    }
+
+    return !pass
+  }
+
   for(let i=0; i<arr.length; i++) {
     const { node, value } = arr[i]
 
@@ -166,7 +185,7 @@ Tree.prototype.solve = function(arr) {
     let conflict = this.traverseDF(resolve, node) // traverse down from seed
 
     if(!conflict) {
-      conflict = this.traverseUp(backProp, node.parent) // traverse up from seed
+      conflict = this.traverseUp(resolveBack, node.parent) // traverse up from seed
 
       if(conflict) consistent = false
     } else {
