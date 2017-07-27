@@ -19,21 +19,10 @@ export default {
 
     var N = 10 // N triangles on the width, N triangles on the height.
 
-    var angle = [], indices = []
+    var indices = []
     for (var i = 0; i < N * N; i++) {
-      // generate random initial angle.
-      // angle[i] = Math.random() * (2 * Math.PI)
-      angle[i] = 0
       indices[i] = i % 2 ? 1 : -1
     }
-
-    // This buffer stores the angles of all
-    // the instanced triangles.
-    const angleBuffer = regl.buffer({
-      length: angle.length * 4,
-      type: 'float',
-      usage: 'dynamic'
-    })
 
     const indicesBuffer = regl.buffer({
       length: indices.length * 4,
@@ -67,11 +56,6 @@ export default {
               return [r, g, r * g + 0.2]
             })),
           divisor: 1 // one separate color for every triangle
-        },
-
-        angle: {
-          buffer: angleBuffer,
-          divisor: 1 // one separate angle for every triangle
         },
 
         index: {
