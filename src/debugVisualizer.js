@@ -48,10 +48,12 @@ export default {
 
     node.append("circle").attr("r", 2.5)
 
-    node.append("text")
-      .attr("dy", 3)
-      .attr("x", d => d.children ? -8 : 8)
-      .text(d => d.data.value.data)
+    const text = node.selectAll("text")
+      .data(d => [d])
+      .enter().append("text")
+        .attr("dy", 3)
+        .attr("x", 0)
+        .text(d => d.data.value.data)
   },
 
   draw() {
