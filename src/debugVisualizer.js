@@ -55,7 +55,12 @@ export default {
       .data(d => [d])
       .enter().append("text")
         .attr("class", d => {
-          return `argument ${d.data.value.supports ? 'support' : 'attack'}`
+          let side = ''
+          if(typeof d.data.value.supports !== 'undefined') {
+            side = d.data.value.supports ? 'support' : 'attack'
+          }
+          
+          return `argument ${side}`
         })
         .attr("dy", 3)
         .attr("x", 0)
