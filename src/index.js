@@ -56,14 +56,14 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   web.add(nestedSupportNode, supportNode)
   web.add(new Node('it is wrong because', false), supportNode)
 
+  web.solve(supportNode, true)
+
   if(debug) {
     DebugVisualizer.initialize(web)
     DebugVisualizer.draw()    
   } else {
     renderer.initialize({ container: document.querySelector("app"), shaders })
   }
-
-  web.solve(supportNode, true)
 
   console.log(web)
 })
