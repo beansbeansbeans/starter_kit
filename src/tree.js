@@ -133,7 +133,7 @@ Tree.prototype.solve = function(node, value) {
   const resolve = n => {
     if(typeof n.value !== 'undefined') return false // already assigned
 
-    const constrainedValue = forwardProp(n)
+    const constrainedValue = forwardProp(n, true)
     if(constrainedValue) {
       n.value = constrainedValue.value
     }
@@ -164,22 +164,11 @@ Tree.prototype.solve = function(node, value) {
   }
 
   // THEN (finally), output solutions with backtracking
-
-  return
   this.traverseDF(n => {
     if(typeof n.value === 'undefined') {
-
-      if(n.parent) {
-        if(n.parent.value === true || n.parent.provisionalValue === true) {
-          if(!n.supports) {
-            n.provisionalValue = false
-          }
-        } else if(n.parent.value === false || n.parent.provisionalValue === false) { // one of the attackers must be true
-          if(n.parent.children.filter(n => !n.supports)
-            .filter(n => n.value === true || n.provisionalValue === true).length < 1) {
-            n.provisionalValue = true
-          }
-        }
+      const constrainedValue = forwardProp(n, false)
+      if(constrainedValue) {
+        n.provisionalValue = constrainedValue.value
       }
 
       if(typeof n.provisionalValue === 'undefined') { // if still no value...
