@@ -9,6 +9,23 @@ function Tree(val) {
   this._root = new Node(val)
 }
 
+const constraintCheck = fn => n => {
+  let pass = true
+  const constrainedValue = fn(n)
+
+  if(constrainedValue) {
+    if(typeof n.value === 'undefined') {
+      n.value = constrainedValue.value
+    } else {
+      if(constrainedValue.value !== n.value) {
+        pass = false
+      }
+    }
+  }
+
+  return !pass
+}
+
 function value(n, fn, strict) {
   if(strict) return fn(n.value)
   return fn(n.value) || fn(n.provisionalValue)
@@ -143,39 +160,8 @@ Tree.prototype.solve = function(arr) {
 
   let consistent = true
 
-  const resolve = n => {
-    let pass = true
-    const constrainedValue = forwardProp(n, true)
-
-    if(constrainedValue) {
-      if(typeof n.value === 'undefined') {
-        n.value = constrainedValue.value
-      } else {
-        if(constrainedValue.value !== n.value) {
-          pass = false
-        }
-      }
-    }
-
-    return !pass
-  }
-
-  const resolveBack = n => {
-    let pass = true
-    const constrainedValue = backProp(n, true)
-
-    if(constrainedValue) {
-      if(typeof n.value === 'undefined') {
-        n.value = constrainedValue.value
-      } else {
-        if(constrainedValue.value !== n.value) {
-          pass = false
-        }
-      }
-    }
-
-    return !pass
-  }
+  const resolve = constraintCheck(n => forwardProp(n, true))
+  const resolveBack = constraintCheck(n => backProp(n, true))
 
   for(let i=0; i<arr.length; i++) {
     const { node, value } = arr[i]
