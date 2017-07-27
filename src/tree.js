@@ -38,7 +38,16 @@ function forwardProp(n, strict) {
 }
 
 function backProp(n) {
+  const attackers = n.children.filter(n => !n.supports)
 
+  // if the attackers of n are all false (or there are no attackers), then n is true
+  if(!attackers.length || attackers.every(n => n.value === false)) {
+    n.value = true
+
+  // if one of the attackers of n is true, then n is false
+  } else if(attackers.some(n => n.value === true)) {
+    n.value = false
+  }
 }
 
 Tree.prototype.traverseUp = function(fn, seed) {
@@ -146,18 +155,7 @@ Tree.prototype.solve = function(node, value) {
 
   if(node.parent) {
     // traverse up from seed
-    this.traverseUp(n => {
-      const attackers = n.children.filter(n => !n.supports)
-
-      // if the attackers of n are all false (or there are no attackers), then n is true
-      if(!attackers.length || attackers.every(n => n.value === false)) {
-        n.value = true
-
-      // if one of the attackers of n is true, then n is false
-      } else if(attackers.some(n => n.value === true)) {
-        n.value = false
-      }
-    }, node.parent)
+    this.traverseUp(backProp, node.parent)
 
     // traverse down from root
     this.traverseDF(resolve)    
@@ -174,7 +172,6 @@ Tree.prototype.solve = function(node, value) {
       if(typeof n.provisionalValue === 'undefined') { // if still no value...
         n.provisionalValue = Math.random() < 0.5 ? 0 : 1
       }
-
     }
 
     // if there's a conflict, should return true
