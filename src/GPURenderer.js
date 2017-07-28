@@ -1,9 +1,10 @@
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 import reglImport from 'regl'
-import camera from 'canvas-orbit-camera'
+import cameraModule from 'canvas-orbit-camera'
+import mat4 from 'gl-mat4'
 
-let width, height, config, regl
+let width, height, config, regl, camera
 
 const onResize = () => {
 
@@ -18,6 +19,10 @@ export default {
       extensions: ['angle_instanced_arrays'],
       container: opts.container
     })
+
+    camera = cameraModule(opts.container)
+    camera.distance = 2.5
+    camera.rotation = new Float32Array(4)
 
     config = opts
 
@@ -46,6 +51,15 @@ export default {
       frag: opts.shaders['drawRect.fs'],
 
       vert: opts.shaders['drawRect.vs'],
+
+      uniforms: {
+        view: camera.view(),
+        projection: ({ viewportWidth, viewportHeight }) => mat4.perspective([],
+                           Math.PI / 4,
+                           viewportWidth / viewportHeight,
+                           0.01, 
+                           2000)
+      },
 
       attributes: {
         position: [
