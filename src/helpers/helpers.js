@@ -10,6 +10,10 @@ export default {
     return Math.floor(num / nearestInt) * nearestInt
   },
 
+  radToDegrees: function(rad) {
+    return rad * (180 / Math.PI)
+  },
+
   decodeFloat: function(x, y, z, w) {
     UINT8_VIEW[0] = Math.floor(w)
     UINT8_VIEW[1] = Math.floor(z)

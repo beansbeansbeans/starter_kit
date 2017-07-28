@@ -1,4 +1,5 @@
 import helpers from './helpers/helpers'
+const { radToDegrees } = helpers
 import sharedState from './sharedState'
 import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
@@ -9,6 +10,14 @@ let width, height, config, regl, camera
 const onResize = () => {
 
 }
+
+const nW = 11 // triangles going across
+const nH = 2 * 22 // triangles going down
+const nTriangles = nW * nH
+const buffer = 1
+const perRectWidth = 1 / (nW / 2)
+const perRectHeight = 1 / (nH / 2)
+const cameraDist = 1
 
 export default {
   initialize(opts) {
@@ -21,17 +30,10 @@ export default {
     })
 
     camera = cameraModule(opts.container)
-    camera.distance = 2.5
+    camera.distance = cameraDist
     camera.rotation = new Float32Array(4)
 
     config = opts
-
-    const nW = 11 // triangles going across
-    const nH = 2 * 22 // triangles going down
-    const nTriangles = nW * nH
-    const buffer = 1
-    const perRectWidth = 1 / (nW / 2)
-    const perRectHeight = 1 / (nH / 2)
 
     let bufferX = 2 * buffer / width 
     let bufferY = buffer / height
@@ -54,9 +56,10 @@ export default {
 
       uniforms: {
         view: camera.view(),
-        projection: ({ viewportWidth, viewportHeight }) => mat4.perspective([],
-                           Math.PI / 4,
-                           viewportWidth / viewportHeight,
+        projection: ({ viewportWidth, viewportHeight }) => 
+          mat4.perspective([],
+                           Math.PI / 1.75,
+                           width / height,
                            0.01, 
                            2000)
       },
