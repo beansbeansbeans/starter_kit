@@ -21,7 +21,7 @@ export default {
     config = opts
 
     const nW = 11 // triangles going across
-    const nH = 2 * 16 // triangles going down
+    const nH = 2 * 22 // triangles going down
     const nTriangles = nW * nH
     const buffer = 1
     const perRectWidth = 1 / (nW / 2)
