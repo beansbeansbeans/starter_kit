@@ -18,7 +18,7 @@ export default {
     config = opts
 
     var nW = 10 // triangles going across
-    var nH = 10 // triangles going down
+    var nH = 2 * 7 // triangles going down
     var nTriangles = nW * nH
 
     var indices = []
@@ -47,10 +47,10 @@ export default {
         offset: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              var x = -1 + 2 * Math.floor(i / nW) / nW
+              var x = -1 + 2 * Math.floor(i / nH) / nW
               var y = -1 + 2 * (i % nH) / nH
-              
-              if(i % 2 !== 0) y += 0.2
+
+              if(i % 2 !== 0) y += 1 / (nH / 2)
 
               return [x, y]
             })),
