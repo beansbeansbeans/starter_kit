@@ -17,10 +17,12 @@ export default {
 
     config = opts
 
-    var N = 10 // N triangles on the width, N triangles on the height.
+    var nW = 10 // triangles going across
+    var nH = 10 // triangles going down
+    var nTriangles = nW * nH
 
     var indices = []
-    for (var i = 0; i < N * N; i++) {
+    for (var i = 0; i < nTriangles; i++) {
       indices[i] = i % 2 ? 1 : -1
     }
 
@@ -36,13 +38,13 @@ export default {
       vert: opts.shaders['drawRect.vs'],
 
       attributes: {
-        position: [[0.0, -0.1], [0, 0.0], [0.19, 0.0]],
+        position: [[0.0, -0.4], [0, 0.0], [0.19, 0.0]],
 
         offset: {
           buffer: regl.buffer(
-            Array(N * N).fill().map((_, i) => {
-              var x = -1 + 2 * Math.floor(i / N) / N
-              var y = -1 + 2 * (i % N) / N + 0.1
+            Array(nTriangles).fill().map((_, i) => {
+              var x = -1 + 2 * Math.floor(i / nW) / nW
+              var y = -1 + 2 * (i % nH) / nH
               return [x, y]
             })),
           divisor: 1 // one separate offset for every triangle.
@@ -50,9 +52,9 @@ export default {
 
         color: {
           buffer: regl.buffer(
-            Array(N * N).fill().map((_, i) => {
-              var r = Math.floor(i / N) / N
-              var g = (i % N) / N
+            Array(nTriangles).fill().map((_, i) => {
+              var r = Math.floor(i / nW) / nW
+              var g = (i % nH) / nH
               return [r, g, r * g + 0.2]
             })),
           divisor: 1 // one separate color for every triangle
@@ -72,7 +74,7 @@ export default {
       // However, every such triangle are drawn N * N times,
       // through instancing.
       count: 3,
-      instances: N * N
+      instances: nTriangles
     })
 
     regl.frame(function () {
