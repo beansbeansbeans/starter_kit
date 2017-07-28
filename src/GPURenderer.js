@@ -1,6 +1,7 @@
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 import reglImport from 'regl'
+import camera from 'canvas-orbit-camera'
 
 let width, height, config, regl
 
