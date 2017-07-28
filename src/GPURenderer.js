@@ -10,6 +10,9 @@ const onResize = () => {
 
 export default {
   initialize(opts) {
+    width = sharedState.get("windowWidth")
+    height = sharedState.get("windowHeight")
+
     regl = reglImport({ 
       extensions: ['angle_instanced_arrays'],
       container: opts.container
@@ -17,9 +20,15 @@ export default {
 
     config = opts
 
-    var nW = 11 // triangles going across
-    var nH = 2 * 9 // triangles going down
-    var nTriangles = nW * nH
+    const nW = 11 // triangles going across
+    const nH = 2 * 9 // triangles going down
+    const nTriangles = nW * nH
+    const buffer = 2
+    const perRectWidth = 1 / (nW / 2)
+    const perRectHeight = 1 / (nH / 2)
+
+    let bufferX = 2 * buffer / width 
+    let bufferY = buffer / height
 
     var indices = []
     for (var i = 0; i < nTriangles; i++) {
@@ -39,9 +48,9 @@ export default {
 
       attributes: {
         position: [
-          [0.0, -1 * 2 * (1 / (nH / 2))], 
+          [0.0, -1 * 2 * (perRectHeight - bufferY)], 
           [0, 0.0], 
-          [1 / (nW / 2), 0.0]
+          [perRectWidth - bufferX, 0.0]
         ],
 
         offset: {
@@ -51,9 +60,9 @@ export default {
               var y = -1 + 2 * (i % nH) / nH
 
               if(i % 2 !== 0) {
-                y += 1 / (nH / 2)
+                y += perRectHeight - (bufferY * 2)
               } else {
-                x += 1 / (nW / 2)
+                x += perRectWidth - bufferX
               }
 
               return [x, y]
@@ -85,6 +94,7 @@ export default {
       // However, every such triangle are drawn N * N times,
       // through instancing.
       count: 3,
+
       instances: nTriangles
     })
 
