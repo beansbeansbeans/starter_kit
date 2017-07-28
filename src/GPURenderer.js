@@ -17,7 +17,7 @@ export default {
 
     config = opts
 
-    var nW = 10 // triangles going across
+    var nW = 11 // triangles going across
     var nH = 2 * 9 // triangles going down
     var nTriangles = nW * nH
 
@@ -41,7 +41,7 @@ export default {
         position: [
           [0.0, -1 * 2 * (1 / (nH / 2))], 
           [0, 0.0], 
-          [0.19, 0.0]
+          [1 / (nW / 2), 0.0]
         ],
 
         offset: {
@@ -53,7 +53,7 @@ export default {
               if(i % 2 !== 0) {
                 y += 1 / (nH / 2)
               } else {
-                x += 0.19
+                x += 1 / (nW / 2)
               }
 
               return [x, y]
@@ -64,7 +64,7 @@ export default {
         color: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              var r = Math.floor(i / nW) / nW
+              var r = Math.floor(i / nH) / nW
               var g = (i % nH) / nH
               return [r, g, r * g + 0.2]
             })),
