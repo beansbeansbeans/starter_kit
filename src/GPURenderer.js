@@ -38,13 +38,20 @@ export default {
       vert: opts.shaders['drawRect.vs'],
 
       attributes: {
-        position: [[0.0, -0.4], [0, 0.0], [0.19, 0.0]],
+        position: [
+          [0.0, -1 * 2 * (1 / (nH / 2))], 
+          [0, 0.0], 
+          [0.19, 0.0]
+        ],
 
         offset: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
               var x = -1 + 2 * Math.floor(i / nW) / nW
               var y = -1 + 2 * (i % nH) / nH
+              
+              if(i % 2 !== 0) y += 0.2
+
               return [x, y]
             })),
           divisor: 1 // one separate offset for every triangle.

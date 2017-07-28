@@ -13,8 +13,6 @@ void main() {
 
   if(index < 0.) {
     offsetX += 0.19;
-  } else {
-    offsetY += 0.2;
   }
 
   gl_Position = vec4(
