@@ -9,13 +9,21 @@ function Tree(val) {
   this._root = new Node(val)
 }
 
-const constraintCheck = fn => n => {
+const constraintCheck = (fn, strict = true) => n => {
   let pass = true
-  const constrainedValue = fn(n)
+  const constrainedValue = fn(n, strict)
 
   if(constrainedValue) {
     if(typeof n.value === 'undefined') {
-      n.value = constrainedValue.value
+      if(strict) {
+        n.value = constrainedValue.value
+      } else {
+        n.provisionalValue = constrainedValue.value
+
+        if(typeof n.provisionalValue === 'undefined') { // if still no value...
+          n.provisionalValue = Math.random() < 0.5 ? false : true
+        }
+      }
     } else {
       if(constrainedValue.value !== n.value) {
         pass = false
@@ -160,8 +168,7 @@ Tree.prototype.solve = function(arr) {
 
   let consistent = true
 
-  const resolve = constraintCheck(n => forwardProp(n, true))
-  const resolveBack = constraintCheck(n => backProp(n, true))
+  const resolve = constraintCheck(forwardProp)
 
   for(let i=0; i<arr.length; i++) {
     const { node, value } = arr[i]
@@ -171,7 +178,7 @@ Tree.prototype.solve = function(arr) {
     let conflict = this.traverseDF(resolve, node) // traverse down from seed
 
     if(!conflict) {
-      conflict = this.traverseUp(resolveBack, node.parent) // traverse up from seed
+      conflict = this.traverseUp(constraintCheck(backProp), node.parent) // traverse up from seed
 
       if(conflict) consistent = false
     } else {
@@ -184,42 +191,21 @@ Tree.prototype.solve = function(arr) {
   if(consistent) {
     let conflict = this.traverseDF(resolve) // traverse down from root
 
+    // if there's a conflict, should return true
+    // how could a conflict occur? a parent dictates one thing, but a child dictates another
+    // it would be discovered if the child already has a value assigned to it, but its parent's provisional value wants the child's value to be something else
+
+    // PROCESS:
+    // x: what does the parent want me to be?
+    // if i already have a value, and it's different from x, then we have a constraint violation
+    // else, assign x to provisionalValue
+
+    // once we have a constraint violation, we need to start over from the last node, and try a different value. if we still have a constraint violation, then we need to go up another node.
+
     if(!conflict) {
-      // output solutions with backtracking
-      conflict = this.traverseDF(n => {
-        const constrainedValue = forwardProp(n, false)
+      const provisionalResolve = constraintCheck(forwardProp, false)
 
-        let pass = true
-
-        if(typeof n.value === 'undefined') {
-          if(constrainedValue) {
-            n.provisionalValue = constrainedValue.value
-          }
-
-          if(typeof n.provisionalValue === 'undefined') { // if still no value...
-            n.provisionalValue = Math.random() < 0.5 ? false : true
-          }
-        } else {
-          if(constrainedValue) {
-            if(constrainedValue.value !== n.value) {
-              pass = false
-            }
-          }
-        }
-
-        // if there's a conflict, should return true
-        // how could a conflict occur? a parent dictates one thing, but a child dictates another
-        // it would be discovered if the child already has a value assigned to it, but its parent's provisional value wants the child's value to be something else
-
-        // PROCESS:
-        // x: what does the parent want me to be?
-        // if i already have a value, and it's different from x, then we have a constraint violation
-        // else, assign x to provisionalValue
-
-        // once we have a constraint violation, we need to start over from the last node, and try a different value. if we still have a constraint violation, then we need to go up another node. 
-
-        return !pass
-      })
+      conflict = this.traverseDF(provisionalResolve, false)
 
       console.log(conflict)
     }

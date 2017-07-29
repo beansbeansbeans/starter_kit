@@ -10,7 +10,7 @@ import treeData from './tree'
 const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = false
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = true
 
 const shaders = {},
   preload = {
