@@ -47,13 +47,26 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   // create web
   const web = new Tree('climate change is a hoax')
-  web.add(new Node('no it is not', false), web._root)
+  const attackNode = new Node('no it is not', false)
+  web.add(attackNode, web._root)
+
+  web.add(new Node('yes', true), attackNode)
+  web.add(new Node('no', false), attackNode)
 
   const supportNode = new Node('that is right', true)
   web.add(supportNode, web._root)
+  web.add(new Node('another reason it is right', true), web._root)
+  web.add(new Node('another reason it is wrong', false), web._root)
 
   const nestedSupportNode = new Node('it is right because', true)
   web.add(nestedSupportNode, supportNode)
+
+  const doubleNestedSupport = new Node('nested support', true)
+  web.add(doubleNestedSupport, nestedSupportNode)
+
+  web.add(new Node('yes', true), doubleNestedSupport)
+  web.add(new Node('no', false), doubleNestedSupport)
+
   const nestedAttackNode = new Node('it is wrong because', false)
   web.add(nestedAttackNode, supportNode)
 
