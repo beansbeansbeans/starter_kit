@@ -45,6 +45,18 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
 
+  console.log(argument)
+
+  const traverse = node => node.children.reduce((acc, curr) => {
+    console.log(curr)
+    if(curr.children && curr.children.length) {
+      return traverse(curr)
+    }
+    return curr
+  }, false)
+
+  traverse(argument[0])
+
   // create web
   const web = new Tree('climate change is a hoax')
   const attackNode = new Node('no it is not', false)

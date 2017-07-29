@@ -1,19 +1,47 @@
 {
   "data": "climate change is a hoax",
-  "supports": [
+  "children": [
     {
       "data": "yes it is",
-      "supports": [
+      "supports": true,
+      "children": [
+        {
+          "data": "yes",
+          "supports": true,
+          "children": [
+            {
+              "data": "yes",
+              "supports": true
+            },
+            {
+              "data": "no",
+              "supports": false
+            }
+          ]
+        },
+        {
+          "data": "it is wrong because",
+          "supports": false
+        }
       ]
-    }
-  ],
-  "rejects": [
+    },
     {
       "data": "no it is not",
-      "supports": [
-      ],
-      "rejects": [
+      "supports": false,
+      "children": [
+        {
+          "data": "yes",
+          "supports": true
+        },
+        {
+          "data": "no",
+          "supports": false
+        }
       ]
+    },
+    {
+      "data": "and another thing",
+      "supports": false
     }
   ]
 }
