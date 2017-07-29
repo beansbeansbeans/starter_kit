@@ -205,7 +205,7 @@ Tree.prototype.solve = function(arr) {
     if(!conflict) {
       const provisionalResolve = constraintCheck(forwardProp, false)
 
-      conflict = this.traverseDF(provisionalResolve, false)
+      conflict = this.traverseDF(provisionalResolve)
 
       console.log(conflict)
     }
