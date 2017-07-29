@@ -59,7 +59,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   web.solve([ 
     { node: supportNode, value: true },
-    { node: nestedAttackNode, value: true }
+    // { node: nestedAttackNode, value: true }
   ])
 
   if(debug) {

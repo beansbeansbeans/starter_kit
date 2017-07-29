@@ -19,15 +19,17 @@ const constraintCheck = (fn, strict = true) => n => {
         n.value = constrainedValue.value
       } else {
         n.provisionalValue = constrainedValue.value
-
-        if(typeof n.provisionalValue === 'undefined') { // if still no value...
-          n.provisionalValue = Math.random() < 0.5 ? false : true
-        }
       }
     } else {
       if(constrainedValue.value !== n.value) {
         pass = false
       }
+    }
+  }
+
+  if(typeof n.value === 'undefined' && strict === false) {
+    if(typeof n.provisionalValue === 'undefined') { // if still no value...
+      n.provisionalValue = Math.random() < 0.5 ? false : true
     }
   }
 
