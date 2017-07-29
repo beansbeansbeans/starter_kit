@@ -47,45 +47,48 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   console.log(argument)
 
-  const traverse = node => node.children.reduce((acc, curr) => {
-    console.log(curr)
-    if(curr.children && curr.children.length) {
-      return traverse(curr)
+  let match, toSearch = [{ node: argument[0] }], web,
+    constraints = []
+
+  const walk = () => {
+    let newToSearch = []
+
+    for(let i=0; i<toSearch.length; i++) {
+      let node = toSearch[i].node,
+        parent = toSearch[i].parent,
+        treeNode
+
+      if(typeof parent === 'undefined') {
+        web = new Tree(node.data)
+        treeNode = web._root
+      } else {
+        treeNode = new Node(node.data, node.supports)
+        web.add(treeNode, parent)
+      }
+
+      if(typeof node.constraintValue !== 'undefined') {
+        constraints.push({
+          node: treeNode,
+          value: node.constraintValue
+        })
+      }
+
+      if(node.children) {
+        node.children.forEach(c => newToSearch.push({
+          parent: treeNode,
+          node: c
+        }))
+      }
     }
-    return curr
-  }, false)
 
-  traverse(argument[0])
+    toSearch = newToSearch
 
-  // create web
-  const web = new Tree('climate change is a hoax')
-  const attackNode = new Node('no it is not', false)
-  web.add(attackNode, web._root)
+    if(toSearch.length) walk()
+  }
 
-  web.add(new Node('yes', true), attackNode)
-  web.add(new Node('no', false), attackNode)
+  walk()
 
-  const supportNode = new Node('that is right', true)
-  web.add(supportNode, web._root)
-  web.add(new Node('another reason it is right', true), web._root)
-  web.add(new Node('another reason it is wrong', false), web._root)
-
-  const nestedSupportNode = new Node('it is right because', true)
-  web.add(nestedSupportNode, supportNode)
-
-  const doubleNestedSupport = new Node('nested support', true)
-  web.add(doubleNestedSupport, nestedSupportNode)
-
-  web.add(new Node('yes', true), doubleNestedSupport)
-  web.add(new Node('no', false), doubleNestedSupport)
-
-  const nestedAttackNode = new Node('it is wrong because', false)
-  web.add(nestedAttackNode, supportNode)
-
-  web.solve([ 
-    { node: supportNode, value: true },
-    // { node: nestedAttackNode, value: true }
-  ])
+  web.solve(constraints)
 
   if(debug) {
     DebugVisualizer.initialize(web)

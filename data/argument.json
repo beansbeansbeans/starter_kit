@@ -4,6 +4,7 @@
     {
       "data": "yes it is",
       "supports": true,
+      "constraintValue": true,
       "children": [
         {
           "data": "yes",
@@ -21,6 +22,7 @@
         },
         {
           "data": "it is wrong because",
+          "constraintValue": true,
           "supports": false
         }
       ]
