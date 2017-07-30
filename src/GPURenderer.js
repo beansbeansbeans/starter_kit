@@ -5,7 +5,7 @@ import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
 
-let width, height, config, regl, camera
+let width, height, config, regl, camera, perRectWidth, perRectHeight
 
 const onResize = () => {
 
@@ -15,14 +15,15 @@ const nW = 11 // triangles going across
 const nH = 2 * 22 // triangles going down
 const nTriangles = nW * nH
 const buffer = 1
-const perRectWidth = 1 / (nW / 2)
-const perRectHeight = 1 / (nH / 2)
-const cameraDist = 1
+const cameraDist = 360
 
 export default {
   initialize(opts) {
     width = sharedState.get("windowWidth")
     height = sharedState.get("windowHeight")
+    
+    perRectWidth = width / nW
+    perRectHeight = height / nH
 
     regl = reglImport({ 
       extensions: ['angle_instanced_arrays'],
@@ -74,8 +75,8 @@ export default {
         offset: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              var x = -1 + 2 * Math.floor(i / nH) / nW
-              var y = -1 + 2 * (i % nH) / nH
+              var x = -(width / 2) + width * Math.floor(i / nH) / nW
+              var y = -(height / 2) + height * (i % nH) / nH
 
               if(i % 2 !== 0) {
                 y += perRectHeight - (bufferY * 2)
