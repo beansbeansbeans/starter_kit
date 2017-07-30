@@ -36,9 +36,10 @@ export default {
 
     config = opts
 
-    var indices = []
-    for (var i = 0; i < nTriangles; i++) {
+    let indices = [], extrusions = []
+    for (let i = 0; i < nTriangles; i++) {
       indices[i] = i % 2 ? 1 : -1
+      if(i % 2 === 0) extrusions[i / 2] = Math.random() * 100
     }
 
     const indicesBuffer = regl.buffer({
@@ -81,7 +82,7 @@ export default {
                 x += perRectWidth - buffer
               }
 
-              return [x, y]
+              return [x, y, extrusions[Math.floor(i / 2)]]
             })),
           divisor: 1 // one separate offset for every triangle.
         },
