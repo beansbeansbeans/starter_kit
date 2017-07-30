@@ -41,11 +41,9 @@ export default {
 
     config = opts
 
-    let indices = [], extrusions = []
+    let indices = []
     for (let i = 0; i < nTriangles; i++) {
       indices[i] = i % 2 ? 1 : -1
-      // if(i % 2 === 0) extrusions[i / 2] = Math.random() * 100
-      if(i % 2 === 0) extrusions[i / 2] = 0
     }
 
     const indicesBuffer = regl.buffer({
