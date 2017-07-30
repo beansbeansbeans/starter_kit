@@ -5,11 +5,16 @@ import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
 
-let width, height, config, regl, camera, perRectWidth, perRectHeight
+let width, height, config, regl, camera, perRectWidth, perRectHeight, mouseX, mouseY
 
 const onResize = () => {
 
 }
+
+document.addEventListener("mousemove", e => {
+  mouseX = e.clientX
+  mouseY = e.clientY
+})
 
 const nW = 11 // triangles going across
 const nH = 2 * 40 // triangles going down
@@ -39,7 +44,8 @@ export default {
     let indices = [], extrusions = []
     for (let i = 0; i < nTriangles; i++) {
       indices[i] = i % 2 ? 1 : -1
-      if(i % 2 === 0) extrusions[i / 2] = Math.random() * 100
+      // if(i % 2 === 0) extrusions[i / 2] = Math.random() * 100
+      if(i % 2 === 0) extrusions[i / 2] = 0
     }
 
     const indicesBuffer = regl.buffer({
@@ -71,20 +77,8 @@ export default {
         ],
 
         offset: {
-          buffer: regl.buffer(
-            Array(nTriangles).fill().map((_, i) => {
-              var x = -(width / 2) + width * Math.floor(i / nH) / nW
-              var y = -(height / 2) + height * (i % nH) / nH
-
-              if(i % 2 !== 0) {
-                y += perRectHeight - (buffer * 2)
-              } else {
-                x += perRectWidth - buffer
-              }
-
-              return [x, y, extrusions[Math.floor(i / 2)]]
-            })),
-          divisor: 1 // one separate offset for every triangle.
+          buffer: regl.prop('offset'),
+          divisor: 1
         },
 
         color: {
@@ -126,7 +120,20 @@ export default {
       // }
       indicesBuffer.subdata(indices)
 
-      draw()
+      draw({
+        offset: Array(nTriangles).fill().map((_, i) => {
+          var x = -(width / 2) + width * Math.floor(i / nH) / nW
+          var y = -(height / 2) + height * (i % nH) / nH
+
+          if(i % 2 !== 0) {
+            y += perRectHeight - (buffer * 2)
+          } else {
+            x += perRectWidth - buffer
+          }
+
+          return [x, y, 0]
+        })
+      })
     })
   },
 
