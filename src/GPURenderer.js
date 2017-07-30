@@ -20,7 +20,7 @@ const nW = 11 // triangles going across
 const nH = 2 * 40 // triangles going down
 const nTriangles = nW * nH
 const buffer = 1
-const cameraDist = 200
+const cameraDist = 100
 
 export default {
   initialize(opts) {
@@ -60,6 +60,7 @@ export default {
       vert: opts.shaders['drawRect.vs'],
 
       uniforms: {
+        midRect: [perRectWidth / 2, perRectHeight / 2],
         view: camera.view(),
         projection: ({ viewportWidth, viewportHeight }) => 
           mat4.perspective([],
