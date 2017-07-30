@@ -36,9 +36,6 @@ export default {
 
     config = opts
 
-    let bufferX = 2 * buffer / width 
-    let bufferY = buffer / height
-
     var indices = []
     for (var i = 0; i < nTriangles; i++) {
       indices[i] = i % 2 ? 1 : -1
@@ -67,9 +64,9 @@ export default {
 
       attributes: {
         position: [
-          [0.0, -1 * 2 * (perRectHeight - bufferY)], 
+          [0.0, -1 * 2 * (perRectHeight - buffer)], 
           [0, 0.0], 
-          [perRectWidth - bufferX, 0.0]
+          [perRectWidth - buffer, 0.0]
         ],
 
         offset: {
@@ -79,9 +76,9 @@ export default {
               var y = -(height / 2) + height * (i % nH) / nH
 
               if(i % 2 !== 0) {
-                y += perRectHeight - (bufferY * 2)
+                y += perRectHeight - (buffer * 2)
               } else {
-                x += perRectWidth - bufferX
+                x += perRectWidth - buffer
               }
 
               return [x, y]
