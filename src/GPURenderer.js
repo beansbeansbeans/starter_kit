@@ -16,11 +16,11 @@ document.addEventListener("mousemove", e => {
   mouseY = -1 * (e.clientY - height / 2)
 })
 
-const nW = 11 // triangles going across
-const nH = 2 * 40 // triangles going down
+const nW = 12 // triangles going across
+const nH = 2 * 50 // triangles going down
 const nTriangles = nW * nH
 const buffer = 1
-const cameraDist = 100
+const cameraDist = 500
 
 export default {
   initialize(opts) {
@@ -80,9 +80,9 @@ export default {
         offset: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              let index = i % 2 === 0 ? i - 1 : i
+              let index = i % 2 === 1 ? i - 1 : i
               let x = -(width / 2) + width * Math.floor(index / nH) / nW
-              let y = -(height / 2) - perRectHeight + height * (index % nH) / nH
+              let y = -(height / 2) + perRectHeight / 2 + height * (index % nH) / nH - buffer * 4
 
               return [x, y]
             })),
@@ -92,7 +92,7 @@ export default {
         color: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              let index = i % 2 === 0 ? i - 1 : i
+              let index = i % 2 === 1 ? i - 1 : i
               var r = Math.floor(index / nH) / nW
               var g = (index % nH) / nH
               return [r, g, r * g + 0.2]

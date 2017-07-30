@@ -23,7 +23,7 @@ void main() {
 
   gl_Position = projection * view * vec4(
     x, y,
-    50. / max(1., distance(offset + rect / 2., mousePosition)),
+    75. / max(1., distance(offset + rect / 2., mousePosition)),
     1);
 
   vColor = color;
