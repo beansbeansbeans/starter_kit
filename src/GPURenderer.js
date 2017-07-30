@@ -66,7 +66,9 @@ export default {
                            2 * Math.atan(height / (2 * cameraDist)),
                            width / height,
                            0.01, 
-                           2000)
+                           2000),
+        mousePosition: (ctx, props) => 
+          ([props.mouseX, props.mouseY])
       },
 
       attributes: {
@@ -77,7 +79,19 @@ export default {
         ],
 
         offset: {
-          buffer: regl.prop('offset'),
+          buffer: regl.buffer(
+            Array(nTriangles).fill().map((_, i) => {
+              let x = -(width / 2) + width * Math.floor(i / nH) / nW
+              let y = -(height / 2) + height * (i % nH) / nH
+
+              if(i % 2 !== 0) {
+                y += perRectHeight - (buffer * 2)
+              } else {
+                x += perRectWidth - buffer
+              }
+
+              return [x, y]
+            })),
           divisor: 1
         },
 
@@ -116,29 +130,7 @@ export default {
       // }
       indicesBuffer.subdata(indices)
 
-      draw({
-        offset: Array(nTriangles).fill().map((_, i) => {
-          let x = -(width / 2) + width * Math.floor(i / nH) / nW
-          let y = -(height / 2) + height * (i % nH) / nH
-
-          if(i % 2 !== 0) {
-            y += perRectHeight - (buffer * 2)
-          } else {
-            x += perRectWidth - buffer
-          }
-
-          let z = 0
-
-          let centerX = x + perRectWidth / 2
-          let centerY = y - perRectHeight / 2
-
-          if(Math.abs(centerX - mouseX) < 50 && Math.abs(centerY - mouseY) < 10) {
-            z = 50
-          }
-
-          return [x, y, z]
-        })
-      })
+      draw({ mouseX, mouseY })
     })
   },
 
