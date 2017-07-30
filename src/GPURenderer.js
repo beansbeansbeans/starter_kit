@@ -12,10 +12,10 @@ const onResize = () => {
 }
 
 const nW = 11 // triangles going across
-const nH = 2 * 22 // triangles going down
+const nH = 2 * 40 // triangles going down
 const nTriangles = nW * nH
 const buffer = 1
-const cameraDist = 360
+const cameraDist = 200
 
 export default {
   initialize(opts) {
@@ -56,7 +56,7 @@ export default {
         view: camera.view(),
         projection: ({ viewportWidth, viewportHeight }) => 
           mat4.perspective([],
-                           Math.PI / 1.75,
+                           2 * Math.atan(height / (2 * cameraDist)),
                            width / height,
                            0.01, 
                            2000)
