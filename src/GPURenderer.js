@@ -92,8 +92,9 @@ export default {
         color: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              var r = Math.floor(i / nH) / nW
-              var g = (i % nH) / nH
+              let index = i % 2 === 0 ? i - 1 : i
+              var r = Math.floor(index / nH) / nW
+              var g = (index % nH) / nH
               return [r, g, r * g + 0.2]
             })),
           divisor: 1 // one separate color for every triangle
