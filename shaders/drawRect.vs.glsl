@@ -17,4 +17,8 @@ void main() {
     offset.z, 1);
 
   vColor = color;
+
+  if(offset.z > 0.) {
+    vColor = vec3(1., 0., 0.);
+  }
 }

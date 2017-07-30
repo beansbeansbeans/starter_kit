@@ -12,8 +12,8 @@ const onResize = () => {
 }
 
 document.addEventListener("mousemove", e => {
-  mouseX = e.clientX
-  mouseY = e.clientY
+  mouseX = e.clientX - width / 2
+  mouseY = -1 * (e.clientY - height / 2)
 })
 
 const nW = 11 // triangles going across
@@ -97,10 +97,6 @@ export default {
         }
       },
 
-      depth: {
-        enable: false
-      },
-
       // Every triangle is just three vertices.
       // However, every such triangle are drawn N * N times,
       // through instancing.
@@ -122,8 +118,8 @@ export default {
 
       draw({
         offset: Array(nTriangles).fill().map((_, i) => {
-          var x = -(width / 2) + width * Math.floor(i / nH) / nW
-          var y = -(height / 2) + height * (i % nH) / nH
+          let x = -(width / 2) + width * Math.floor(i / nH) / nW
+          let y = -(height / 2) + height * (i % nH) / nH
 
           if(i % 2 !== 0) {
             y += perRectHeight - (buffer * 2)
@@ -131,7 +127,16 @@ export default {
             x += perRectWidth - buffer
           }
 
-          return [x, y, 0]
+          let z = 0
+
+          let centerX = x + perRectWidth / 2
+          let centerY = y - perRectHeight / 2
+
+          if(Math.abs(centerX - mouseX) < 50 && Math.abs(centerY - mouseY) < 10) {
+            z = 50
+          }
+
+          return [x, y, z]
         })
       })
     })
