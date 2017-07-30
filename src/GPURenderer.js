@@ -58,7 +58,7 @@ export default {
       vert: opts.shaders['drawRect.vs'],
 
       uniforms: {
-        midRect: [perRectWidth / 2, perRectHeight / 2],
+        rect: [perRectWidth - buffer, perRectHeight * 2 - buffer],
         view: camera.view(),
         projection: ({ viewportWidth, viewportHeight }) => 
           mat4.perspective([],
@@ -72,7 +72,7 @@ export default {
 
       attributes: {
         position: [
-          [0.0, -1 * 2 * (perRectHeight - buffer)], 
+          [0.0, 2 * perRectHeight - buffer], 
           [0, 0.0], 
           [perRectWidth - buffer, 0.0]
         ],
@@ -80,14 +80,9 @@ export default {
         offset: {
           buffer: regl.buffer(
             Array(nTriangles).fill().map((_, i) => {
-              let x = -(width / 2) + width * Math.floor(i / nH) / nW
-              let y = -(height / 2) + height * (i % nH) / nH
-
-              if(i % 2 !== 0) {
-                y += perRectHeight - (buffer * 2)
-              } else {
-                x += perRectWidth - buffer
-              }
+              let index = i % 2 === 0 ? i - 1 : i
+              let x = -(width / 2) + width * Math.floor(index / nH) / nW
+              let y = -(height / 2) - perRectHeight + height * (index % nH) / nH
 
               return [x, y]
             })),

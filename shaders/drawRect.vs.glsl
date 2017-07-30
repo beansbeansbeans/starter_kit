@@ -2,7 +2,7 @@ precision mediump float;
 attribute vec2 position;
 
 uniform mat4 projection, view;
-uniform vec2 mousePosition, midRect;
+uniform vec2 mousePosition, rect;
 
 // These are instanced attributes.
 attribute vec3 color;
@@ -11,12 +11,19 @@ attribute float index;
 varying vec3 vColor;
 
 void main() {
+  float x = offset.x + position.x;
+  float y = offset.y + position.y;
+
+  if(index > 0.) {
+    if(position.x < 0.0001 && position.y < 0.0001) {
+      x = offset.x + rect.x;
+      y = offset.y + rect.y;
+    }
+  }
 
   gl_Position = projection * view * vec4(
-    offset.x + index * position.x,
-    offset.y + index * position.y,
-    min(100., 
-      100. / distance(offset + index * midRect, mousePosition)), 
+    x, y,
+    min(100., 100. / distance(offset + rect / 2., mousePosition)),
     1);
 
   vColor = color;
