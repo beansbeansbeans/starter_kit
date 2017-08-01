@@ -51,13 +51,13 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
 
-  console.log(argument)
-
   let match, toSearch = [{ node: argument[0] }], web,
     constraints = []
 
-  const walk = () => {
+  function* walk() {
     let newToSearch = []
+
+    yield 42
 
     for(let i=0; i<toSearch.length; i++) {
       let node = toSearch[i].node,
@@ -89,23 +89,39 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
     toSearch = newToSearch
 
-    if(toSearch.length) walk()
+    if(toSearch.length) {
+      yield* walk()
+    } else {
+      return
+    }
   }
 
-  walk()
+  var walker = walk()
 
-  web.solve(constraints)
+  function attempt() {
+    result = walker.next()
+    console.log(result)
+    console.log(web)
 
-  if(debug) {
-    DebugVisualizer.initialize(web)
-    DebugVisualizer.draw()    
-    DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
-    DebugWebgl.draw(web)
-  } else {
-    renderer.initialize({ container: document.querySelector("app"), shaders })
+    if(!result.done) {
+      setTimeout(attempt, 1000)
+    } else {
+      web.solve(constraints)
+
+      if(debug) {
+        DebugVisualizer.initialize(web)
+        DebugVisualizer.draw()    
+        DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
+        DebugWebgl.draw(web)
+      } else {
+        renderer.initialize({ container: document.querySelector("app"), shaders })
+      }
+
+      console.log(web)
+    }
   }
 
-  console.log(web)
+  attempt()
 })
 
 window.addEventListener("resize", debounce(() => {
