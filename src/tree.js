@@ -1,6 +1,7 @@
 function Node(val, supports) {
   this.data = val
   this.children = []
+  this.leaves = 0
   this._id = uuid.v4()
   this.supports = supports
 }
@@ -167,9 +168,18 @@ Tree.prototype.add = function(n, parent) {
   parent.children.push(n)
   n.parent = parent
   n.depth = parent.depth + 1
+
+  if(parent.children.length > 1) {
+    this.traverseUp(node => {
+      if(node._id !== n._id) node.leaves++ }, n)    
+  } else {
+    parent.leaves++
+  }
 }
 
 Tree.prototype.remove = function(node) {
+  this.traverseUp(n => n.leaves--, node)
+
   let children = node.parent.children
   let index = children.map(c => c._id).indexOf(node._id)
 

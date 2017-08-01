@@ -16,6 +16,13 @@ const render = () => {
 keep track: how many columns are there
 also: how many occupied and unoccupied rectangles are there in the last column
 to determine this: just count the number of leaf nodes in the tree (through DF search)
+
+traverse nodes, add top and height properties to each
+- top is inherited from its parent, plus however many of its siblings have already been templated
+- height is however many leaf nodes this node contains, times the min-height. 
+- if this node is a leaf node, then its height is the minheight.
+
+should we have each node keep track of how many leaf nodes it contains?
 */
 
 export default {
