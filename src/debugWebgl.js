@@ -1,4 +1,4 @@
-let ctx, rafID, width, height, rects = []
+let ctx, rafID, width, height, rects = [], tree, argWidth
 
 const render = () => {
   ctx.clearRect(0, 0, width, height)  
@@ -7,7 +7,11 @@ const render = () => {
   ctx.fillRect(0, 0, width, height)
 
   ctx.strokeStyle = "white"
-  ctx.strokeRect(10, 10, 100, 100)
+
+  tree.traverseDF(n => {
+    let left = n.depth * argWidth
+    ctx.strokeRect(left, n.top, argWidth, n.height)
+  })
 
   // rafID = requestAnimationFrame(render)
 }
@@ -28,14 +32,16 @@ should we have each node keep track of how many leaf nodes it contains?
 export default {
   initialize({ canvas, web }) {
     ctx = canvas.getContext("2d")
+    tree = web
 
     width = canvas.getAttribute("width")
     height = canvas.getAttribute("height")
 
     let leaves = web.countLeaves(),
       depth = web.getDepth(),
-      argWidth = Math.floor(width / depth),
       minHeight = height / leaves
+
+    argWidth = Math.floor(width / depth)
 
     web.traverseDF(n => {
       let top = 0
