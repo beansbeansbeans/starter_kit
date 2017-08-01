@@ -12,8 +12,6 @@ const render = () => {
     let left = n.depth * argWidth
     ctx.strokeRect(left, n.top, argWidth, n.height)
   })
-
-  // rafID = requestAnimationFrame(render)
 }
 
 /* 
@@ -29,48 +27,49 @@ traverse nodes, add top and height properties to each
 should we have each node keep track of how many leaf nodes it contains?
 */
 
+const reconcile = () => {
+  let leaves = tree.countLeaves(),
+    depth = tree.getDepth(),
+    minHeight = height / leaves
+
+  argWidth = Math.floor(width / depth)
+
+  tree.traverseDF(n => {
+    let top = 0
+
+    if(n.depth > 0) {
+      let children = n.parent.children
+
+      for(let i=0; i<children.length; i++) {
+        if(children[i]._id === n._id) {
+          if(i > 0) {
+            let prevSib = children[i - 1]
+            top = prevSib.top + prevSib.height
+          } else {
+            top = n.parent.top
+          }
+          break
+        }
+      }
+    }
+
+    n.top = top
+    n.height = Math.max(minHeight, n.leaves * minHeight)
+  })
+}
+
 export default {
-  initialize({ canvas, web }) {
+  initialize({ canvas }) {
     ctx = canvas.getContext("2d")
-    tree = web
 
     width = canvas.getAttribute("width")
     height = canvas.getAttribute("height")
-
-    let leaves = web.countLeaves(),
-      depth = web.getDepth(),
-      minHeight = height / leaves
-
-    argWidth = Math.floor(width / depth)
-
-    web.traverseDF(n => {
-      let top = 0
-
-      if(n.depth > 0) {
-        let children = n.parent.children
-
-        for(let i=0; i<children.length; i++) {
-          if(children[i]._id === n._id) {
-            if(i > 0) {
-              let prevSib = children[i - 1]
-              top = prevSib.top + prevSib.height
-            } else {
-              top = n.parent.top
-            }
-            break
-          }
-        }
-      }
-
-      n.top = top
-      n.height = Math.max(minHeight, n.leaves * minHeight)
-    })
-
-    render()
-    // rafID = render()
   },
 
-  draw() {
+  draw(web) {
+    tree = web
 
+    reconcile()
+    render()
   }
 }

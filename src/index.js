@@ -99,7 +99,8 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   if(debug) {
     DebugVisualizer.initialize(web)
     DebugVisualizer.draw()    
-    DebugWebgl.initialize({ canvas: document.querySelector("canvas"), web })
+    DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
+    DebugWebgl.draw(web)
   } else {
     renderer.initialize({ container: document.querySelector("app"), shaders })
   }

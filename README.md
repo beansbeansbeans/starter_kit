@@ -16,7 +16,7 @@ when a new argument is introduced:
 - heights readjust so that constraints 1 and 2 are satisfied
 
 implementation:
-- render it statically through breadth-first search
+- DONE - render it statically through breadth-first search
 - render it incrementally / randomly - moving through the tree
 - animate
 - render to webgl
