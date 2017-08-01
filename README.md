@@ -9,14 +9,14 @@ RENDERING PROCEDURE
 
 constraint0: seed argument occupies all available height
 constraint1: children of an argument collectively occupy all of their parent's height
-constraint2: heights of second to last column inhabitants are proportional with respect to how many children they have
+constraint2: rectangles in the right-most column are the same height
 
 when a new argument is introduced:
 - columns en-narrow to accommodate (if it's a new depth)
 - heights readjust so that constraints 1 and 2 are satisfied
 
 implementation:
-- render it statically
+- render it statically through breadth-first search
 - render it incrementally / randomly - moving through the tree
 - animate
 - render to webgl

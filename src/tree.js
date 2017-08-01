@@ -137,6 +137,16 @@ Tree.prototype.traverseBF = function(matchFn) {
   return match
 }
 
+Tree.prototype.countLeaves = function() {
+  let leaves = 0
+  this.traverseBF(n => {
+    if(!n.children.length) leaves++
+    return false
+  })
+
+  return leaves
+}
+
 Tree.prototype.find = function(data, property = 'data') {
   return this.traverseDF(node => node[property] === data)
 }

@@ -1,14 +1,22 @@
-let ctx, rafID, width, height
+let ctx, rafID, width, height, rects = []
 
 const render = () => {
   ctx.clearRect(0, 0, width, height)  
 
-  ctx.fillStyle = "white"
-  // ctx.fillStyle = `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)})`
+  ctx.fillStyle = "black"
   ctx.fillRect(0, 0, width, height)
 
-  rafID = requestAnimationFrame(render)
+  ctx.strokeStyle = "white"
+  ctx.strokeRect(10, 10, 100, 100)
+
+  // rafID = requestAnimationFrame(render)
 }
+
+/* 
+keep track: how many columns are there
+also: how many occupied and unoccupied rectangles are there in the last column
+to determine this: just count the number of leaf nodes in the tree (through DF search)
+*/
 
 export default {
   initialize({ canvas, web }) {
@@ -17,7 +25,10 @@ export default {
     width = canvas.getAttribute("width")
     height = canvas.getAttribute("height")
 
-    rafID = render()
+    console.log(web.countLeaves())
+
+    render()
+    // rafID = render()
   },
 
   draw() {
