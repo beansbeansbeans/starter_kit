@@ -178,7 +178,11 @@ Tree.prototype.add = function(n, parent) {
 }
 
 Tree.prototype.remove = function(node) {
-  this.traverseUp(n => n.leaves--, node)
+  if(node.parent.children.length === 1) {
+    node.parent.leaves--
+  } else {
+    this.traverseUp(n => n.leaves--, node)
+  }
 
   let children = node.parent.children
   let index = children.map(c => c._id).indexOf(node._id)
