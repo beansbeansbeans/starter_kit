@@ -7,10 +7,16 @@ SOLVING PROCEDURE
 
 RENDERING PROCEDURE
 
-maybe...
+constraint0: seed argument occupies all available height
+constraint1: children of an argument collectively occupy all of their parent's height
+constraint2: heights of second to last column inhabitants are proportional with respect to how many children they have
 
-the buffer should be in terms of actual screen coordinates,
-(regardless of how i solve this - actual screen coordinates should enter the picture at some point)
+when a new argument is introduced:
+- columns en-narrow to accommodate (if it's a new depth)
+- heights readjust so that constraints 1 and 2 are satisfied
 
-(figure out where -1 +1 maps onto the screen - that will help me determine the multiplication factor)
-
+implementation:
+- render it statically
+- render it incrementally / randomly - moving through the tree
+- animate
+- render to webgl

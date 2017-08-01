@@ -9,8 +9,9 @@ import renderer from './GPURenderer'
 import treeData from './tree'
 const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
+import DebugWebgl from './debugWebgl'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = false
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = true
 
 const shaders = {},
   preload = {
@@ -31,7 +32,12 @@ class App extends Component {
   render({}) {
     let debugDOM = null
     if(debug) {
-      debugDOM = <svg id="debug-svg"></svg>
+      debugDOM = <div id="debug">
+        <canvas 
+          width={sharedState.get("windowWidth")}
+          height={sharedState.get("windowHeight")}></canvas>
+        <svg id="debug-svg"></svg>
+      </div>
     }
 
     return (
@@ -93,6 +99,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   if(debug) {
     DebugVisualizer.initialize(web)
     DebugVisualizer.draw()    
+    DebugWebgl.initialize({ canvas: document.querySelector("canvas"), web })
   } else {
     renderer.initialize({ container: document.querySelector("app"), shaders })
   }
