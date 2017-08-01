@@ -57,7 +57,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   function* walk() {
     let newToSearch = []
 
-
     for(let i=0; i<toSearch.length; i++) {
       let node = toSearch[i].node,
         parent = toSearch[i].parent,
@@ -69,6 +68,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
       } else {
         treeNode = new Node(node.data, node.supports)
         web.add(treeNode, parent)
+        yield treeNode
       }
 
       if(typeof node.constraintValue !== 'undefined') {
@@ -87,9 +87,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     }
 
     toSearch = newToSearch
-
-    console.log("in:", toSearch.length)
-    yield toSearch.length
 
     if(toSearch.length) {
       yield* walk()
