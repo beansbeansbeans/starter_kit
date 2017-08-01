@@ -32,8 +32,37 @@ export default {
     width = canvas.getAttribute("width")
     height = canvas.getAttribute("height")
 
-    console.log(web.countLeaves())
-    console.log(web.getDepth())
+    let leaves = web.countLeaves(),
+      depth = web.getDepth(),
+      argWidth = Math.floor(width / depth),
+      minHeight = height / leaves
+
+    web.traverseDF(n => {
+      let top = 0
+
+      if(n.depth > 0) {
+        top = 0
+
+        let children = n.parent.children
+
+        for(let i=0; i<children.length; i++) {
+          let child = children[i]
+
+          if(child._id === n._id) {
+            if(i > 0) {
+              let prevSib = children[i - 1]
+              top = prevSib.top + prevSib.height
+            } else {
+              top = n.parent.top
+            }
+            break
+          }
+        }
+      }
+
+      n.top = top
+      n.height = Math.max(minHeight, n.leaves * minHeight)
+    })
 
     render()
     // rafID = render()
