@@ -11,7 +11,7 @@ const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 import DebugWebgl from './debugWebgl'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = true
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = false
 
 const shaders = {},
   preload = {
