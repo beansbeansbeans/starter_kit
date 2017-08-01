@@ -26,6 +26,7 @@ export default {
     height = canvas.getAttribute("height")
 
     console.log(web.countLeaves())
+    console.log(web.getDepth())
 
     render()
     // rafID = render()

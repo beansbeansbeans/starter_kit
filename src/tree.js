@@ -7,6 +7,7 @@ function Node(val, supports) {
 
 function Tree(val) {
   this._root = new Node(val)
+  this._root.depth = 0
 }
 
 const constraintCheck = (fn, strict = true) => n => {
@@ -147,6 +148,17 @@ Tree.prototype.countLeaves = function() {
   return leaves
 }
 
+Tree.prototype.getDepth = function() {
+  let maxDepth = 0
+  this.traverseDF(n => {
+    if(n.depth > maxDepth) {
+      maxDepth = n.depth
+    }
+  })
+
+  return maxDepth + 1
+}
+
 Tree.prototype.find = function(data, property = 'data') {
   return this.traverseDF(node => node[property] === data)
 }
@@ -154,6 +166,7 @@ Tree.prototype.find = function(data, property = 'data') {
 Tree.prototype.add = function(n, parent) {
   parent.children.push(n)
   n.parent = parent
+  n.depth = parent.depth + 1
 }
 
 Tree.prototype.remove = function(node) {
