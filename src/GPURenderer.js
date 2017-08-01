@@ -21,11 +21,11 @@ document.addEventListener("mouseleave", e => {
   mouseY = -1
 })
 
-const nW = 12 // triangles going across
+const nW = 13 // triangles going across
 const nH = 2 * 50 // triangles going down
 const nTriangles = nW * nH
 const buffer = 1
-const cameraDist = 500
+const cameraDist = 1000
 
 export default {
   initialize(opts) {
