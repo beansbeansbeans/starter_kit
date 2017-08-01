@@ -57,7 +57,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   function* walk() {
     let newToSearch = []
 
-    yield 42
 
     for(let i=0; i<toSearch.length; i++) {
       let node = toSearch[i].node,
@@ -88,6 +87,9 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     }
 
     toSearch = newToSearch
+
+    console.log("in:", toSearch.length)
+    yield toSearch.length
 
     if(toSearch.length) {
       yield* walk()
