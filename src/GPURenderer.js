@@ -5,7 +5,7 @@ import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
 
-let width, height, config, regl, camera, perRectWidth, perRectHeight, mouseX, mouseY
+let width, height, config, regl, camera, perRectWidth, perRectHeight, mouseX = -1, mouseY = -1
 
 const onResize = () => {
 
@@ -14,6 +14,11 @@ const onResize = () => {
 document.addEventListener("mousemove", e => {
   mouseX = e.clientX - width / 2
   mouseY = -1 * (e.clientY - height / 2)
+})
+
+document.addEventListener("mouseleave", e => {
+  mouseX = -1
+  mouseY = -1
 })
 
 const nW = 12 // triangles going across
