@@ -8,6 +8,7 @@ uniform vec2 mousePosition, rect;
 attribute vec3 color;
 attribute vec2 offset;
 attribute float index;
+attribute float extrusion;
 varying vec3 vColor;
 
 void main() {
@@ -23,7 +24,7 @@ void main() {
 
   gl_Position = projection * view * vec4(
     x, y,
-    75. / max(1., distance(offset + rect / 2., mousePosition)),
+    extrusion + (75. / max(1., distance(offset + rect / 2., mousePosition))),
     1);
 
   vColor = color;

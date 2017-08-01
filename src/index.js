@@ -105,7 +105,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     console.log(result)
 
     if(!result.done) {
-      setTimeout(iterate, 1000)
+      requestAnimationFrame(iterate)
     } else {
       web.solve(constraints)
 
