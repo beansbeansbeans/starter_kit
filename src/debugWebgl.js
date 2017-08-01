@@ -47,14 +47,10 @@ export default {
       let top = 0
 
       if(n.depth > 0) {
-        top = 0
-
         let children = n.parent.children
 
         for(let i=0; i<children.length; i++) {
-          let child = children[i]
-
-          if(child._id === n._id) {
+          if(children[i]._id === n._id) {
             if(i > 0) {
               let prevSib = children[i - 1]
               top = prevSib.top + prevSib.height

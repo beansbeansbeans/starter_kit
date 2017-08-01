@@ -165,7 +165,12 @@ Tree.prototype.find = function(data, property = 'data') {
 }
 
 Tree.prototype.add = function(n, parent) {
-  parent.children.push(n)
+  if(!n.supports) {
+    parent.children.push(n)
+  } else {
+    parent.children.unshift(n)
+  }
+
   n.parent = parent
   n.depth = parent.depth + 1
 
