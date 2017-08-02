@@ -46,20 +46,13 @@ export default {
 
     config = opts
 
-    let indices = [], extrusions = []
+    let indices = []
     for (let i = 0; i < nTriangles; i++) {
       indices[i] = i % 2 ? 1 : -1
-      if(i % 2 === 0) extrusions.push(Math.random() * 50)
     }
 
     const indicesBuffer = regl.buffer({
       length: indices.length * 4,
-      type: 'float',
-      usage: 'dynamic'
-    })
-
-    const extrusionsBuffer = regl.buffer({
-      length: extrusions.length * 4,
       type: 'float',
       usage: 'dynamic'
     })
@@ -115,11 +108,6 @@ export default {
         index: {
           buffer: indicesBuffer,
           divisor: 1
-        },
-
-        extrusion: {
-          buffer: extrusionsBuffer,
-          divisor: 2
         }
       },
 
@@ -137,7 +125,6 @@ export default {
       })
 
       indicesBuffer.subdata(indices)
-      extrusionsBuffer.subdata(extrusions)
 
       draw({ mouseX, mouseY })
     })
