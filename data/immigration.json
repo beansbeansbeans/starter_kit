@@ -1,0 +1,21 @@
+{
+  "data": "illegal immigration is good for the economy",
+  "children": [
+    {
+      "data": "affluent households benefit from childcare, maintenance, cleaning, and other services",
+      "supports": true
+    },
+    {
+      "data": "immigrants are costly for the government - they receive more than they pay in taxes",
+      "supports": false
+    },
+    {
+      "data": "state provides education and emergency care and other benefits for immigrants",
+      "supports": false
+    },
+    {
+      "data": "crime and drug issues disrupt law-abiding citizens lives",
+      "supports": false
+    }
+  ]
+}
