@@ -98,6 +98,8 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   if(debug) {
     DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
+  } else {
+    renderer.initialize({ container: document.querySelector("app"), shaders })
   }
 
   function iterate() {
@@ -105,21 +107,22 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     console.log(result)
 
     if(!result.done) {
-      requestAnimationFrame(iterate)
+      setTimeout(iterate, 1000)
+      // requestAnimationFrame(iterate)
     } else {
       web.solve(constraints)
 
       if(debug) {
         DebugVisualizer.initialize(web)
         DebugVisualizer.draw()
-      } else {
-        renderer.initialize({ container: document.querySelector("app"), shaders })
       }
-
-      console.log(web)
     }
 
-    if(debug) DebugWebgl.draw(web)
+    if(debug) {
+      DebugWebgl.draw(web)
+    } else {
+      renderer.update(web)
+    }
   }
 
   iterate()

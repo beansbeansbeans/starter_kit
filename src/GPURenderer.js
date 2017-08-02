@@ -5,7 +5,7 @@ import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
 
-let width, height, config, regl, camera, perRectWidth, perRectHeight, mouseX = -1, mouseY = -1
+let width, height, config, regl, camera, perRectWidth, perRectHeight, mouseX = -1, mouseY = -1, tree, draw
 
 const onResize = () => {
 
@@ -57,7 +57,7 @@ export default {
       usage: 'dynamic'
     })
 
-    const draw = regl({
+    draw = regl({
       frag: opts.shaders['drawRect.fs'],
 
       vert: opts.shaders['drawRect.vs'],
@@ -119,15 +119,17 @@ export default {
       instances: nTriangles
     })
 
-    regl.frame(function () {
-      regl.clear({
-        color: [0, 0, 0, 1]
-      })
+    indicesBuffer.subdata(indices)
+  },
 
-      indicesBuffer.subdata(indices)
+  update(web) {
+    tree = web
 
-      draw({ mouseX, mouseY })
+    regl.clear({
+      color: [0, 0, 0, 1]
     })
+
+    draw({ mouseX, mouseY })
   },
 
   resize() {
