@@ -11,7 +11,7 @@ const { Tree, Node } = treeData
 import DebugVisualizer from './debugVisualizer'
 import DebugWebgl from './debugWebgl'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = false
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, debug = true
 
 const shaders = {},
   preload = {
@@ -107,7 +107,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     console.log(result)
 
     if(!result.done) {
-      setTimeout(iterate, 1000)
+      setTimeout(iterate, 500)
       // requestAnimationFrame(iterate)
     } else {
       web.solve(constraints)

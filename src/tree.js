@@ -258,7 +258,33 @@ Tree.prototype.solve = function(arr) {
   }
 }
 
+Tree.prototype.reconcile = function(width, height) {
+  let leaves = this.countLeaves(),
+    depth = this.getDepth(),
+    minHeight = height / leaves
+
+  this.traverseDF(n => {
+    let top = 0
+
+    if(n.depth > 0) {
+      let children = n.parent.children
+
+      for(let i=0; i<children.length; i++) {
+        if(children[i]._id === n._id) {
+          if(i > 0) {
+            let prevSib = children[i - 1]
+            top = prevSib.top + prevSib.height
+          } else {
+            top = n.parent.top
+          }
+          break
+        }
+      }
+    }
+
+    n.top = top
+    n.height = Math.max(minHeight, n.leaves * minHeight)
+  })
+}
+
 export default { Tree, Node }
-
-
-
