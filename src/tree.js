@@ -1,13 +1,17 @@
-function Node(val, supports) {
+import randomModule from './helpers/random'
+const random = randomModule.random(42)
+
+function Node(val, supports, extraData) {
   this.data = val
   this.children = []
   this.leaves = 0
   this._id = uuid.v4()
   this.supports = supports
+  this.extraData = extraData
 }
 
-function Tree(val) {
-  this._root = new Node(val)
+function Tree(val, extraData) {
+  this._root = new Node(val, null, extraData)
   this._root.depth = 0
 }
 
@@ -31,7 +35,7 @@ const constraintCheck = (fn, strict = true) => n => {
 
   if(typeof n.value === 'undefined' && strict === false) {
     if(typeof n.provisionalValue === 'undefined') { // if still no value...
-      n.provisionalValue = Math.random() < 0.5 ? false : true
+      n.provisionalValue = random.nextDouble() < 0.5 ? false : true
     }
   }
 
@@ -99,17 +103,18 @@ Tree.prototype.traverseUp = function(fn, seed) {
   return apply(seed)
 }
 
-Tree.prototype.traverseDF = function(matchFn, seed) {
+Tree.prototype.traverseDF = function(matchFn, seed, find = false) {
   if(typeof seed === 'undefined') seed = this._root
 
-  const find = node => node.children.reduce((acc, curr) => {
+  const traverse = node => node.children.reduce((acc, curr) => {
+    if(find && matchFn(acc)) return acc
     if(matchFn(curr)) return curr
-    return find(curr)
+    return traverse(curr)
   }, false)
 
   if(matchFn(seed)) return seed
 
-  return find(seed)
+  return traverse(seed)
 }
 
 Tree.prototype.traverseBF = function(matchFn) {
@@ -140,13 +145,7 @@ Tree.prototype.traverseBF = function(matchFn) {
 }
 
 Tree.prototype.countLeaves = function() {
-  let leaves = 0
-  this.traverseBF(n => {
-    if(!n.children.length) leaves++
-    return false
-  })
-
-  return leaves
+  return this._root.leaves
 }
 
 Tree.prototype.getDepth = function() {
@@ -161,10 +160,13 @@ Tree.prototype.getDepth = function() {
 }
 
 Tree.prototype.find = function(data, property = 'data') {
-  return this.traverseDF(node => node[property] === data)
+  return this.traverseDF(node => node[property] === data, this._root, true)
 }
 
 Tree.prototype.add = function(n, parent) {
+  n.leaves = 0
+  n.children = []
+
   if(!n.supports) {
     parent.children.push(n)
   } else {
@@ -183,15 +185,18 @@ Tree.prototype.add = function(n, parent) {
 }
 
 Tree.prototype.remove = function(node) {
-  if(node.parent.children.length === 1) {
+  let children = node.parent.children, leaves = Math.max(1, node.leaves)
+
+  if(children.length === 1 && node.children.length === 0) {
     node.parent.leaves--
   } else {
-    this.traverseUp(n => n.leaves--, node)
+    this.traverseUp(n => {
+      n.leaves -= leaves
+      return false
+    }, node)
   }
 
-  let children = node.parent.children
   let index = children.map(c => c._id).indexOf(node._id)
-
   children.splice(index, 1)
 }
 

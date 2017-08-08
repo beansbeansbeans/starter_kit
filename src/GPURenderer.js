@@ -1,39 +1,62 @@
 import helpers from './helpers/helpers'
 const { radToDegrees } = helpers
 import sharedState from './sharedState'
+import mediator from './mediator'
 import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
+import { difference } from 'underscore'
 
-let width, height, config, regl, camera, perRectWidth, perRectHeight, mouseX = -1, mouseY = -1, tree, draw
-
-const onResize = () => {
-
+let width, height, config, regl, camera, mouseX = -1, mouseY = -1, tree, draw, rectWidth = 0, nextRectWidth = 0, frame = 0, iterations = 0, updateIterator = 0, lastNow = Date.now(), iterationSnapshot, state = {
+  rectWidth, nextRectWidth
 }
 
-document.addEventListener("mousemove", e => {
-  mouseX = e.clientX - width / 2
-  mouseY = -1 * (e.clientY - height / 2)
+let animationLength = 0
+const frames = [4]
+
+const onResize = () => {}
+
+const measureFPS = () => {
+  const now = Date.now()
+
+  // console.log(Math.round((iterations - iterationSnapshot) / ((now - lastNow) / 1000)))
+  
+  lastNow = now
+  iterationSnapshot = iterations
+}
+
+mediator.subscribe("mousemove", data => {
+  mouseX = data.x - width / 2
+  mouseY = -1 * (data.y - height / 2)  
 })
 
-document.addEventListener("mouseleave", e => {
+mediator.subscribe("mouseleave", data => {
   mouseX = -1
-  mouseY = -1
+  mouseY = -1  
 })
 
-const nW = 13 // triangles going across
-const nH = 2 * 50 // triangles going down
-const nTriangles = nW * nH
-const buffer = 1
+const maxArgumentCount = 1000
+const nTriangles = 2 * maxArgumentCount // max # arguments
+const buffer = 2
 const cameraDist = 1000
+
+let unusedIndices = []
+for(let i=0; i<maxArgumentCount; i++) unusedIndices.push(i)
+const nextIndex = () => unusedIndices.shift()
+
+let supports = new Float32Array(maxArgumentCount)
+let tops = new Float32Array(maxArgumentCount)
+let tops2 = new Float32Array(maxArgumentCount)
+let left = new Float32Array(maxArgumentCount)
+let left2 = new Float32Array(maxArgumentCount)
+let heights = new Float32Array(maxArgumentCount)
+let heights2 = new Float32Array(maxArgumentCount)
+let idToIndex = {}
 
 export default {
   initialize(opts) {
-    width = sharedState.get("windowWidth")
-    height = sharedState.get("windowHeight")
-    
-    perRectWidth = width / nW
-    perRectHeight = height / nH
+    width = sharedState.get('containerWidth')
+    height = sharedState.get('containerHeight')
 
     regl = reglImport({ 
       extensions: ['angle_instanced_arrays'],
@@ -47,9 +70,7 @@ export default {
     config = opts
 
     let indices = []
-    for (let i = 0; i < nTriangles; i++) {
-      indices[i] = i % 2 ? 1 : -1
-    }
+    for (let i = 0; i < nTriangles; i++) indices[i] = i
 
     const indicesBuffer = regl.buffer({
       length: indices.length * 4,
@@ -63,7 +84,12 @@ export default {
       vert: opts.shaders['drawRect.vs'],
 
       uniforms: {
-        rect: [perRectWidth - buffer, perRectHeight * 2 - buffer],
+        bufferSize: buffer,
+        animationLength: (ctx, props) => props.animationLength,
+        canvasRect: [width, height],
+        frame: (ctx, props) => props.frame,
+        rectWidth: (ctx, props) => props.rectWidth,
+        nextRectWidth: (ctx, props) => props.nextRectWidth,
         view: camera.view(),
         projection: ({ viewportWidth, viewportHeight }) => 
           mat4.perspective([],
@@ -76,33 +102,41 @@ export default {
       },
 
       attributes: {
-        position: [
-          [0.0, 2 * perRectHeight - buffer], 
-          [0, 0.0], 
-          [perRectWidth - buffer, 0.0]
-        ],
+        corner: [ 1, 2, 3 ],
 
-        offset: {
-          buffer: regl.buffer(
-            Array(nTriangles).fill().map((_, i) => {
-              let index = i % 2 === 1 ? i - 1 : i
-              let x = -(width / 2) + width * Math.floor(index / nH) / nW
-              let y = -(height / 2) + perRectHeight / 2 + height * (index % nH) / nH - buffer * 4
-
-              return [x, y]
-            })),
-          divisor: 1
+        supports: {
+          buffer: regl.prop('supports'),
+          divisor: 2
         },
 
-        color: {
-          buffer: regl.buffer(
-            Array(nTriangles).fill().map((_, i) => {
-              let index = i % 2 === 1 ? i - 1 : i
-              var r = Math.floor(index / nH) / nW
-              var g = (index % nH) / nH
-              return [r, g, r * g + 0.2]
-            })),
-          divisor: 1 // one separate color for every triangle
+        nextLeft: {
+          buffer: regl.prop('nextLeft'),
+          divisor: 2
+        },
+
+        nextTop: {
+          buffer: regl.prop('nextTops'),
+          divisor: 2
+        },
+
+        nextHeight: {
+          buffer: regl.prop('nextHeights'),
+          divisor: 2
+        },
+
+        left: {
+          buffer: regl.prop('currentLeft'),
+          divisor: 2
+        },
+
+        top: {
+          buffer: regl.prop('currentTops'),
+          divisor: 2
+        },
+
+        height: {
+          buffer: regl.prop('currentHeights'),
+          divisor: 2
         },
 
         index: {
@@ -111,25 +145,105 @@ export default {
         }
       },
 
-      // Every triangle is just three vertices.
-      // However, every such triangle are drawn N * N times,
-      // through instancing.
       count: 3,
 
       instances: nTriangles
     })
 
     indicesBuffer.subdata(indices)
+
+    regl.frame(ctx => {
+      regl.clear({ color: [255/255, 100/255, 104/255, 1] })
+
+      state.frame = frame
+      state.mouseX = mouseX
+      state.mouseY = mouseY
+
+      draw(state)
+
+      iterations++
+      frame++
+
+      if(frame > animationLength) {
+        mediator.publish("reconcileTree")
+      }
+    })
+
+    setInterval(measureFPS, 1000)
   },
 
   update(web) {
     tree = web
+    tree.reconcile(width, height)
 
-    regl.clear({
-      color: [0, 0, 0, 1]
+    let depth = tree.getDepth()
+    animationLength = frames[Math.min(depth - 1, frames.length - 1)]
+
+    state.rectWidth = rectWidth
+    rectWidth = Math.round(width / depth)
+    state.nextRectWidth = rectWidth
+
+    let traversed = []
+
+    tree.traverseDF(n => {
+      if(typeof idToIndex[n._id] === 'undefined') {
+        idToIndex[n._id] = nextIndex()
+      }
+
+      let index = idToIndex[n._id]
+
+      if(updateIterator % 2 === 0) {
+        tops[index] = n.top
+        left[index] = n.depth * rectWidth
+        heights[index] = n.height
+      } else {
+        tops2[index] = n.top
+        left2[index] = n.depth * rectWidth
+        heights2[index] = n.height    
+      }
+
+      supports[index] = (n.supports || n.depth === 0) ? 1 : 0
+
+      traversed.push(n._id)
     })
 
-    draw({ mouseX, mouseY })
+    let deleted = difference(Object.keys(idToIndex), traversed)
+    for(let i=0; i<deleted.length; i++) {
+      let index = idToIndex[deleted[i]]
+
+      tops[index] = 0
+      left[index] = 0
+      heights[index] = 0
+
+      tops2[index] = 0
+      left2[index] = 0
+      heights2[index] = 0
+
+      unusedIndices.push(index)
+      delete idToIndex[deleted[i]]
+    }
+
+    if(updateIterator % 2 === 1) {
+      state.currentTops = tops
+      state.currentLeft = left
+      state.currentHeights = heights
+      state.nextTops = tops2
+      state.nextLeft = left2
+      state.nextHeights = heights2
+    } else {
+      state.currentTops = tops2
+      state.currentLeft = left2
+      state.currentHeights = heights2
+      state.nextTops = tops
+      state.nextLeft = left
+      state.nextHeights = heights
+    }
+
+    state.supports = supports
+    state.animationLength = animationLength
+
+    updateIterator++
+    frame = 0
   },
 
   resize() {

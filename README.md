@@ -18,9 +18,10 @@ when a new argument is introduced:
 implementation:
 - DONE - render it statically through breadth-first search
 - DONE - render it incrementally / randomly - moving through the tree
-- render to webgl
-
-the pipeline should accept a tree of top/height properties, and output a visual tree of rectangles
-
+- DONE - render to webgl
 
 - animate
+
+the issue is: every argument needs a unique position within the top, left, and heights arrays
+
+so, create an object mapping _id's to indices

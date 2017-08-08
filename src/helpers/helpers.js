@@ -14,12 +14,26 @@ export default {
     return rad * (180 / Math.PI)
   },
 
+  removeDuplicates: function(arr) {
+    let clean = []
+    for(let i=0; i<arr.length; i++) {
+      if(clean.indexOf(arr[i]) === -1) clean.push(arr[i])
+    }
+    return clean
+  },
+
   decodeFloat: function(x, y, z, w) {
     UINT8_VIEW[0] = Math.floor(w)
     UINT8_VIEW[1] = Math.floor(z)
     UINT8_VIEW[2] = Math.floor(y)
     UINT8_VIEW[3] = Math.floor(x)
     return FLOAT_VIEW[0]
+  },
+
+  bindAll(ctx, fns) {
+    fns.forEach(d => {
+      ctx[d] = ctx[d].bind(ctx)
+    })
   },
 
   // WEBL HELPERS

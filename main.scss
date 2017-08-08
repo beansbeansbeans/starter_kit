@@ -1,5 +1,19 @@
+@import "scss/variables";
+@import "scss/controls";
+@import "scss/moralMatricesChart";
+
 body {
   margin: 0;
+  background: $bittersweet;
+}
+
+body, html {
+  font-family: Helvetica Neue;
+  font-size: 10px;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 app {
@@ -12,14 +26,22 @@ app {
 
 canvas {
   display: block;
-  border: solid 1px #ccc;
   position: relative;
 }
 
 button {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+$webgl-buffer: 2px;
+
+#webgl-wrapper {
+  position: fixed;
+  left: $webgl-buffer;
+  top: $webgl-buffer;
+  bottom: 0;
+  width: calc(100vw - #{$controls-width} - #{$webgl-buffer});
 }
 
 #debug canvas {
@@ -36,4 +58,13 @@ svg {
   .attack {
     fill: red;
   }
+}
+
+.debug-label {
+  color: transparent;
+}
+
+#hover-info {
+  position: fixed;
+  max-width: 30rem;
 }
