@@ -109,15 +109,31 @@ class Tree {
   traverseDF(matchFn, seed, find = false) {
     if(typeof seed === 'undefined') seed = this._root
 
-    const traverse = node => node.children.reduce((acc, curr) => {
+    if(matchFn(seed)) return seed
+
+    return seed.children.reduce((acc, curr) => {
       if(find && matchFn(acc)) return acc
       if(matchFn(curr)) return curr
-      return traverse(curr)
-    }, false)
+
+      return this.traverseDF(matchFn, curr, find)
+    }, false)  
+  }
+
+  * traverseDFAsync(matchFn, seed, find = false) {
+    if(typeof seed === 'undefined') seed = this._root
 
     if(matchFn(seed)) return seed
 
-    return traverse(seed)    
+    function* traverse(node) {
+      yield* node.children.reduce((acc, curr) => {
+        if(find && matchFn(acc)) return acc
+        if(matchFn(curr)) return curr
+
+        return traverse(curr)
+      })
+    }
+
+    yield traverse(seed) 
   }
 
   traverseBF(matchFn) {
