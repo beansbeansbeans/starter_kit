@@ -1,13 +1,15 @@
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-function Node(val, supports, extraData) {
-  this.data = val
-  this.children = []
-  this.leaves = 0
-  this._id = uuid.v4()
-  this.supports = supports
-  this.extraData = extraData
+class Node {
+  constructor(val, supports, extraData) {
+    this.data = val
+    this.children = []
+    this.leaves = 0
+    this._id = uuid.v4()
+    this.supports = supports
+    this.extraData = extraData    
+  }
 }
 
 function Tree(val, extraData) {
