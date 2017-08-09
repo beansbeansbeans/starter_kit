@@ -147,7 +147,12 @@ class App extends Component {
             <button onClick={this.resolve}>reset</button>
           </div>
           <div class="solver">
-            <button onClick={() => {}}>solve</button>
+            <button onClick={() => {
+              web.solve(constraints.map(c => ({
+                node: directory[c.id].node,
+                value: true
+              })))
+            }}>solve</button>
           </div>
         </div>
         {argumentLabelsDOM}
