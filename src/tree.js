@@ -125,7 +125,7 @@ class Tree {
     if(matchFn(seed)) return seed
 
     function* traverse(node) {
-      yield* node.children.reduce((acc, curr) => {
+      yield node.children.reduce((acc, curr) => {
         if(find && matchFn(acc)) return acc
         if(matchFn(curr)) return curr
 

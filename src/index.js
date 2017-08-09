@@ -303,8 +303,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     if(!result.done) {
       mediator.subscribe("reconcileTree", iterate, true)
     } else {
-      // web.solve(constraints)
-
       if(debug) {
         DebugVisualizer.initialize(web)
         DebugVisualizer.draw()

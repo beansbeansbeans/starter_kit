@@ -153,6 +153,8 @@ export default {
     indicesBuffer.subdata(indices)
 
     regl.frame(ctx => {
+      if(typeof tree === 'undefined') return
+
       regl.clear({ color: [255/255, 100/255, 104/255, 1] })
 
       state.frame = frame
