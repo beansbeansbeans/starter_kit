@@ -61,10 +61,11 @@ svg {
 }
 
 .debug-label {
-  color: transparent;
+  // color: transparent;
 }
 
 #hover-info {
   position: fixed;
   max-width: 30rem;
+  pointer-events: none;
 }

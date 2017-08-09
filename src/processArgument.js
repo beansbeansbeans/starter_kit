@@ -10,6 +10,8 @@ function walk() {
     let node = toSearch[i]
     node._id = uuid.v4()
 
+    if(typeof node.children === 'undefined') node.children = []
+
     node.moralMatrices = []
     if(random.nextDouble() < 0.5) node.moralMatrices.push('A')
     if(random.nextDouble() < 0.5) node.moralMatrices.push('B')
@@ -19,9 +21,7 @@ function walk() {
 
     directory[node._id] = node
 
-    if(node.children) {
-      node.children.forEach(d => newToSearch.push(d))
-    }
+    node.children.forEach(d => newToSearch.push(d))
   }
 
   toSearch = newToSearch
@@ -44,7 +44,8 @@ const processArgument = (arg, add) => {
       "data": random.nextDouble().toFixed(5),
       "supports": random.nextDouble() < 0.5 ? true : false,
       "_id": uuid.v4(),
-      moralMatrices: []
+      moralMatrices: [],
+      children: []
     }
 
     if(random.nextDouble() < 0.5) child.moralMatrices.push('A')

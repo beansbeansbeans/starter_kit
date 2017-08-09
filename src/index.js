@@ -38,7 +38,8 @@ class App extends Component {
       label: m.label,
       value: null
     })),
-    hoverInfo: ''
+    hoverInfo: '',
+    constraints: []
   }
 
   componentWillMount() {
@@ -93,7 +94,7 @@ class App extends Component {
     this.setState({ hoverInfo: '' })
   }
 
-  render({ }, { argumentLabels, moralMatrix, hoverInfo }) {
+  render({ }, { argumentLabels, moralMatrix, hoverInfo, constraints }) {
     let debugDOM = null, argumentLabelsDOM = null
 
     if(debug) {
@@ -109,13 +110,23 @@ class App extends Component {
         let label = argumentLabels[i]
 
         argumentLabelsDOM.push(<div 
-          style={`position:fixed; top: ${label.top}px; left: ${label.left + 3}px; height: ${label.height}px; width: ${label.width}px; font-size: 11px`}
+          style={`position:fixed; top: ${label.top}px; left: ${label.left + 3}px; height: ${label.height}px; width: ${label.width}px; font-size: 11px; background-color: ${constraints.find(c => c.id === label.id) ? 'yellow' : ''}`}
           class="debug-label"
           onMouseOver={() => {
             let node = web.find(label.id, '_id')
             this.setState({ hoverInfo: node.data })
           } }
-          onClick={() => window.removeArgument(label.id)}
+          onClick={() => {
+            let newConstraints = constraints
+            let indexOfThis = newConstraints.findIndex(c => c.id === label.id)
+            if(indexOfThis > -1) {
+              newConstraints.splice(indexOfThis, 1)
+            } else {
+              newConstraints.push(label)
+            }
+
+            this.setState({ constraints: newConstraints })
+          }}
           data-id={label.id}>
           {label.id.substring(0, 2) + ' ' + (label.moralMatrices ? label.moralMatrices.join(" ") : '')}
           </div>)
@@ -129,10 +140,15 @@ class App extends Component {
         <div 
           onMouseOver={this.mouseLeaveRects}
           id="controls">
-          <MoralMatricesChart matrix={moralMatrix} />
-          <button onClick={() => this.resolve('A')}>moral matrix A</button>
-          <button onClick={() => this.resolve('B')}>moral matrix B</button>
-          <button onClick={() => this.resolve()}>reset</button>
+          <div class="matrices">
+            <MoralMatricesChart matrix={moralMatrix} />
+            <button onClick={() => this.resolve('A')}>moral matrix A</button>
+            <button onClick={() => this.resolve('B')}>moral matrix B</button>
+            <button onClick={this.resolve}>reset</button>
+          </div>
+          <div class="solver">
+            <button onClick={() => {}}>solve</button>
+          </div>
         </div>
         {argumentLabelsDOM}
         <div style={`transform: translate3d(${mouseX}px, ${mouseY}px, 0)`} id="hover-info">{hoverInfo}</div>
@@ -216,11 +232,11 @@ function resolveIterate() {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
 
-  processArgument(argument, 200)
+  processArgument(argument, 20)
 
   handleResize()
 
-  let toSearch = [{ node: argument[0] }], constraints = []
+  let toSearch = [{ node: argument[0] }]
 
   function* walk() {
     let newToSearch = []
@@ -253,19 +269,10 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
       yield treeNode
 
-      if(typeof node.constraintValue !== 'undefined') {
-        constraints.push({
-          node: treeNode,
-          value: node.constraintValue
-        })
-      }
-
-      if(node.children) {
-        node.children.forEach(c => newToSearch.push({
-          parent: treeNode,
-          node: c
-        }))
-      }
+      node.children.forEach(c => newToSearch.push({
+        parent: treeNode,
+        node: c
+      }))
     }
 
     toSearch = newToSearch
@@ -279,13 +286,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   const walker = walk()
 
-  window.removeArgument = function(id) {
-    let node = web.find(id, '_id')
-    web.remove(node)
-
-    renderer.update(web)
-  }
-
   if(debug) {
     DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
   } else {
@@ -298,7 +298,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     if(!result.done) {
       mediator.subscribe("reconcileTree", iterate, true)
     } else {
-      web.solve(constraints)
+      // web.solve(constraints)
 
       if(debug) {
         DebugVisualizer.initialize(web)

@@ -12,7 +12,7 @@ let width, height, config, regl, camera, mouseX = -1, mouseY = -1, tree, draw, r
 }
 
 let animationLength = 0
-const frames = [4]
+const frames = [1]
 
 const onResize = () => {}
 

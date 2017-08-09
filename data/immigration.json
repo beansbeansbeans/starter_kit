@@ -68,7 +68,6 @@
         {
           "data": "immigrants found companies at twice the rate of native borns",
           "supports": false,
-          "constraintValue": true,
           "children": [
             {
               "data": "those immigrants start out wealthy - not illegal",
@@ -90,8 +89,7 @@
         },
         {
           "data": "we've had fears of balkanization in the past - it's by overcoming them that we've become the world's most powerful economy",
-          "supports": false,
-          "constraintValue": true
+          "supports": false
         }
       ]
     },
