@@ -1,6 +1,13 @@
 const UINT8_VIEW = new Uint8Array(4),
   FLOAT_VIEW = new Float32Array(UINT8_VIEW.buffer)
 
+const createInterpolator = ticks => (start, finish) => tick => {
+  let t = tick
+  t /= ticks
+
+  return -(finish - start) * t * (t - 2) + start
+}
+
 export default {
   trim: function(string) {
     return string.replace(/^\s+|\s+$/gm, '')
@@ -21,6 +28,8 @@ export default {
     }
     return clean
   },
+
+  createInterpolator,
 
   decodeFloat: function(x, y, z, w) {
     UINT8_VIEW[0] = Math.floor(w)

@@ -1,5 +1,5 @@
 import helpers from './helpers/helpers'
-const { radToDegrees } = helpers
+const { radToDegrees, createInterpolator } = helpers
 import sharedState from './sharedState'
 import mediator from './mediator'
 import reglImport from 'regl'
@@ -177,37 +177,26 @@ export default {
     setInterval(measureFPS, 1000)
 
     mediator.subscribe("flip", () => {
-      const currentEye = [0, 0, cameraDist]
+      const currentEye = [0, 0, cameraDist], ticks = 30
 
-      const ticks = 30
-      let tick = 0, 
-        startZ = cameraDist, 
-        z = startZ,
-        finalZ = 1500
+      let interpolator = createInterpolator(ticks),
+        cameraDistInterpolator = interpolator(cameraDist, 1500),
+        tick = 0
 
-      const move = () => {
-        let t = tick
-        t /= ticks
-
-        z = -(finalZ - startZ) * t * (t - 2) + startZ
-
-        if(tick < ticks) {
-          requestAnimationFrame(move)
-        }
-
-        tick++
-
+      const nudge = () => {
         camera.lookAt(
-            [0, 0, z] // eye
+            [0, 0, cameraDistInterpolator(tick)] // eye
           , [0, 0, 0]
           , [0, 1, 0]
           // , [-500, 0, 0] // center
           // , [0.5, 0.5, 0] // up
         )
+
+        if(tick < ticks) requestAnimationFrame(nudge)
+        tick++
       }
 
-      requestAnimationFrame(move)
-
+      requestAnimationFrame(nudge)
 
       console.log(camera.view())
     })
