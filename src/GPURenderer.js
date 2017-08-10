@@ -181,15 +181,16 @@ export default {
 
       let interpolator = createInterpolator(ticks),
         cameraDistInterpolator = interpolator(cameraDist, 1500),
+        xPosInterpolator = interpolator(0, -500),
+        xUpInterpolator = interpolator(0, 0.5),
+        yUpInterpolator = interpolator(1, 0.5),
         tick = 0
 
       const nudge = () => {
         camera.lookAt(
             [0, 0, cameraDistInterpolator(tick)] // eye
-          , [0, 0, 0]
-          , [0, 1, 0]
-          // , [-500, 0, 0] // center
-          // , [0.5, 0.5, 0] // up
+          , [xPosInterpolator(tick), 0, 0] // center
+          , [xUpInterpolator(tick), yUpInterpolator(tick), 0] // up
         )
 
         if(tick < ticks) requestAnimationFrame(nudge)
@@ -197,8 +198,6 @@ export default {
       }
 
       requestAnimationFrame(nudge)
-
-      console.log(camera.view())
     })
   },
 
