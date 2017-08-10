@@ -174,6 +174,14 @@ export default {
       state.mouseY = mouseY
       state.cameraView = camera.view()
 
+      if(typeof state.extrusions === 'undefined') {
+        state.extrusions = new Float32Array(maxArgumentCount)
+      }
+
+      for(let i=0; i<maxArgumentCount; i++) {
+        state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
+      }
+
       draw(state)
 
       iterations++
@@ -281,8 +289,7 @@ export default {
       state.nextLeft = left
       state.nextHeights = heights
     }
-
-    state.extrusions = extrusions
+    
     state.supports = supports
     state.animationLength = animationLength
 
