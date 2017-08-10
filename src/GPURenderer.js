@@ -6,6 +6,8 @@ import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
 import { difference } from 'underscore'
+import randomModule from './helpers/random'
+const random = randomModule.random(42)
 
 let width, height, config, regl, camera, mouseX = -1, mouseY = -1, tree, draw, rectWidth = 0, nextRectWidth = 0, frame = 0, iterations = 0, updateIterator = 0, lastNow = Date.now(), iterationSnapshot, state = {
   rectWidth, nextRectWidth
@@ -51,7 +53,12 @@ let left = new Float32Array(maxArgumentCount)
 let left2 = new Float32Array(maxArgumentCount)
 let heights = new Float32Array(maxArgumentCount)
 let heights2 = new Float32Array(maxArgumentCount)
+let extrusions = new Float32Array(maxArgumentCount)
 let idToIndex = {}
+
+for(let i=0; i<maxArgumentCount; i++) {
+  extrusions[i] = -15 + random.nextDouble() * 30
+}
 
 export default {
   initialize(opts) {
@@ -142,6 +149,11 @@ export default {
         index: {
           buffer: indicesBuffer,
           divisor: 1
+        },
+
+        extrusion: {
+          buffer: regl.prop('extrusions'),
+          divisor: 2
         }
       },
 
@@ -270,6 +282,7 @@ export default {
       state.nextHeights = heights
     }
 
+    state.extrusions = extrusions
     state.supports = supports
     state.animationLength = animationLength
 

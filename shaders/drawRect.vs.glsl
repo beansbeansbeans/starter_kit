@@ -7,6 +7,7 @@ uniform vec2 canvasRect;
 uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame;
 
 attribute vec3 color;
+attribute float extrusion;
 attribute float top;
 attribute float left;
 attribute float height;
@@ -78,7 +79,7 @@ void main() {
     interpolatedPos = interpolatedBR;
   }
 
-  gl_Position = projection * view * vec4(interpolatedPos, 0, 1);
+  gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
 
   if(supports > 0.) {
     vColor = vec3(1);
