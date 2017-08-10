@@ -272,6 +272,10 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
         inWeb: true 
       }
 
+      if(Object.keys(directory).length === 20) {
+        mediator.publish("flip")
+      }
+
       yield treeNode
 
       node.children.forEach(c => newToSearch.push({
@@ -303,6 +307,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     if(!result.done) {
       mediator.subscribe("reconcileTree", iterate, true)
     } else {
+
       if(debug) {
         DebugVisualizer.initialize(web)
         DebugVisualizer.draw()

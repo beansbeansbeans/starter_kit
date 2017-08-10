@@ -175,6 +175,15 @@ export default {
     })
 
     setInterval(measureFPS, 1000)
+
+    mediator.subscribe("flip", () => {
+      camera.lookAt(
+          [0, 0, 1500]
+        , [-500, 0, 0]
+        , [0.5, 0.5, 0])
+      
+      console.log(camera.view())
+    })
   },
 
   update(web) {
