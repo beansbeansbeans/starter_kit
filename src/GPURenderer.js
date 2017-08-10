@@ -65,7 +65,7 @@ export default {
 
     camera = cameraModule(opts.container.querySelector("canvas"))
     camera.distance = cameraDist
-    camera.rotation = new Float32Array(4)
+    camera.rotate([0.0, 0.0], [0.0, 0.0])
 
     config = opts
 
