@@ -63,7 +63,7 @@ export default {
       container: opts.container
     })
 
-    camera = cameraModule(opts.container)
+    camera = cameraModule(opts.container.querySelector("canvas"))
     camera.distance = cameraDist
     camera.rotation = new Float32Array(4)
 
@@ -90,7 +90,7 @@ export default {
         frame: (ctx, props) => props.frame,
         rectWidth: (ctx, props) => props.rectWidth,
         nextRectWidth: (ctx, props) => props.nextRectWidth,
-        view: camera.view(),
+        view: (ctx, props) => props.cameraView,
         projection: ({ viewportWidth, viewportHeight }) => 
           mat4.perspective([],
                            2 * Math.atan(height / (2 * cameraDist)),
@@ -160,6 +160,7 @@ export default {
       state.frame = frame
       state.mouseX = mouseX
       state.mouseY = mouseY
+      state.cameraView = camera.view()
 
       draw(state)
 
@@ -169,6 +170,8 @@ export default {
       if(frame > animationLength) {
         mediator.publish("reconcileTree")
       }
+
+      camera.tick()
     })
 
     setInterval(measureFPS, 1000)

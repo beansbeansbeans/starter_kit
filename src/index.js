@@ -53,16 +53,16 @@ class App extends Component {
       depth = web.getDepth(),
       rectWidth = sharedState.get('containerWidth') / depth
 
-    web.traverseDF(n => {
-      argumentLabels.push({
-        top: n.top,
-        left: n.depth * rectWidth,
-        height: n.height,
-        width: rectWidth,
-        moralMatrices: n.extraData.moralMatrices,
-        id: n._id
-      })
-    })
+    // web.traverseDF(n => {
+    //   argumentLabels.push({
+    //     top: n.top,
+    //     left: n.depth * rectWidth,
+    //     height: n.height,
+    //     width: rectWidth,
+    //     moralMatrices: n.extraData.moralMatrices,
+    //     id: n._id
+    //   })
+    // })
 
     this.setState({ argumentLabels })
   }
