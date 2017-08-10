@@ -16,6 +16,7 @@ dist/
 
 node_modules/*
 !node_modules/key-pressed/
+!node_modules/canvas-orbit-camera
 
 coverage
 .DS_Store
