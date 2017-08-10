@@ -177,11 +177,38 @@ export default {
     setInterval(measureFPS, 1000)
 
     mediator.subscribe("flip", () => {
-      camera.lookAt(
-          [0, 0, 1500]
-        , [-500, 0, 0]
-        , [0.5, 0.5, 0])
-      
+      const currentEye = [0, 0, cameraDist]
+
+      const ticks = 30
+      let tick = 0, 
+        startZ = cameraDist, 
+        z = startZ,
+        finalZ = 1500
+
+      const move = () => {
+        let t = tick
+        t /= ticks
+
+        z = -(finalZ - startZ) * t * (t - 2) + startZ
+
+        if(tick < ticks) {
+          requestAnimationFrame(move)
+        }
+
+        tick++
+
+        camera.lookAt(
+            [0, 0, z] // eye
+          , [0, 0, 0]
+          , [0, 1, 0]
+          // , [-500, 0, 0] // center
+          // , [0.5, 0.5, 0] // up
+        )
+      }
+
+      requestAnimationFrame(move)
+
+
       console.log(camera.view())
     })
   },
