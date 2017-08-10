@@ -96,7 +96,7 @@ export default {
                            2 * Math.atan(height / (2 * cameraDist)),
                            width / height,
                            0.01, 
-                           2000),
+                           3000),
         mousePosition: (ctx, props) => 
           ([props.mouseX, props.mouseY])
       },
@@ -180,17 +180,19 @@ export default {
       const currentEye = [0, 0, cameraDist], ticks = 30
 
       let interpolator = createInterpolator(ticks),
-        cameraDistInterpolator = interpolator(cameraDist, 1500),
-        xPosInterpolator = interpolator(0, -500),
-        xUpInterpolator = interpolator(0, 0.5),
-        yUpInterpolator = interpolator(1, 0.5),
+        cameraDistInterpolator = interpolator(cameraDist, 700),
+        yEyeInterpolator = interpolator(0, 800),
+        xPosInterpolator = interpolator(0, -250),
+        xUpInterpolator = interpolator(0, -0.5),
+        yUpInterpolator = interpolator(1, 0.25),
+        zUpInterpolator = interpolator(0, 0.1),
         tick = 0
 
       const nudge = () => {
         camera.lookAt(
-            [0, 0, cameraDistInterpolator(tick)] // eye
+            [0, yEyeInterpolator(tick), cameraDistInterpolator(tick)] // eye
           , [xPosInterpolator(tick), 0, 0] // center
-          , [xUpInterpolator(tick), yUpInterpolator(tick), 0] // up
+          , [xUpInterpolator(tick), yUpInterpolator(tick), zUpInterpolator(tick)] // up
         )
 
         if(tick < ticks) requestAnimationFrame(nudge)
