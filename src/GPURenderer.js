@@ -179,7 +179,7 @@ export default {
       }
 
       for(let i=0; i<maxArgumentCount; i++) {
-        state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
+        // state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
       }
 
       draw(state)
@@ -197,6 +197,8 @@ export default {
     setInterval(measureFPS, 1000)
 
     mediator.subscribe("flip", () => {
+      return
+      
       const currentEye = [0, 0, cameraDist], ticks = 30
 
       let interpolator = createInterpolator(ticks),
@@ -210,9 +212,9 @@ export default {
 
       const nudge = () => {
         camera.lookAt(
-            [0, yEyeInterpolator(tick), cameraDistInterpolator(tick)] // eye
-          , [xPosInterpolator(tick), 0, 0] // center
-          , [xUpInterpolator(tick), yUpInterpolator(tick), zUpInterpolator(tick)] // up
+          [0, yEyeInterpolator(tick), cameraDistInterpolator(tick)] // eye
+        , [xPosInterpolator(tick), 0, 0] // center
+        , [xUpInterpolator(tick), yUpInterpolator(tick), zUpInterpolator(tick)] // up
         )
 
         if(tick < ticks) requestAnimationFrame(nudge)
