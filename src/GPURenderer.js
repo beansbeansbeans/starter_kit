@@ -187,7 +187,7 @@ export default {
       iterations++
       frame++
 
-      if(frame > animationLength) {
+      if(frame === animationLength) {
         mediator.publish("reconcileTree")
       }
 
