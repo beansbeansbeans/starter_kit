@@ -82,7 +82,8 @@ class Node {
     this.leaves = 0
     this._id = uuid.v4()
     this.supports = supports
-    this.extraData = extraData    
+    this.extraData = extraData
+    this.active = true    
   }
 }
 
@@ -219,6 +220,14 @@ class Tree {
     children.splice(index, 1)    
   }
 
+  silentlyAdd(node) {
+    node.active = true
+  }
+
+  silentlyRemove(node) {
+    node.active = false
+  }
+
   solve(arr) {
     /*
     so the solution process is: 
@@ -288,26 +297,31 @@ class Tree {
       minHeight = height / leaves
 
     this.traverseDF(n => {
-      let top = 0
+      let top = 0, height = 0
 
-      if(n.depth > 0) {
-        let children = n.parent.children
+      if(n.active) {
 
-        for(let i=0; i<children.length; i++) {
-          if(children[i]._id === n._id) {
-            if(i > 0) {
-              let prevSib = children[i - 1]
-              top = prevSib.top + prevSib.height
-            } else {
-              top = n.parent.top
+        if(n.depth > 0) {
+          let children = n.parent.children
+
+          for(let i=0; i<children.length; i++) {
+            if(children[i]._id === n._id) {
+              if(i > 0) {
+                let prevSib = children[i - 1]
+                top = prevSib.top + prevSib.height
+              } else {
+                top = n.parent.top
+              }
+              break
             }
-            break
           }
         }
+
+        height = Math.max(minHeight, n.leaves * minHeight)
       }
 
       n.top = top
-      n.height = Math.max(minHeight, n.leaves * minHeight)
+      n.height = height
     })
   }
 }

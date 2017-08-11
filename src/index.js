@@ -181,7 +181,7 @@ function* resolve(label) {
           return false
         }, node)
 
-        web.remove(node)
+        web.silentlyRemove(node)
 
         yield node
       }
@@ -207,7 +207,7 @@ function* resolve(label) {
       if((label && node.extraData.moralMatrices.indexOf(label) > -1) || typeof label === 'undefined') {
         if(directory[node.parent._id].inWeb && !directory[node._id].inWeb) {
           directory[node._id].inWeb = true
-          web.add(node, directory[node.parent._id].node)
+          web.silentlyAdd(node, directory[node.parent._id].node)
           toDelete.push(node._id)
           addCount++            
 
