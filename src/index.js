@@ -15,7 +15,7 @@ import processArgument from './processArgument'
 import MoralMatricesChart from './moralMatricesChart'
 import { moralMatrices, matrices } from './config'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY, debugNode
 
 const shaders = {},
   preload = {
@@ -115,6 +115,7 @@ class App extends Component {
           onMouseOver={() => {
             let node = web.find(label.id, '_id')
             this.setState({ hoverInfo: node.data })
+            console.log(node)
           } }
           onClick={() => {
             let newConstraints = constraints
@@ -154,6 +155,26 @@ class App extends Component {
               })))
             }}>solve</button>
           </div>
+          <button onClick={() => {
+            const parent = debugNode.parent
+            const children = debugNode.children
+
+            web.traverseBF(n => {
+              if(n._id !== debugNode._id) {
+                n.depth--
+              }
+
+              return false
+            }, debugNode)
+
+            web.remove(debugNode)
+
+            for(let i=0; i<children.length; i++) {
+              web.add(children[i], parent)
+            }
+
+            renderer.update(web)
+          }}>debug tree interpolation</button>
         </div>
         {argumentLabelsDOM}
         <div style={`transform: translate3d(${mouseX}px, ${mouseY}px, 0)`} id="hover-info">{hoverInfo}</div>
@@ -266,6 +287,8 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
         web.add(treeNode, parent)
       }
+
+      if(node.debug) debugNode = treeNode
 
       directory[treeNode._id] = { 
         node: treeNode,

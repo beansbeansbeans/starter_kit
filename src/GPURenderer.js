@@ -9,7 +9,7 @@ import { difference } from 'underscore'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-const frames = [2],
+const frames = [20],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
   buffer = 2, cameraDist = 1000,
   onResize = () => {},

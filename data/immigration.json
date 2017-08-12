@@ -68,6 +68,7 @@
         {
           "data": "immigrants found companies at twice the rate of native borns",
           "supports": false,
+          "debug": true,
           "children": [
             {
               "data": "those immigrants start out wealthy - not illegal",

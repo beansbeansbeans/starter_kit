@@ -136,8 +136,10 @@ class Tree {
     yield traverse(seed) 
   }
 
-  traverseBF(matchFn) {
-    let match, toSearch = [this._root]
+  traverseBF(matchFn, seed) {
+    if(typeof seed === 'undefined') seed = this._root
+
+    let match, toSearch = [seed]
 
     function walk() {
       let newToSearch = []
@@ -183,8 +185,7 @@ class Tree {
   }
 
   add(n, parent) {
-    n.leaves = 0
-    n.children = []
+    let leaves = Math.max(1, n.leaves)
 
     if(!n.supports) {
       parent.children.push(n)
@@ -197,9 +198,9 @@ class Tree {
 
     if(parent.children.length > 1) {
       this.traverseUp(node => {
-        if(node._id !== n._id) node.leaves++ }, n)    
+        if(node._id !== n._id) node.leaves += leaves }, n)    
     } else {
-      parent.leaves++
+      parent.leaves += leaves
     }    
   }
 
