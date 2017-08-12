@@ -9,23 +9,28 @@ import { difference } from 'underscore'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-let width, height, config, regl, camera, mouseX = -1, mouseY = -1, draw, rectWidth = 0, nextRectWidth = 0, frame = 0, iterations = 0, updateIterator = 0, lastNow = Date.now(), iterationSnapshot, state = {
-  rectWidth, nextRectWidth
-}
+const frames = [2],
+  maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
+  buffer = 2, cameraDist = 1000,
+  onResize = () => {},
+  measureFPS = () => {
+    const now = Date.now()
+    // console.log(Math.round((iterations - iterationSnapshot) / ((now - lastNow) / 1000)))
+    
+    lastNow = now
+    iterationSnapshot = iterations
+  },
+  nextIndex = () => unusedIndices.shift()
 
-let animationLength = 0
-const frames = [20]
-
-const onResize = () => {}
-
-const measureFPS = () => {
-  const now = Date.now()
-
-  // console.log(Math.round((iterations - iterationSnapshot) / ((now - lastNow) / 1000)))
-  
-  lastNow = now
-  iterationSnapshot = iterations
-}
+let width, height, rectWidth = 0, nextRectWidth = 0, 
+  config, regl, camera, draw, 
+  mouseX = -1, mouseY = -1,
+  frame = 0, iterations = 0, updateIterator = 0, iterationSnapshot, 
+  lastNow = Date.now(), 
+  state = { rectWidth, nextRectWidth }, animationLength = 0,
+  unusedIndices = [], positions = [{}, {}], idToIndex = {},
+  supports = new Float32Array(maxArgumentCount),
+  extrusions = new Float32Array(maxArgumentCount)
 
 mediator.subscribe("mousemove", data => {
   mouseX = data.x - width / 2
@@ -37,26 +42,13 @@ mediator.subscribe("mouseleave", data => {
   mouseY = -1  
 })
 
-const maxArgumentCount = 1000
-const nTriangles = 2 * maxArgumentCount // max # arguments
-const buffer = 2
-const cameraDist = 1000
-
-let unusedIndices = []
 for(let i=0; i<maxArgumentCount; i++) unusedIndices.push(i)
-const nextIndex = () => unusedIndices.shift()
-
-let positions = [{}, {}]
 
 for(let i=0; i<2; i++) {
   positions[i].tops = new Float32Array(maxArgumentCount)
   positions[i].left = new Float32Array(maxArgumentCount)
   positions[i].heights = new Float32Array(maxArgumentCount)
 }
-
-let supports = new Float32Array(maxArgumentCount)
-let extrusions = new Float32Array(maxArgumentCount)
-let idToIndex = {}
 
 for(let i=0; i<maxArgumentCount; i++) {
   extrusions[i] = -15 + random.nextDouble() * 30
@@ -169,10 +161,10 @@ export default {
     regl.frame(ctx => {
       regl.clear({ color: [255/255, 100/255, 104/255, 1] })
 
-      state.frame = frame
-      state.mouseX = mouseX
-      state.mouseY = mouseY
-      state.cameraView = camera.view()
+      Object.assign(state, {
+        frame, mouseX, mouseY,
+        cameraView: camera.view()
+      })
 
       if(typeof state.extrusions === 'undefined') {
         state.extrusions = new Float32Array(maxArgumentCount)
@@ -183,15 +175,12 @@ export default {
       }
 
       draw(state)
+      camera.tick()
 
       iterations++
       frame++
 
-      if(frame === animationLength) {
-        mediator.publish("reconcileTree")
-      }
-
-      camera.tick()
+      if(frame === animationLength) mediator.publish("reconcileTree")
     })
 
     setInterval(measureFPS, 1000)
@@ -228,17 +217,16 @@ export default {
   update(web) {
     web.reconcile(width, height)
 
-    let depth = web.getDepth()
+    let depth = web.getDepth(),
+      lastIndex = updateIterator % 2,
+      currentIndex = lastIndex === 0 ? 1 : 0,
+      traversed = []
+
     animationLength = frames[Math.min(depth - 1, frames.length - 1)]
 
     state.rectWidth = rectWidth
     rectWidth = Math.round(width / depth)
     state.nextRectWidth = rectWidth
-
-    let lastIndex = updateIterator % 2,
-      currentIndex = lastIndex === 0 ? 1 : 0
-
-    let traversed = []
 
     web.traverseDF(n => {
       if(typeof idToIndex[n._id] === 'undefined') idToIndex[n._id] = nextIndex()
@@ -267,14 +255,15 @@ export default {
       delete idToIndex[deleted[i]]
     }
 
-    state.currentTops = positions[currentIndex].tops
-    state.currentLeft = positions[currentIndex].left
-    state.currentHeights = positions[currentIndex].heights
-    state.nextTops = positions[lastIndex].tops
-    state.nextLeft = positions[lastIndex].left
-    state.nextHeights = positions[lastIndex].heights    
-    state.supports = supports
-    state.animationLength = animationLength
+    Object.assign(state, {
+      currentTops: positions[currentIndex].tops,
+      currentLeft: positions[currentIndex].left,
+      currentHeights: positions[currentIndex].heights,
+      nextTops: positions[lastIndex].tops,
+      nextLeft: positions[lastIndex].left,
+      nextHeights: positions[lastIndex].heights,
+      supports, animationLength
+    })
 
     updateIterator++
     frame = 0
