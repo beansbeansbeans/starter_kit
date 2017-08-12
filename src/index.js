@@ -185,14 +185,7 @@ function* resolve(label) {
       if(node.extraData.moralMatrices.indexOf(label) < 0) {
         obj.inWeb = false
         removedKeys.push(node._id)
-
-        web.traverseDF(n => {
-          directory[n._id].inWeb = false
-          if(n._id !== node._id) removedKeys.push(n._id)
-          return false
-        }, node)
-
-        web.remove(node)
+        web.removeSingle(node)
 
         yield node
       }
@@ -218,7 +211,7 @@ function* resolve(label) {
       if((label && node.extraData.moralMatrices.indexOf(label) > -1) || typeof label === 'undefined') {
         if(directory[node.parent._id].inWeb && !directory[node._id].inWeb) {
           directory[node._id].inWeb = true
-          web.add(node, directory[node.parent._id].node)
+          web.addBack(node)
           toDelete.push(node._id)
           addCount++            
 
