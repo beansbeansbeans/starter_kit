@@ -194,35 +194,24 @@ function* resolve(label) {
     removedKeys = removeDuplicates(removedKeys)
   }
 
-  // loop through array of all removed arguments - if it contains the label but is not in the tree, add it to the tree and remove it from the array of removed arguments
-  // if its parent is not in the tree, then don't add it. 
-  // repeat this add-loop until you're not adding any more nodes.
+  console.log("ADDING BACK")
 
-  let addCount = 0, trials = 0
+  for(let i=0; i<removedKeys.length; i++) {
+    let node = directory[removedKeys[i]].node
 
-  while((addCount > 0 || trials === 0) && trials < 100) {
-    addCount = 0
+    if((label && node.extraData.moralMatrices.indexOf(label) > -1) || typeof label === 'undefined') {
+      if(!directory[node._id].inWeb) {
+        let nearestActiveAncestor = web.traverseUp(n => {
+          return directory[n._id].inWeb
+        }, node)
 
-    let toDelete = []
+        directory[node._id].inWeb = true
+        node.parent = nearestActiveAncestor
+        web.addBack(node)
 
-    for(let i=0; i<removedKeys.length; i++) {
-      let node = directory[removedKeys[i]].node
-
-      if((label && node.extraData.moralMatrices.indexOf(label) > -1) || typeof label === 'undefined') {
-        if(directory[node.parent._id].inWeb && !directory[node._id].inWeb) {
-          directory[node._id].inWeb = true
-          web.addBack(node)
-          toDelete.push(node._id)
-          addCount++            
-
-          yield node
-        }
+        yield node
       }
     }
-
-    for(let i=0; i<toDelete.length; i++) removedKeys.splice(toDelete[i] - i, 1)
-
-    trials++
   }
 
   return
@@ -234,7 +223,7 @@ function resolveIterate() {
   renderer.update(web)
 
   if(!result.done) {
-    mediator.subscribe("reconcileTree", resolveIterate, true)
+    mediator.subscribe("manualReconcile", resolveIterate, true)
   }
 }
 
