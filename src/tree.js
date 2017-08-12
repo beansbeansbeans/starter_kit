@@ -233,7 +233,7 @@ class Tree {
     let children = node.parent.children, 
       leaves = Math.max(1, node.leaves)
 
-    if(children.length === 1 && node.children.length === 0) {
+    if(children.length === 1 && node.children.length < 2) { // if this is an only child, and it has one leaf or fewer...
       node.parent.leaves--
     } else {
       this.traverseUp(n => {
