@@ -184,6 +184,7 @@ function* resolve(label) {
 
       if(node.extraData.moralMatrices.indexOf(label) < 0) {
         obj.inWeb = false
+
         removedKeys.push(node._id)
         web.removeSingle(node)
 
@@ -193,8 +194,6 @@ function* resolve(label) {
 
     removedKeys = removeDuplicates(removedKeys)
   }
-
-  console.log("ADDING BACK")
 
   for(let i=0; i<removedKeys.length; i++) {
     let node = directory[removedKeys[i]].node
@@ -207,6 +206,21 @@ function* resolve(label) {
 
         directory[node._id].inWeb = true
         node.parent = nearestActiveAncestor
+
+        // in case a child of this node had been reassigned to a different parent when this node was deleted, and is no longer in the tree
+        let toDelete = []
+        for(let i=0; i<node.children.length; i++) {
+          let child = node.children[i]
+
+          if(!directory[child._id].inWeb) {
+            toDelete.push(i)
+          }
+        }
+
+        for(let i=0; i<toDelete.length; i++) {
+          node.children.splice(toDelete[i] - i, 1)
+        }
+
         web.addBack(node)
 
         yield node
