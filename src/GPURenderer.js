@@ -9,12 +9,12 @@ import { difference } from 'underscore'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-let width, height, config, regl, camera, mouseX = -1, mouseY = -1, tree, draw, rectWidth = 0, nextRectWidth = 0, frame = 0, iterations = 0, updateIterator = 0, lastNow = Date.now(), iterationSnapshot, state = {
+let width, height, config, regl, camera, mouseX = -1, mouseY = -1, draw, rectWidth = 0, nextRectWidth = 0, frame = 0, iterations = 0, updateIterator = 0, lastNow = Date.now(), iterationSnapshot, state = {
   rectWidth, nextRectWidth
 }
 
 let animationLength = 0
-const frames = [1]
+const frames = [20]
 
 const onResize = () => {}
 
@@ -46,13 +46,15 @@ let unusedIndices = []
 for(let i=0; i<maxArgumentCount; i++) unusedIndices.push(i)
 const nextIndex = () => unusedIndices.shift()
 
+let positions = [{}, {}]
+
+for(let i=0; i<2; i++) {
+  positions[i].tops = new Float32Array(maxArgumentCount)
+  positions[i].left = new Float32Array(maxArgumentCount)
+  positions[i].heights = new Float32Array(maxArgumentCount)
+}
+
 let supports = new Float32Array(maxArgumentCount)
-let tops = new Float32Array(maxArgumentCount)
-let tops2 = new Float32Array(maxArgumentCount)
-let left = new Float32Array(maxArgumentCount)
-let left2 = new Float32Array(maxArgumentCount)
-let heights = new Float32Array(maxArgumentCount)
-let heights2 = new Float32Array(maxArgumentCount)
 let extrusions = new Float32Array(maxArgumentCount)
 let idToIndex = {}
 
@@ -165,8 +167,6 @@ export default {
     indicesBuffer.subdata(indices)
 
     regl.frame(ctx => {
-      if(typeof tree === 'undefined') return
-
       regl.clear({ color: [255/255, 100/255, 104/255, 1] })
 
       state.frame = frame
@@ -198,7 +198,7 @@ export default {
 
     mediator.subscribe("flip", () => {
       return
-      
+
       const currentEye = [0, 0, cameraDist], ticks = 30
 
       let interpolator = createInterpolator(ticks),
@@ -226,35 +226,28 @@ export default {
   },
 
   update(web) {
-    tree = web
-    tree.reconcile(width, height)
+    web.reconcile(width, height)
 
-    let depth = tree.getDepth()
+    let depth = web.getDepth()
     animationLength = frames[Math.min(depth - 1, frames.length - 1)]
 
     state.rectWidth = rectWidth
     rectWidth = Math.round(width / depth)
     state.nextRectWidth = rectWidth
 
+    let lastIndex = updateIterator % 2,
+      currentIndex = lastIndex === 0 ? 1 : 0
+
     let traversed = []
 
-    tree.traverseDF(n => {
-      if(typeof idToIndex[n._id] === 'undefined') {
-        idToIndex[n._id] = nextIndex()
-      }
+    web.traverseDF(n => {
+      if(typeof idToIndex[n._id] === 'undefined') idToIndex[n._id] = nextIndex()
 
       let index = idToIndex[n._id]
 
-      if(updateIterator % 2 === 0) {
-        tops[index] = n.top
-        left[index] = n.depth * rectWidth
-        heights[index] = n.height
-      } else {
-        tops2[index] = n.top
-        left2[index] = n.depth * rectWidth
-        heights2[index] = n.height    
-      }
-
+      positions[lastIndex].tops[index] = n.top
+      positions[lastIndex].left[index] = n.depth * rectWidth
+      positions[lastIndex].heights[index] = n.height
       supports[index] = (n.supports || n.depth === 0) ? 1 : 0
 
       traversed.push(n._id)
@@ -264,34 +257,22 @@ export default {
     for(let i=0; i<deleted.length; i++) {
       let index = idToIndex[deleted[i]]
 
-      tops[index] = 0
-      left[index] = 0
-      heights[index] = 0
-
-      tops2[index] = 0
-      left2[index] = 0
-      heights2[index] = 0
+      for(let i=0; i<2; i++) {
+        positions[i].tops[index] = 0
+        positions[i].left[index] = 0
+        positions[i].heights[index] = 0
+      }
 
       unusedIndices.push(index)
       delete idToIndex[deleted[i]]
     }
 
-    if(updateIterator % 2 === 1) {
-      state.currentTops = tops
-      state.currentLeft = left
-      state.currentHeights = heights
-      state.nextTops = tops2
-      state.nextLeft = left2
-      state.nextHeights = heights2
-    } else {
-      state.currentTops = tops2
-      state.currentLeft = left2
-      state.currentHeights = heights2
-      state.nextTops = tops
-      state.nextLeft = left
-      state.nextHeights = heights
-    }
-    
+    state.currentTops = positions[currentIndex].tops
+    state.currentLeft = positions[currentIndex].left
+    state.currentHeights = positions[currentIndex].heights
+    state.nextTops = positions[lastIndex].tops
+    state.nextLeft = positions[lastIndex].left
+    state.nextHeights = positions[lastIndex].heights    
     state.supports = supports
     state.animationLength = animationLength
 
