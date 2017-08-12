@@ -156,48 +156,12 @@ class App extends Component {
             }}>solve</button>
           </div>
           <button onClick={() => {
-            const parent = debugNode.parent
-            const children = debugNode.children
-
-            web.traverseBF(n => {
-              if(n._id !== debugNode._id) {
-                n.depth--
-              }
-
-              return false
-            }, debugNode)
-
-            web.remove(debugNode)
-
-            for(let i=0; i<children.length; i++) {
-              web.add(children[i], parent)
-            }
+            web.removeSingle(debugNode)
 
             renderer.update(web)
           }}>debug remove node</button>
           <button onClick={() => {
-            const parent = debugNode.parent
-            const children = debugNode.children
-            const leaves = children.reduce((acc, curr) => acc + Math.max(1, curr.leaves), 0)
-
-            for(let i=0; i<children.length; i++) {
-              web.remove(children[i])
-            }
-
-            for(let i=0; i<children.length; i++) {
-              children[i].parent = debugNode
-            }
-
-            debugNode.leaves = leaves
-            web.add(debugNode, parent)
-
-            web.traverseBF(n => {
-              if(n._id !== debugNode._id) {
-                n.depth++
-              }
-
-              return false
-            }, debugNode)
+            web.addBack(debugNode)
 
             renderer.update(web)
           }}>debug add node</button>

@@ -204,6 +204,31 @@ class Tree {
     }    
   }
 
+  addBack(node) {
+    const parent = node.parent
+    const children = node.children
+    const leaves = children.reduce((acc, curr) => acc + Math.max(1, curr.leaves), 0)
+
+    for(let i=0; i<children.length; i++) {
+      this.remove(children[i])
+    }
+
+    for(let i=0; i<children.length; i++) {
+      children[i].parent = node
+    }
+
+    node.leaves = leaves
+    this.add(node, parent)
+
+    this.traverseBF(n => {
+      if(n._id !== node._id) {
+        n.depth++
+      }
+
+      return false
+    }, node)
+  }
+
   remove(node) {
     let children = node.parent.children, 
       leaves = Math.max(1, node.leaves)
@@ -221,6 +246,25 @@ class Tree {
 
     let index = children.map(c => c._id).indexOf(node._id)
     children.splice(index, 1)    
+  }
+
+  removeSingle(node) {
+    const parent = node.parent
+    const children = node.children
+
+    this.traverseBF(n => {
+      if(n._id !== node._id) {
+        n.depth--
+      }
+
+      return false
+    }, node)
+
+    this.remove(node)
+
+    for(let i=0; i<children.length; i++) {
+      this.add(children[i], parent)
+    }
   }
 
   solve(arr) {
