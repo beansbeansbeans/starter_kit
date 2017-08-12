@@ -178,7 +178,7 @@ class App extends Component {
           <button onClick={() => {
             const parent = debugNode.parent
             const children = debugNode.children
-            const leaves = debugNode.leaves
+            const leaves = children.reduce((acc, curr) => acc + Math.max(1, curr.leaves), 0)
 
             for(let i=0; i<children.length; i++) {
               web.remove(children[i])
@@ -189,8 +189,6 @@ class App extends Component {
             }
 
             debugNode.leaves = leaves
-
-            // remove children, add debug node
             web.add(debugNode, parent)
 
             web.traverseBF(n => {
