@@ -205,13 +205,16 @@ class Tree {
   }
 
   remove(node) {
-    let children = node.parent.children, leaves = Math.max(1, node.leaves)
+    let children = node.parent.children, 
+      leaves = Math.max(1, node.leaves)
 
     if(children.length === 1 && node.children.length === 0) {
       node.parent.leaves--
     } else {
       this.traverseUp(n => {
-        n.leaves -= leaves
+        if(n._id !== node._id) {
+          n.leaves -= leaves
+        }
         return false
       }, node)
     }

@@ -53,16 +53,16 @@ class App extends Component {
       depth = web.getDepth(),
       rectWidth = sharedState.get('containerWidth') / depth
 
-    // web.traverseDF(n => {
-    //   argumentLabels.push({
-    //     top: n.top,
-    //     left: n.depth * rectWidth,
-    //     height: n.height,
-    //     width: rectWidth,
-    //     moralMatrices: n.extraData.moralMatrices,
-    //     id: n._id
-    //   })
-    // })
+    web.traverseDF(n => {
+      argumentLabels.push({
+        top: n.top,
+        left: n.depth * rectWidth,
+        height: n.height,
+        width: rectWidth,
+        moralMatrices: n.extraData.moralMatrices,
+        id: n._id
+      })
+    })
 
     this.setState({ argumentLabels })
   }
@@ -174,7 +174,35 @@ class App extends Component {
             }
 
             renderer.update(web)
-          }}>debug tree interpolation</button>
+          }}>debug remove node</button>
+          <button onClick={() => {
+            const parent = debugNode.parent
+            const children = debugNode.children
+            const leaves = debugNode.leaves
+
+            for(let i=0; i<children.length; i++) {
+              web.remove(children[i])
+            }
+
+            for(let i=0; i<children.length; i++) {
+              children[i].parent = debugNode
+            }
+
+            debugNode.leaves = leaves
+
+            // remove children, add debug node
+            web.add(debugNode, parent)
+
+            web.traverseBF(n => {
+              if(n._id !== debugNode._id) {
+                n.depth++
+              }
+
+              return false
+            }, debugNode)
+
+            renderer.update(web)
+          }}>debug add node</button>
         </div>
         {argumentLabelsDOM}
         <div style={`transform: translate3d(${mouseX}px, ${mouseY}px, 0)`} id="hover-info">{hoverInfo}</div>
