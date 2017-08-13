@@ -25,7 +25,7 @@ const frames = [5],
 let width, height, rectWidth = 0, nextRectWidth = 0, 
   config, regl, camera, draw, 
   mouseX = -1, mouseY = -1,
-  frame = 0, extrusionFrame = 0, iterations = 0, updateIterator = 0, iterationSnapshot, 
+  frame = 0, extrusionFrame = 0, iterations = 0, iterationSnapshot, 
   lastNow = Date.now(), 
   state = { rectWidth, nextRectWidth }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
@@ -216,8 +216,7 @@ export default {
 
   extrude(web, moralMatrix) {
     let scores = web.scoreArguments(moralMatrix),
-      currentIndex = 0,
-      lastIndex = 1
+      currentIndex = 0, lastIndex = 1
 
     web.traverseDF(n => {
       let index = idToIndex[n._id]
@@ -239,8 +238,7 @@ export default {
     web.reconcile(width, height)
 
     let depth = web.getDepth(),
-      lastIndex = updateIterator % 2,
-      currentIndex = lastIndex === 0 ? 1 : 0,
+      currentIndex = 0, lastIndex = 1,
       traversed = []
 
     animationLength = frames[Math.min(depth - 1, frames.length - 1)]
@@ -254,9 +252,14 @@ export default {
 
       let index = idToIndex[n._id]
 
-      positions[lastIndex].tops[index] = n.top
-      positions[lastIndex].left[index] = n.depth * rectWidth
-      positions[lastIndex].heights[index] = n.height
+      positions[lastIndex].tops[index] = positions[currentIndex].tops[index]
+      positions[lastIndex].left[index] = positions[currentIndex].left[index]
+      positions[lastIndex].heights[index] = positions[currentIndex].heights[index]
+      
+      positions[currentIndex].tops[index] = n.top
+      positions[currentIndex].left[index] = n.depth * rectWidth
+      positions[currentIndex].heights[index] = n.height
+
       supports[index] = (n.supports || n.depth === 0) ? 1 : 0
 
       traversed.push(n._id)
@@ -277,16 +280,15 @@ export default {
     }
 
     Object.assign(state, {
-      currentTops: positions[currentIndex].tops,
-      currentLeft: positions[currentIndex].left,
-      currentHeights: positions[currentIndex].heights,
-      nextTops: positions[lastIndex].tops,
-      nextLeft: positions[lastIndex].left,
-      nextHeights: positions[lastIndex].heights,
+      currentTops: positions[lastIndex].tops,
+      currentLeft: positions[lastIndex].left,
+      currentHeights: positions[lastIndex].heights,
+      nextTops: positions[currentIndex].tops,
+      nextLeft: positions[currentIndex].left,
+      nextHeights: positions[currentIndex].heights,
       supports, animationLength
     })
 
-    updateIterator++
     frame = 0
   },
 
