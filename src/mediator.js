@@ -24,7 +24,3 @@ const publish = (channel, data) => {
 }
 
 export default { subscribe, publish }
-
-window.fire = function() {
-  publish("manualReconcile")
-}

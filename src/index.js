@@ -237,7 +237,7 @@ function resolveIterate() {
   renderer.update(web)
 
   if(!result.done) {
-    mediator.subscribe("manualReconcile", resolveIterate, true)
+    mediator.subscribe("reconcileTree", resolveIterate, true)
   }
 }
 
