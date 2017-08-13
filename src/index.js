@@ -87,8 +87,10 @@ class App extends Component {
     }, () => {
       renderer.extrude(web, this.state.moralMatrix)
 
-      // resolver = resolve(label)
-      // resolveIterate()              
+      setTimeout(() => {
+        resolver = resolve(label)
+        resolveIterate()                      
+      }, 1000)
     })
   }
 

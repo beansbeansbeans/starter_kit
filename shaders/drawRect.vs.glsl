@@ -4,7 +4,7 @@ attribute float corner;
 uniform mat4 projection, view;
 uniform vec2 mousePosition;
 uniform vec2 canvasRect;
-uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame;
+uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame;
 
 attribute vec3 color;
 attribute float nextExtrusion;
@@ -27,8 +27,8 @@ float rand(vec2 co) {
   return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
-float ease(float b, float next) {
-  float t = min(animationLength, frame);
+float ease(float b, float next, float frameType) {
+  float t = min(animationLength, frameType);
   float d = animationLength;
   float c = next - b;
 
@@ -39,8 +39,8 @@ float ease(float b, float next) {
 
 vec2 interp(vec2 cur, vec2 next) {
   return vec2(
-    ease(-(canvasRect.x / 2.) + cur.x, -(canvasRect.x / 2.) + next.x),
-    ease(-(-(canvasRect.y / 2.) + cur.y), -(-(canvasRect.y / 2.) + next.y)));
+    ease(-(canvasRect.x / 2.) + cur.x, -(canvasRect.x / 2.) + next.x, frame),
+    ease(-(-(canvasRect.y / 2.) + cur.y), -(-(canvasRect.y / 2.) + next.y), frame));
 }
 
 void main() {
@@ -80,7 +80,7 @@ void main() {
     interpolatedPos = interpolatedBR;
   }
 
-  float extrusion = ease(currentExtrusion, nextExtrusion);
+  float extrusion = ease(currentExtrusion, nextExtrusion, extrusionFrame);
 
   gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
 

@@ -25,7 +25,7 @@ const frames = [5],
 let width, height, rectWidth = 0, nextRectWidth = 0, 
   config, regl, camera, draw, 
   mouseX = -1, mouseY = -1,
-  frame = 0, iterations = 0, updateIterator = 0, iterationSnapshot, 
+  frame = 0, extrusionFrame = 0, iterations = 0, updateIterator = 0, iterationSnapshot, 
   lastNow = Date.now(), 
   state = { rectWidth, nextRectWidth }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
@@ -85,6 +85,7 @@ export default {
         animationLength: (ctx, props) => props.animationLength,
         canvasRect: [width, height],
         frame: (ctx, props) => props.frame,
+        extrusionFrame: (ctx, props) => props.extrusionFrame,
         rectWidth: (ctx, props) => props.rectWidth,
         nextRectWidth: (ctx, props) => props.nextRectWidth,
         view: (ctx, props) => props.cameraView,
@@ -163,7 +164,7 @@ export default {
       regl.clear({ color: [255/255, 100/255, 104/255, 1] })
 
       Object.assign(state, {
-        frame, mouseX, mouseY,
+        frame, extrusionFrame, mouseX, mouseY,
         cameraView: camera.view()
       })
 
@@ -177,6 +178,7 @@ export default {
 
       iterations++
       frame++
+      extrusionFrame++
 
       if(frame === animationLength) mediator.publish("reconcileTree")
     })
@@ -230,7 +232,7 @@ export default {
     state.currentExtrusion = positions[lastIndex].extrusions
     state.nextExtrusion = positions[currentIndex].extrusions
 
-    frame = 0
+    extrusionFrame = 0
   },
 
   update(web) {
