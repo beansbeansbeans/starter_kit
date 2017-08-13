@@ -50,10 +50,6 @@ for(let i=0; i<2; i++) {
   positions[i].extrusions = new Float32Array(maxArgumentCount)
 }
 
-for(let i=0; i<maxArgumentCount; i++) {
-  extrusions[i] = -15 + random.nextDouble() * 30
-}
-
 export default {
   initialize(opts) {
     width = sharedState.get('containerWidth')
@@ -145,13 +141,13 @@ export default {
           divisor: 1
         },
 
-        currentExtrusion: {
-          buffer: regl.prop('currentExtrusion'),
+        nextExtrusion: {
+          buffer: regl.prop('nextExtrusion'),
           divisor: 2
         },
 
-        lastExtrusion: {
-          buffer: regl.prop('lastExtrusion'),
+        currentExtrusion: {
+          buffer: regl.prop('currentExtrusion'),
           divisor: 2
         }
       },
@@ -171,12 +167,12 @@ export default {
         cameraView: camera.view()
       })
 
-      if(typeof state.lastExtrusion === 'undefined') {
-        state.lastExtrusion = new Float32Array(maxArgumentCount)
-      }
-
       if(typeof state.currentExtrusion === 'undefined') {
         state.currentExtrusion = new Float32Array(maxArgumentCount)
+      }
+
+      if(typeof state.nextExtrusion === 'undefined') {
+        state.nextExtrusion = new Float32Array(maxArgumentCount)
       }
 
       draw(state)
@@ -234,8 +230,8 @@ export default {
     })
 
     state.animationLength = 20
-    state.lastExtrusion = positions[lastIndex].extrusions
-    state.currentExtrusion = positions[currentIndex].extrusions
+    state.currentExtrusion = positions[lastIndex].extrusions
+    state.nextExtrusion = positions[currentIndex].extrusions
 
     updateIterator++
     frame = 0

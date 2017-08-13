@@ -7,8 +7,8 @@ uniform vec2 canvasRect;
 uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame;
 
 attribute vec3 color;
+attribute float nextExtrusion;
 attribute float currentExtrusion;
-attribute float lastExtrusion;
 attribute float top;
 attribute float left;
 attribute float height;
@@ -80,7 +80,7 @@ void main() {
     interpolatedPos = interpolatedBR;
   }
 
-  float extrusion = ease(lastExtrusion, currentExtrusion);
+  float extrusion = ease(currentExtrusion, nextExtrusion);
 
   gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
 
