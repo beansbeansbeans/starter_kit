@@ -230,7 +230,6 @@ export default {
     state.currentExtrusion = positions[lastIndex].extrusions
     state.nextExtrusion = positions[currentIndex].extrusions
 
-    updateIterator++
     frame = 0
   },
 
