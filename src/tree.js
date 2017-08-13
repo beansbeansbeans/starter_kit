@@ -113,7 +113,6 @@ class Tree {
 
     return seed.children.reduce((acc, curr) => {
       if(find && matchFn(acc)) return acc
-      if(matchFn(curr)) return curr
 
       return this.traverseDF(matchFn, curr, find)
     }, false)  

@@ -29,8 +29,7 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   lastNow = Date.now(), 
   state = { rectWidth, nextRectWidth }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
-  supports = new Float32Array(maxArgumentCount),
-  extrusions = new Float32Array(maxArgumentCount)
+  supports = new Float32Array(maxArgumentCount)
 
 mediator.subscribe("mousemove", data => {
   mouseX = data.x - width / 2
@@ -230,18 +229,13 @@ export default {
 
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       positions[currentIndex].extrusions[index] = scores[n._id]
+
+      return false
     })
 
     state.animationLength = 20
-    // state.lastExtrusion = positions[lastIndex].extrusions
-    // state.currentExtrusion = positions[currentIndex].extrusions
-
-    state.lastExtrusion = new Float32Array(maxArgumentCount)
-    state.currentExtrusion = new Float32Array(maxArgumentCount)
-
-    for(let i=0; i<maxArgumentCount; i++) {
-      state.currentExtrusion[i] = -15 + random.nextDouble() * 30
-    }
+    state.lastExtrusion = positions[lastIndex].extrusions
+    state.currentExtrusion = positions[currentIndex].extrusions
 
     updateIterator++
     frame = 0
