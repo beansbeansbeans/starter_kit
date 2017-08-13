@@ -87,10 +87,10 @@ class App extends Component {
     }, () => {
       renderer.extrude(web, this.state.moralMatrix)
 
-      setTimeout(() => {
+      mediator.subscribe("extrusionAnimationComplete", () => {
         resolver = resolve(label)
         resolveIterate()                      
-      }, 1000)
+      }, true)
     })
   }
 

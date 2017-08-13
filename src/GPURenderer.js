@@ -180,7 +180,8 @@ export default {
       frame++
       extrusionFrame++
 
-      if(frame === animationLength) mediator.publish("reconcileTree")
+      if(frame === state.animationLength) mediator.publish("reconcileTree")
+      if(extrusionFrame === state.animationLength) mediator.publish("extrusionAnimationComplete")
     })
 
     setInterval(measureFPS, 1000)
