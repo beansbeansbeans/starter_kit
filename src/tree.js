@@ -358,6 +358,17 @@ class Tree {
       n.height = Math.max(minHeight, n.leaves * minHeight)
     })
   }
+
+  scoreArguments(moralMatrix) { // dummy fn right now
+    let scores = {}
+
+    this.traverseDF(n => {
+      scores[n._id] = -15 + random.nextDouble() * 30
+      return false
+    })
+
+    return scores
+  }
 }
 
 export default { Tree, Node }

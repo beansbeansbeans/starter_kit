@@ -168,10 +168,11 @@ export default {
 
       if(typeof state.extrusions === 'undefined') {
         state.extrusions = new Float32Array(maxArgumentCount)
-      }
 
-      for(let i=0; i<maxArgumentCount; i++) {
-        state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
+        for(let i=0; i<maxArgumentCount; i++) {
+          // state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
+          state.extrusions[i] = extrusions[i]
+        }
       }
 
       draw(state)
@@ -211,6 +212,20 @@ export default {
       }
 
       requestAnimationFrame(nudge)
+    })
+  },
+
+  extrude(web, moralMatrix) {
+    let scores = web.scoreArguments(moralMatrix)
+
+    for(let i=0; i<maxArgumentCount; i++) {
+      state.extrusions[i] = extrusions[i]
+    }
+
+    web.traverseDF(n => {
+      let index = idToIndex[n._id]
+
+      state.extrusions[index] = scores[n._id]
     })
   },
 
