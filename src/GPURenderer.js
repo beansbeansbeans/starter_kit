@@ -169,9 +169,6 @@ export default {
 
       if(typeof state.currentExtrusion === 'undefined') {
         state.currentExtrusion = new Float32Array(maxArgumentCount)
-      }
-
-      if(typeof state.nextExtrusion === 'undefined') {
         state.nextExtrusion = new Float32Array(maxArgumentCount)
       }
 
