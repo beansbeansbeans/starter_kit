@@ -122,17 +122,17 @@ export default {
           divisor: 2
         },
 
-        left: {
+        lastLeft: {
           buffer: regl.prop('lastLeft'),
           divisor: 2
         },
 
-        top: {
+        lastTop: {
           buffer: regl.prop('lastTop'),
           divisor: 2
         },
 
-        height: {
+        lastHeight: {
           buffer: regl.prop('lastHeight'),
           divisor: 2
         },

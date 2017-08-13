@@ -9,9 +9,9 @@ uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extr
 attribute vec3 color;
 attribute float lastExtrusion;
 attribute float currentExtrusion;
-attribute float top;
-attribute float left;
-attribute float height;
+attribute float lastTop;
+attribute float lastLeft;
+attribute float lastHeight;
 attribute float currentTop;
 attribute float currentLeft;
 attribute float currentHeight;
@@ -44,11 +44,11 @@ vec2 interp(vec2 cur, vec2 next) {
 }
 
 void main() {
-  float curLeft = left;
-  float curTop = top;
+  float curLeft = lastLeft;
+  float curTop = lastTop;
 
   if(index > eps) {
-    if(left < eps && top < eps && height < eps) {
+    if(lastLeft < eps && lastTop < eps && lastHeight < eps) {
       curLeft = currentLeft;
       curTop = currentTop;
     }
@@ -57,7 +57,7 @@ void main() {
   vec2 pos = vec2(curLeft, curTop);
   vec2 nextPos = vec2(currentLeft, currentTop);
 
-  vec2 topLeft = vec2(pos.x, pos.y + height - bufferSize);
+  vec2 topLeft = vec2(pos.x, pos.y + lastHeight - bufferSize);
   vec2 nextTopLeft = vec2(nextPos.x, nextPos.y + currentHeight - bufferSize);
   vec2 bottomRight = vec2(pos.x + rectWidth - bufferSize, pos.y);
   vec2 nextBottomRight = vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y);
@@ -71,7 +71,7 @@ void main() {
   } else if(abs(corner - 2.) < eps) {
     if(mod(index, 2.) < eps) {
       interpolatedPos = interp(
-        vec2(pos.x + rectWidth - bufferSize, pos.y + height - bufferSize),
+        vec2(pos.x + rectWidth - bufferSize, pos.y + lastHeight - bufferSize),
         vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y + currentHeight - bufferSize));
     } else {
       interpolatedPos = interp(pos, nextPos);
@@ -90,6 +90,6 @@ void main() {
     vColor = vec3(203./255., 194./255., 187./255.);
   }
 
-  // top left position, bottom right position
+  // lastTop lastLeft position, bottom right position
   // vCoord = vec4(interpolatedPos.x, interpolatedPos.y, );
 }
