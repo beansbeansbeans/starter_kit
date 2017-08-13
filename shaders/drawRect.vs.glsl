@@ -7,14 +7,14 @@ uniform vec2 canvasRect;
 uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame;
 
 attribute vec3 color;
-attribute float nextExtrusion;
+attribute float lastExtrusion;
 attribute float currentExtrusion;
 attribute float top;
 attribute float left;
 attribute float height;
-attribute float nextTop;
-attribute float nextLeft;
-attribute float nextHeight;
+attribute float currentTop;
+attribute float currentLeft;
+attribute float currentHeight;
 attribute float index;
 attribute float supports;
 
@@ -49,16 +49,16 @@ void main() {
 
   if(index > eps) {
     if(left < eps && top < eps && height < eps) {
-      curLeft = nextLeft;
-      curTop = nextTop;
+      curLeft = currentLeft;
+      curTop = currentTop;
     }
   }
 
   vec2 pos = vec2(curLeft, curTop);
-  vec2 nextPos = vec2(nextLeft, nextTop);
+  vec2 nextPos = vec2(currentLeft, currentTop);
 
   vec2 topLeft = vec2(pos.x, pos.y + height - bufferSize);
-  vec2 nextTopLeft = vec2(nextPos.x, nextPos.y + nextHeight - bufferSize);
+  vec2 nextTopLeft = vec2(nextPos.x, nextPos.y + currentHeight - bufferSize);
   vec2 bottomRight = vec2(pos.x + rectWidth - bufferSize, pos.y);
   vec2 nextBottomRight = vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y);
 
@@ -72,7 +72,7 @@ void main() {
     if(mod(index, 2.) < eps) {
       interpolatedPos = interp(
         vec2(pos.x + rectWidth - bufferSize, pos.y + height - bufferSize),
-        vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y + nextHeight - bufferSize));
+        vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y + currentHeight - bufferSize));
     } else {
       interpolatedPos = interp(pos, nextPos);
     }
@@ -80,7 +80,7 @@ void main() {
     interpolatedPos = interpolatedBR;
   }
 
-  float extrusion = ease(currentExtrusion, nextExtrusion, extrusionFrame);
+  float extrusion = ease(lastExtrusion, currentExtrusion, extrusionFrame);
 
   gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
 

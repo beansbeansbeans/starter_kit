@@ -107,33 +107,33 @@ export default {
           divisor: 2
         },
 
-        nextLeft: {
-          buffer: regl.prop('nextLeft'),
-          divisor: 2
-        },
-
-        nextTop: {
-          buffer: regl.prop('nextTops'),
-          divisor: 2
-        },
-
-        nextHeight: {
-          buffer: regl.prop('nextHeights'),
-          divisor: 2
-        },
-
-        left: {
+        currentLeft: {
           buffer: regl.prop('currentLeft'),
           divisor: 2
         },
 
+        currentTop: {
+          buffer: regl.prop('currentTop'),
+          divisor: 2
+        },
+
+        currentHeight: {
+          buffer: regl.prop('currentHeight'),
+          divisor: 2
+        },
+
+        left: {
+          buffer: regl.prop('lastLeft'),
+          divisor: 2
+        },
+
         top: {
-          buffer: regl.prop('currentTops'),
+          buffer: regl.prop('lastTop'),
           divisor: 2
         },
 
         height: {
-          buffer: regl.prop('currentHeights'),
+          buffer: regl.prop('lastHeight'),
           divisor: 2
         },
 
@@ -142,13 +142,13 @@ export default {
           divisor: 1
         },
 
-        nextExtrusion: {
-          buffer: regl.prop('nextExtrusion'),
+        currentExtrusion: {
+          buffer: regl.prop('currentExtrusion'),
           divisor: 2
         },
 
-        currentExtrusion: {
-          buffer: regl.prop('currentExtrusion'),
+        lastExtrusion: {
+          buffer: regl.prop('lastExtrusion'),
           divisor: 2
         }
       },
@@ -168,9 +168,9 @@ export default {
         cameraView: camera.view()
       })
 
-      if(typeof state.currentExtrusion === 'undefined') {
+      if(typeof state.lastExtrusion === 'undefined') {
+        state.lastExtrusion = new Float32Array(maxArgumentCount)
         state.currentExtrusion = new Float32Array(maxArgumentCount)
-        state.nextExtrusion = new Float32Array(maxArgumentCount)
       }
 
       draw(state)
@@ -223,13 +223,11 @@ export default {
 
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       positions[currentIndex].extrusions[index] = scores[n._id]
-
-      return false
     })
 
     state.animationLength = 20
-    state.currentExtrusion = positions[lastIndex].extrusions
-    state.nextExtrusion = positions[currentIndex].extrusions
+    state.lastExtrusion = positions[lastIndex].extrusions
+    state.currentExtrusion = positions[currentIndex].extrusions
 
     extrusionFrame = 0
   },
@@ -280,12 +278,12 @@ export default {
     }
 
     Object.assign(state, {
-      currentTops: positions[lastIndex].tops,
-      currentLeft: positions[lastIndex].left,
-      currentHeights: positions[lastIndex].heights,
-      nextTops: positions[currentIndex].tops,
-      nextLeft: positions[currentIndex].left,
-      nextHeights: positions[currentIndex].heights,
+      lastTop: positions[lastIndex].tops,
+      lastLeft: positions[lastIndex].left,
+      lastHeight: positions[lastIndex].heights,
+      currentTop: positions[currentIndex].tops,
+      currentLeft: positions[currentIndex].left,
+      currentHeight: positions[currentIndex].heights,
       supports, animationLength
     })
 
