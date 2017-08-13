@@ -1,12 +1,23 @@
-var css = require('dom-css')
-var mat4 = require('gl-mat4')
-var normals = require('angle-normals')
-var sphere = require('primitive-icosphere')
-var perlin = require('noisejs')
-var reindex = require('mesh-reindex')
-var unindex = require('unindex-mesh')
+import mat4 from 'gl-mat4'
+import normals from 'angle-normals'
+import sphere from 'primitive-icosphere'
+import perlin from 'noisejs'
+import reindex from 'mesh-reindex'
+import unindex from 'unindex-mesh'
+import reglImport from 'regl'
 
-module.exports = function Splash () {
+window.context = {
+  count: 0,
+  batchId: 0,
+  deltaTime: 0,
+  time: 0,
+  viewportWidth: window.innerWidth,
+  viewportHeight: window.innerHeight,
+  drawingBufferWidth: window.innerWidth,
+  drawingBufferHeight: window.innerHeight
+}
+
+export default function Splash () {
   var canvas = document.createElement('canvas')
   canvas.id = 'splash'
 
@@ -19,7 +30,7 @@ module.exports = function Splash () {
 
   window.addEventListener('resize', fit, false)
 
-  var regl = require('regl')(canvas)  
+  window.regl = reglImport(canvas)  
 
   var mesh = sphere(7, {
     subdivisions: 3
@@ -46,27 +57,27 @@ module.exports = function Splash () {
   var uniforms = {
     color: [1, 0, 0, 1],
     model: mat4.scale(mat4.identity([]), mat4.identity([]), [2, 1, 2]),
-    view: function (props, context) {
+    view: function (props) {
       var t = 0.005 * context.count / 2
       return mat4.lookAt([],
         [30 * Math.cos(t), 5, 30 * Math.sin(t)],
         [0, 2.5, 0],
         [0, 1, 0])
     },
-    projection: function (props, context) {
+    projection: function (props) {
       return mat4.perspective([],
         Math.PI / 4,
         context.viewportWidth / context.viewportHeight,
         0.01,
         1000)
     },
-    time: function (props, context) {
+    time: function (props) {
       return context.count / 2
     },
     displacement: regl.texture(dx)
   }
 
-  var drawOutline = regl({
+  window.drawOutline = regl({
     frag: `
     precision highp float;
     uniform vec4 color;
@@ -113,7 +124,7 @@ module.exports = function Splash () {
     count: 799
   })
 
-  var drawTriangles = regl({
+  window.drawTriangles = regl({
     frag: `
     precision highp float;
     uniform vec4 color;

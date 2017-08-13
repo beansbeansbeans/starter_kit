@@ -14,8 +14,9 @@ import mediator from './mediator'
 import processArgument from './processArgument'
 import MoralMatricesChart from './moralMatricesChart'
 import { moralMatrices, matrices } from './config'
+import Splash from './reglHP'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY, debugNode
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY, debugNode, debugReglHomepage = false
 
 const shaders = {},
   preload = {
@@ -310,7 +311,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   if(debug) {
     DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
-  } else {
+  } else if(!debugReglHomepage) {
     renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
   }
 
@@ -334,7 +335,21 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     }
   }
 
-  iterate()
+  if(debugReglHomepage) {
+    document.body.appendChild(Splash())
+
+    window.regl.frame(function () {
+      regl.clear({
+        depth: 1,
+        color: [0, 0, 0, 1]
+      })
+      window.context.count++
+      drawOutline()
+      drawTriangles()
+    })
+  } else {
+    iterate()
+  }
 })
 
 const handleResize = () => {
