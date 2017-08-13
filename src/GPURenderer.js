@@ -11,7 +11,7 @@ const random = randomModule.random(42)
 
 const frames = [5],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
-  buffer = 2, cameraDist = 1000,
+  buffer = 3, cameraDist = 1000,
   onResize = () => {},
   measureFPS = () => {
     const now = Date.now()
@@ -171,7 +171,7 @@ export default {
       }
 
       for(let i=0; i<maxArgumentCount; i++) {
-        // state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
+        state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
       }
 
       draw(state)
@@ -186,7 +186,7 @@ export default {
     setInterval(measureFPS, 1000)
 
     mediator.subscribe("flip", () => {
-      return
+      // return
 
       const currentEye = [0, 0, cameraDist], ticks = 30
 
