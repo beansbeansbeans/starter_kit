@@ -48,6 +48,7 @@ for(let i=0; i<2; i++) {
   positions[i].tops = new Float32Array(maxArgumentCount)
   positions[i].left = new Float32Array(maxArgumentCount)
   positions[i].heights = new Float32Array(maxArgumentCount)
+  positions[i].extrusions = new Float32Array(maxArgumentCount)
 }
 
 for(let i=0; i<maxArgumentCount; i++) {
@@ -145,8 +146,13 @@ export default {
           divisor: 1
         },
 
-        extrusion: {
-          buffer: regl.prop('extrusions'),
+        currentExtrusion: {
+          buffer: regl.prop('currentExtrusion'),
+          divisor: 2
+        },
+
+        lastExtrusion: {
+          buffer: regl.prop('lastExtrusion'),
           divisor: 2
         }
       },
@@ -166,13 +172,12 @@ export default {
         cameraView: camera.view()
       })
 
-      if(typeof state.extrusions === 'undefined') {
-        state.extrusions = new Float32Array(maxArgumentCount)
+      if(typeof state.lastExtrusion === 'undefined') {
+        state.lastExtrusion = new Float32Array(maxArgumentCount)
+      }
 
-        for(let i=0; i<maxArgumentCount; i++) {
-          // state.extrusions[i] = Math.cos(iterations / 10) * extrusions[i]
-          state.extrusions[i] = extrusions[i]
-        }
+      if(typeof state.currentExtrusion === 'undefined') {
+        state.currentExtrusion = new Float32Array(maxArgumentCount)
       }
 
       draw(state)
@@ -216,17 +221,30 @@ export default {
   },
 
   extrude(web, moralMatrix) {
-    let scores = web.scoreArguments(moralMatrix)
-
-    for(let i=0; i<maxArgumentCount; i++) {
-      state.extrusions[i] = extrusions[i]
-    }
+    let scores = web.scoreArguments(moralMatrix),
+      currentIndex = updateIterator % 2,
+      lastIndex = currentIndex === 0 ? 1 : 0
 
     web.traverseDF(n => {
       let index = idToIndex[n._id]
 
-      state.extrusions[index] = scores[n._id]
+      positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
+      positions[currentIndex].extrusions[index] = scores[n._id]
     })
+
+    state.animationLength = 20
+    // state.lastExtrusion = positions[lastIndex].extrusions
+    // state.currentExtrusion = positions[currentIndex].extrusions
+
+    state.lastExtrusion = new Float32Array(maxArgumentCount)
+    state.currentExtrusion = new Float32Array(maxArgumentCount)
+
+    for(let i=0; i<maxArgumentCount; i++) {
+      state.currentExtrusion[i] = -15 + random.nextDouble() * 30
+    }
+
+    updateIterator++
+    frame = 0
   },
 
   update(web) {
