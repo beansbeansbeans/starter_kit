@@ -216,8 +216,8 @@ export default {
 
   extrude(web, moralMatrix) {
     let scores = web.scoreArguments(moralMatrix),
-      currentIndex = updateIterator % 2,
-      lastIndex = currentIndex === 0 ? 1 : 0
+      currentIndex = 0,
+      lastIndex = 1
 
     web.traverseDF(n => {
       let index = idToIndex[n._id]
