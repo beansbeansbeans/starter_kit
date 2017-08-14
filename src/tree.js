@@ -362,7 +362,7 @@ class Tree {
     let scores = {}
 
     this.traverseDF(n => {
-      scores[n._id] = -15 + random.nextDouble() * 30
+      scores[n._id] = -30 + random.nextDouble() * 60
       return false
     })
 
