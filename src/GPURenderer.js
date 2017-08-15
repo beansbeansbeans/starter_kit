@@ -120,7 +120,7 @@ export default {
         mousePosition: (ctx, props) => 
           ([props.mouseX, props.mouseY]),
         // activeDirection: (ctx, props) => Math.floor(random.nextDouble() * 4)
-        activeDirection: 3
+        activeDirection: 1
       },
 
       attributes: {

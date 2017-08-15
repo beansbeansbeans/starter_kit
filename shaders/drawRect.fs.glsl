@@ -45,22 +45,30 @@ void main() {
   if(abs(vActiveStatus - 1.) < eps) { // fill
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
-        if(abs(vActiveDirection - 2.) < eps) {
+        if(abs(vActiveDirection - 2.) < eps) { // left
           if(vBarycentricCoord.x < activeAnimationElapsed) {
             color = activeColor;
           }                  
-        } else {
+        } else if(abs(vActiveDirection - 3.) < eps) { // up
           if(vBarycentricCoord.z < activeAnimationElapsed) {
+            color = activeColor;
+          }
+        } else {
+          if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
             color = activeColor;
           }
         }
       } else {
-        if(abs(vActiveDirection - 2.) < eps) {
+        if(abs(vActiveDirection - 2.) < eps) { // left
           if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
             color = activeColor;
           }          
-        } else {
+        } else if(abs(vActiveDirection - 3.) < eps) { // up
           if(vBarycentricCoord.x > 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }
+        } else {
+          if(vBarycentricCoord.x < activeAnimationElapsed) {
             color = activeColor;
           }
         }
@@ -69,22 +77,30 @@ void main() {
   } else if(abs(vActiveStatus - 2.) < eps) { // recede
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
-        if(abs(vActiveDirection - 2.) < eps) {
+        if(abs(vActiveDirection - 2.) < eps) { // left
           if(vBarycentricCoord.x > activeAnimationElapsed) {
             color = activeColor;
           }          
-        } else {
+        } else if(abs(vActiveDirection - 3.) < eps) { // up
           if(vBarycentricCoord.z > activeAnimationElapsed) {
+            color = activeColor;
+          }
+        } else {
+          if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
             color = activeColor;
           }
         }
       } else {
-        if(abs(vActiveDirection - 2.) < eps) {
+        if(abs(vActiveDirection - 2.) < eps) { // left
           if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
             color = activeColor;
           }          
-        } else {
+        } else if(abs(vActiveDirection - 3.) < eps) { // up
           if(vBarycentricCoord.x < 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }
+        } else {
+          if(vBarycentricCoord.x > activeAnimationElapsed) {
             color = activeColor;
           }
         }
