@@ -13,6 +13,8 @@ float f_thickness = 0.01;
 float innerBuffer = f_thickness * 4.;
 float attackBarThickness = 0.15;
 
+vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
+
 void main() {
   float f_closest_edge = min(vBarycentricCoord.x, min(vBarycentricCoord.y, vBarycentricCoord.z));
 
@@ -37,11 +39,11 @@ void main() {
   if(vSupports < eps && vRenderFlag > eps) {
     if(mod(vIndex, 2.) < eps) {
       if(vBarycentricCoord.x > (1. - attackBarThickness) && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.z > innerBuffer) {
-        color = vec4(1);
+        color = attackColor;
       }    
     } else {
       if(vBarycentricCoord.z < attackBarThickness && vBarycentricCoord.z > innerBuffer && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.x > innerBuffer) {
-        color = vec4(1);
+        color = attackColor;
       }
     }    
   }
