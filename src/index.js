@@ -150,7 +150,7 @@ class App extends Component {
               newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('affluent households benefit') > -1, web._root, true))
               newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('straight-line increase in immigration') > -1, web._root, true))
 
-              renderer.extrudeNode(web, newConstraints)
+              renderer.extrudeNode(web, newConstraints.map(node => ({ node, value: 1})))
 
               setTimeout(() => {
                 this.setState({
@@ -165,7 +165,15 @@ class App extends Component {
                     console.log("iterate solver", result.value)
 
                     if(result.value) {
-                      renderer.extrudeNode(web, [result.value])
+                      let value = result.value.value
+
+                      if(typeof value === 'undefined') {
+                        value = result.value.provisionalValue
+                      }
+
+                      renderer.extrudeNode(web, [{ 
+                        node: result.value,
+                        value: value === true ? 1 : (value === false ? -1 : 0) } ])
                     }
 
                     if(!consistent) console.log("INCONSISTENCY")
@@ -181,7 +189,7 @@ class App extends Component {
 
                   solveIterator()               
                 })
-              }, 2000)
+              }, 1000)
             }}>solve</button>
           </div>
         </div>

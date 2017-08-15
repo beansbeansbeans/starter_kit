@@ -238,15 +238,14 @@ export default {
   },
 
   extrudeNode(web, arr) {
-    console.log("extruding")
-    console.log(arr)
     for(let i=0; i<arr.length; i++) {
-      let node = arr[i]
+      let node = arr[i].node, value = arr[i].value
+
       let currentIndex = 0, lastIndex = 1,
         index = idToIndex[node._id]
 
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-      positions[currentIndex].extrusions[index] = -30 + random.nextDouble() * 60 
+      positions[currentIndex].extrusions[index] = value * random.nextDouble() * 30
 
       state.animationLength = 15
       state.lastExtrusion = positions[lastIndex].extrusions
