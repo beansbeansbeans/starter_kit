@@ -18,7 +18,7 @@ float innerBuffer = f_thickness * 4.;
 float attackBarThickness = 0.15;
 
 vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
-vec4 activeColor = vec4(0, 0, 1, 1);
+vec4 activeColor = vec4(32./255., 87./255., 154./255., 1);
 
 void main() {
   float f_closest_edge = min(vBarycentricCoord.x, min(vBarycentricCoord.y, vBarycentricCoord.z));
