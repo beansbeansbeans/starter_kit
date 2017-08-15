@@ -150,6 +150,8 @@ class App extends Component {
               newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('affluent households benefit') > -1, web._root, true))
               newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('straight-line increase in immigration') > -1, web._root, true))
 
+              newConstraints.forEach(n => { n.constraintValue = true })
+
               renderer.extrudeNode(web, newConstraints.map(node => ({ node, value: 1})))
 
               setTimeout(() => {

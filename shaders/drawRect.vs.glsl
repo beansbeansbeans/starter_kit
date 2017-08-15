@@ -17,12 +17,14 @@ attribute float currentLeft;
 attribute float currentHeight;
 attribute float index;
 attribute float supports;
+attribute float constraint;
 
 varying vec4 vCoord;
 varying vec3 vBarycentricCoord;
 varying float vRenderFlag;
 varying float vIndex;
 varying float vSupports;
+varying float vConstraint;
 
 float eps = 0.0001;
 
@@ -94,6 +96,7 @@ void main() {
   gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
 
   vSupports = supports;
+  vConstraint = constraint;
 
   vRenderFlag = 1.;
   if(currentHeight < eps) {

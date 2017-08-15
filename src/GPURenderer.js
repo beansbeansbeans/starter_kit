@@ -29,7 +29,8 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   lastNow = Date.now(), 
   state = { rectWidth, nextRectWidth }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
-  supports = new Float32Array(maxArgumentCount)
+  supports = new Float32Array(maxArgumentCount),
+  constraint = new Float32Array(maxArgumentCount)
 
 mediator.subscribe("mousemove", data => {
   mouseX = data.x - width / 2
@@ -123,6 +124,11 @@ export default {
 
         supports: {
           buffer: regl.prop('supports'),
+          divisor: 2
+        },
+
+        constraint: {
+          buffer: regl.prop('constraint'),
           divisor: 2
         },
 
@@ -238,25 +244,26 @@ export default {
   },
 
   extrudeNode(web, arr) {
-    for(let i=0; i<arr.length; i++) {
-      let node = arr[i].node, value = arr[i].value
+    let currentIndex = 0, lastIndex = 1
 
-      let currentIndex = 0, lastIndex = 1,
-        index = idToIndex[node._id]
+    for(let i=0; i<arr.length; i++) {
+      let node = arr[i].node, value = arr[i].value, index = idToIndex[node._id]
 
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       positions[currentIndex].extrusions[index] = value * random.nextDouble() * 30
-
-      state.animationLength = 15
-      state.lastExtrusion = positions[lastIndex].extrusions
-      state.currentExtrusion = positions[currentIndex].extrusions
-
-      extrusionFrame = 0
+      constraint[index] = node.constraintValue === true
 
       mediator.subscribe("extrusionAnimationComplete", () => {
         positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       }, true)
     }
+
+    state.animationLength = 15
+    state.constraint = constraint
+    state.lastExtrusion = positions[lastIndex].extrusions
+    state.currentExtrusion = positions[currentIndex].extrusions
+
+    extrusionFrame = 0
   },
 
   extrude(web, moralMatrix) {
@@ -329,7 +336,7 @@ export default {
       currentTop: positions[currentIndex].tops,
       currentLeft: positions[currentIndex].left,
       currentHeight: positions[currentIndex].heights,
-      supports, animationLength
+      supports, constraint, animationLength
     })
 
     frame = 0

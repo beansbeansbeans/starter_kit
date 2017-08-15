@@ -7,6 +7,7 @@ varying float vRenderFlag;
 varying vec3 vBarycentricCoord;
 varying float vIndex;
 varying float vSupports;
+varying float vConstraint;
 
 float eps = 0.0001;
 float f_thickness = 0.01;
@@ -36,15 +37,19 @@ void main() {
 
   vec4 color = vec4(vec3(1, 1, 1), 1. - edgeIntensity);
 
-  if(vSupports < eps && vRenderFlag > eps) {
-    if(mod(vIndex, 2.) < eps) {
-      if(vBarycentricCoord.x > (1. - attackBarThickness) && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.z > innerBuffer) {
-        color = attackColor;
+  if(vConstraint > eps) {
+    color = vec4(0, 1, 0, 1);
+  } else {
+    if(vSupports < eps && vRenderFlag > eps) {
+      if(mod(vIndex, 2.) < eps) {
+        if(vBarycentricCoord.x > (1. - attackBarThickness) && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.z > innerBuffer) {
+          color = attackColor;
+        }    
+      } else {
+        if(vBarycentricCoord.z < attackBarThickness && vBarycentricCoord.z > innerBuffer && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.x > innerBuffer) {
+          color = attackColor;
+        }
       }    
-    } else {
-      if(vBarycentricCoord.z < attackBarThickness && vBarycentricCoord.z > innerBuffer && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.x > innerBuffer) {
-        color = attackColor;
-      }
     }    
   }
 
