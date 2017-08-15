@@ -36,11 +36,11 @@ void main() {
 
   if(vSupports < eps && vRenderFlag > eps) {
     if(mod(vIndex, 2.) < eps) {
-      if(vBarycentricCoord.x > (1. - attackBarThickness) && vBarycentricCoord.x < (1. - innerBuffer)) {
+      if(vBarycentricCoord.x > (1. - attackBarThickness) && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.z > innerBuffer) {
         color = vec4(1);
       }    
     } else {
-      if(vBarycentricCoord.z < attackBarThickness && vBarycentricCoord.z > innerBuffer) {
+      if(vBarycentricCoord.z < attackBarThickness && vBarycentricCoord.z > innerBuffer && vBarycentricCoord.x < (1. - innerBuffer) && vBarycentricCoord.x > innerBuffer) {
         color = vec4(1);
       }
     }    
