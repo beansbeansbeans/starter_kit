@@ -17,6 +17,7 @@ float innerBuffer = f_thickness * 4.;
 float attackBarThickness = 0.15;
 
 vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
+vec4 activeColor = vec4(0, 0, 1, 1);
 
 void main() {
   float f_closest_edge = min(vBarycentricCoord.x, min(vBarycentricCoord.y, vBarycentricCoord.z));
@@ -43,17 +44,25 @@ void main() {
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
         if(vBarycentricCoord.x < vAnimationElapsed) {
-          color = vec4(0, 0, 1, 1);
+          color = activeColor;
         }        
       } else {
         if(vBarycentricCoord.z > 1. - vAnimationElapsed) {
-          color = vec4(0, 0, 1, 1);
+          color = activeColor;
         }
       }
     }
   } else if(abs(vActiveStatus - 2.) < eps) {
     if(edgeIntensity > eps) {
-      color = vec4(1, 0, 0, 1);
+      if(mod(vIndex, 2.) < eps) {
+        if(vBarycentricCoord.x > vAnimationElapsed) {
+          color = activeColor;
+        }
+      } else {
+        if(vBarycentricCoord.z < 1. - vAnimationElapsed) {
+          color = activeColor;
+        }
+      }
     }
   } else if(vConstraint > eps) {
     if(edgeIntensity > eps) {
