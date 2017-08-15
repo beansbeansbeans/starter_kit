@@ -39,15 +39,16 @@ void main() {
   }
 
   vec4 color = vec4(vec3(1, 1, 1), 1. - edgeIntensity);
+  float activeAnimationElapsed = vAnimationElapsed * 2.;
 
   if(abs(vActiveStatus - 1.) < eps) {
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
-        if(vBarycentricCoord.x < vAnimationElapsed) {
+        if(vBarycentricCoord.x < activeAnimationElapsed) {
           color = activeColor;
         }        
       } else {
-        if(vBarycentricCoord.z > 1. - vAnimationElapsed) {
+        if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
           color = activeColor;
         }
       }
@@ -55,11 +56,11 @@ void main() {
   } else if(abs(vActiveStatus - 2.) < eps) {
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
-        if(vBarycentricCoord.x > vAnimationElapsed) {
+        if(vBarycentricCoord.x > activeAnimationElapsed) {
           color = activeColor;
         }
       } else {
-        if(vBarycentricCoord.z < 1. - vAnimationElapsed) {
+        if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
           color = activeColor;
         }
       }
