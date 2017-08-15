@@ -10,6 +10,7 @@ varying float vSupports;
 varying float vConstraint;
 varying float vActiveStatus;
 varying float vAnimationElapsed;
+varying float vActiveDirection;
 
 float eps = 0.0001;
 float f_thickness = 0.01;
@@ -41,27 +42,51 @@ void main() {
   vec4 color = vec4(vec3(1, 1, 1), 1. - edgeIntensity);
   float activeAnimationElapsed = vAnimationElapsed * 2.;
 
-  if(abs(vActiveStatus - 1.) < eps) {
+  if(abs(vActiveStatus - 1.) < eps) { // fill
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
-        if(vBarycentricCoord.x < activeAnimationElapsed) {
-          color = activeColor;
-        }        
+        if(abs(vActiveDirection - 2.) < eps) {
+          if(vBarycentricCoord.x < activeAnimationElapsed) {
+            color = activeColor;
+          }                  
+        } else {
+          if(vBarycentricCoord.z < activeAnimationElapsed) {
+            color = activeColor;
+          }
+        }
       } else {
-        if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
-          color = activeColor;
+        if(abs(vActiveDirection - 2.) < eps) {
+          if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }          
+        } else {
+          if(vBarycentricCoord.x > 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }
         }
       }
     }
-  } else if(abs(vActiveStatus - 2.) < eps) {
+  } else if(abs(vActiveStatus - 2.) < eps) { // recede
     if(edgeIntensity > eps) {
       if(mod(vIndex, 2.) < eps) {
-        if(vBarycentricCoord.x > activeAnimationElapsed) {
-          color = activeColor;
+        if(abs(vActiveDirection - 2.) < eps) {
+          if(vBarycentricCoord.x > activeAnimationElapsed) {
+            color = activeColor;
+          }          
+        } else {
+          if(vBarycentricCoord.z > activeAnimationElapsed) {
+            color = activeColor;
+          }
         }
       } else {
-        if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
-          color = activeColor;
+        if(abs(vActiveDirection - 2.) < eps) {
+          if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }          
+        } else {
+          if(vBarycentricCoord.x < 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }
         }
       }
     }
