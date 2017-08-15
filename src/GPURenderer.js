@@ -26,11 +26,12 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   config, regl, camera, draw, 
   mouseX = -1, mouseY = -1,
   frame = 0, extrusionFrame = 0, iterations = 0, iterationSnapshot, 
-  lastNow = Date.now(), 
+  lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
   state = { rectWidth, nextRectWidth }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
-  constraint = new Float32Array(maxArgumentCount)
+  constraint = new Float32Array(maxArgumentCount),
+  activeStatus = new Float32Array(maxArgumentCount)
 
 mediator.subscribe("mousemove", data => {
   mouseX = data.x - width / 2
@@ -129,6 +130,11 @@ export default {
 
         constraint: {
           buffer: regl.prop('constraint'),
+          divisor: 2
+        },
+
+        activeStatus: {
+          buffer: regl.prop('activeStatus'),
           divisor: 2
         },
 
@@ -256,8 +262,19 @@ export default {
       mediator.subscribe("extrusionAnimationComplete", () => {
         positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       }, true)
+
+      if(i === arr.length - 1) {
+        activeStatus[activeIndex] = 0
+
+        previousActiveIndex = activeIndex
+        activeStatus[previousActiveIndex] = 2
+        
+        activeIndex = index
+        activeStatus[activeIndex] = 1
+      }
     }
 
+    state.activeStatus = activeStatus
     state.animationLength = 15
     state.constraint = constraint
     state.lastExtrusion = positions[lastIndex].extrusions
@@ -336,7 +353,7 @@ export default {
       currentTop: positions[currentIndex].tops,
       currentLeft: positions[currentIndex].left,
       currentHeight: positions[currentIndex].heights,
-      supports, constraint, animationLength
+      supports, constraint, activeStatus, animationLength
     })
 
     frame = 0

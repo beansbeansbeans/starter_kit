@@ -18,6 +18,7 @@ attribute float currentHeight;
 attribute float index;
 attribute float supports;
 attribute float constraint;
+attribute float activeStatus;
 
 varying vec4 vCoord;
 varying vec3 vBarycentricCoord;
