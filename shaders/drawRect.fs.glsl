@@ -53,10 +53,14 @@ void main() {
           if(vBarycentricCoord.z < activeAnimationElapsed) {
             color = activeColor;
           }
-        } else {
+        } else if(abs(vActiveDirection - 1.) < eps) { // down
           if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
             color = activeColor;
           }
+        } else { // right
+          if(vBarycentricCoord.x > 1. - activeAnimationElapsed) {
+            color = activeColor;
+          } 
         }
       } else {
         if(abs(vActiveDirection - 2.) < eps) { // left
@@ -67,10 +71,14 @@ void main() {
           if(vBarycentricCoord.x > 1. - activeAnimationElapsed) {
             color = activeColor;
           }
-        } else {
+        } else if(abs(vActiveDirection - 1.) < eps) { // down
           if(vBarycentricCoord.x < activeAnimationElapsed) {
             color = activeColor;
           }
+        } else { // right
+          if(vBarycentricCoord.z < activeAnimationElapsed) {
+            color = activeColor;
+          } 
         }
       }
     }
@@ -85,8 +93,12 @@ void main() {
           if(vBarycentricCoord.z > activeAnimationElapsed) {
             color = activeColor;
           }
-        } else {
+        } else if(abs(vActiveDirection - 1.) < eps) { // down
           if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
+            color = activeColor;
+          }
+        } else { // right
+          if(vBarycentricCoord.x < 1. - activeAnimationElapsed) {
             color = activeColor;
           }
         }
@@ -99,10 +111,14 @@ void main() {
           if(vBarycentricCoord.x < 1. - activeAnimationElapsed) {
             color = activeColor;
           }
-        } else {
+        } else if(abs(vActiveDirection - 1.) < eps) { // down
           if(vBarycentricCoord.x > activeAnimationElapsed) {
             color = activeColor;
           }
+        } else { // right
+          if(vBarycentricCoord.z > activeAnimationElapsed) {
+            color = activeColor;
+          } 
         }
       }
     }
