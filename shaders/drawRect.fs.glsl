@@ -38,7 +38,9 @@ void main() {
   vec4 color = vec4(vec3(1, 1, 1), 1. - edgeIntensity);
 
   if(vConstraint > eps) {
-    color = vec4(0, 1, 0, 1);
+    if(edgeIntensity > eps) {
+      color = vec4(0, 1, 0, 1);
+    }
   } else {
     if(vSupports < eps && vRenderFlag > eps) {
       if(mod(vIndex, 2.) < eps) {
