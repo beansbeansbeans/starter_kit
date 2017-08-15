@@ -253,7 +253,7 @@ export default {
   },
 
   extrudeNode(web, arr) {
-    let currentIndex = 0, lastIndex = 1
+    let currentIndex = 0, lastIndex = 1, activePosition = {}, previousActivePosition = {}
 
     for(let i=0; i<arr.length; i++) {
       let node = arr[i].node, value = arr[i].value, index = idToIndex[node._id]
@@ -275,6 +275,12 @@ export default {
         
         activeIndex = index
         activeStatus[activeIndex] = 1
+
+        activePosition.left = positions[0].left[activeIndex]
+        activePosition.tops = positions[0].tops[activeIndex]
+
+        previousActivePosition.left = positions[0].left[previousActiveIndex]
+        previousActivePosition.tops = positions[0].tops[previousActiveIndex]
       }
     }
 
@@ -283,7 +289,20 @@ export default {
     state.constraint = constraint
     state.lastExtrusion = positions[lastIndex].extrusions
     state.currentExtrusion = positions[currentIndex].extrusions
-    state.activeDirection = Math.floor(random.nextDouble() * 4)
+
+    if(Math.abs(activePosition.left - previousActivePosition.left) > Math.abs(activePosition.tops - previousActivePosition.tops)) { // moving left or right
+      if(activePosition.left < previousActivePosition.left) {
+        state.activeDirection = 2
+      } else {
+        state.activeDirection = 0
+      }
+    } else { // moving top or down
+      if(activePosition.tops < previousActivePosition.tops) {
+        state.activeDirection = 3
+      } else {
+        state.activeDirection = 1
+      }
+    }
 
     activeFrame = 0
     extrusionFrame = 0
