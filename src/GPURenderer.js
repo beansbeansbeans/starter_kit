@@ -82,22 +82,22 @@ export default {
       vert: opts.shaders['drawRect.vs'],
 
       depth: {
-        enable: false
+        enable: true
       },
 
       blend: {
         enable: true,
         func: {
-          srcRGB: 'src alpha',
-          srcAlpha: 1,
-          dstRGB: 'one minus src alpha',
-          dstAlpha: 1
+          srcRGB:   'src alpha',
+          srcAlpha: 'src alpha',
+          dstRGB:   'one minus src alpha',
+          dstAlpha: 'one minus src alpha'
         },
         equation: {
           rgb: 'add',
           alpha: 'add'
         },
-        color: [0, 0, 0, 0]
+        color: [1, 0, 0, 1]
       },
 
       uniforms: {

@@ -53,5 +53,9 @@ void main() {
     }    
   }
 
+  if(color.a < 0.5) {
+    discard;
+  }
+
   gl_FragColor = color;
 }
