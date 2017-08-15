@@ -9,6 +9,7 @@ varying float vIndex;
 varying float vSupports;
 varying float vConstraint;
 varying float vActiveStatus;
+varying float vAnimationElapsed;
 
 float eps = 0.0001;
 float f_thickness = 0.01;
@@ -40,7 +41,15 @@ void main() {
 
   if(abs(vActiveStatus - 1.) < eps) {
     if(edgeIntensity > eps) {
-      color = vec4(0, 0, 1, 1);
+      if(mod(vIndex, 2.) < eps) {
+        if(vBarycentricCoord.x < vAnimationElapsed) {
+          color = vec4(0, 0, 1, 1);
+        }        
+      } else {
+        if(vBarycentricCoord.z > 1. - vAnimationElapsed) {
+          color = vec4(0, 0, 1, 1);
+        }
+      }
     }
   } else if(abs(vActiveStatus - 2.) < eps) {
     if(edgeIntensity > eps) {

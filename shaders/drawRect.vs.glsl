@@ -4,7 +4,7 @@ attribute float corner;
 uniform mat4 projection, view;
 uniform vec2 mousePosition;
 uniform vec2 canvasRect;
-uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame;
+uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame, activeFrame;
 
 attribute vec3 color;
 attribute float lastExtrusion;
@@ -27,6 +27,7 @@ varying float vIndex;
 varying float vSupports;
 varying float vConstraint;
 varying float vActiveStatus;
+varying float vAnimationElapsed;
 
 float eps = 0.0001;
 
@@ -83,8 +84,11 @@ void main() {
         vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y + currentHeight - bufferSize));
     } else {
       //  x _____ z
-      //   |
-      //   |
+      //   |    /
+      //   |   /
+      //   |  /
+      //   | /
+      //   |/
       interpolatedPos = interp(pos, nextPos);
     }
     vBarycentricCoord = vec3(0, 1, 0);
@@ -108,4 +112,6 @@ void main() {
   vActiveStatus = activeStatus;
 
   vIndex = index;
+
+  vAnimationElapsed = activeFrame / animationLength;
 }

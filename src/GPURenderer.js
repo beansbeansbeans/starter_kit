@@ -25,7 +25,7 @@ const frames = [5],
 let width, height, rectWidth = 0, nextRectWidth = 0, 
   config, regl, camera, draw, 
   mouseX = -1, mouseY = -1,
-  frame = 0, extrusionFrame = 0, iterations = 0, iterationSnapshot, 
+  frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
   state = { rectWidth, nextRectWidth }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
@@ -107,6 +107,7 @@ export default {
         canvasRect: [width, height],
         frame: (ctx, props) => props.frame,
         extrusionFrame: (ctx, props) => props.extrusionFrame,
+        activeFrame: (ctx, props) => props.activeFrame,
         rectWidth: (ctx, props) => props.rectWidth,
         nextRectWidth: (ctx, props) => props.nextRectWidth,
         view: (ctx, props) => props.cameraView,
@@ -198,7 +199,7 @@ export default {
       })
 
       Object.assign(state, {
-        frame, extrusionFrame, mouseX, mouseY,
+        frame, extrusionFrame, activeFrame, mouseX, mouseY,
         cameraView: camera.view()
       })
 
@@ -213,6 +214,7 @@ export default {
       iterations++
       frame++
       extrusionFrame++
+      activeFrame++
 
       if(frame === state.animationLength) mediator.publish("reconcileTree")
       if(extrusionFrame === state.animationLength) mediator.publish("extrusionAnimationComplete")
@@ -281,6 +283,7 @@ export default {
     state.lastExtrusion = positions[lastIndex].extrusions
     state.currentExtrusion = positions[currentIndex].extrusions
 
+    activeFrame = 0
     extrusionFrame = 0
   },
 
