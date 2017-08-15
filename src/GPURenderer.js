@@ -27,7 +27,7 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   mouseX = -1, mouseY = -1,
   frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
-  state = { rectWidth, nextRectWidth }, animationLength = 0,
+  state = { rectWidth, nextRectWidth, activeDirection: 0 }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
   constraint = new Float32Array(maxArgumentCount),
@@ -119,8 +119,7 @@ export default {
                            3000),
         mousePosition: (ctx, props) => 
           ([props.mouseX, props.mouseY]),
-        // activeDirection: (ctx, props) => Math.floor(random.nextDouble() * 4)
-        activeDirection: 0
+        activeDirection: (ctx, props) => props.activeDirection
       },
 
       attributes: {
@@ -284,6 +283,7 @@ export default {
     state.constraint = constraint
     state.lastExtrusion = positions[lastIndex].extrusions
     state.currentExtrusion = positions[currentIndex].extrusions
+    state.activeDirection = Math.floor(random.nextDouble() * 4)
 
     activeFrame = 0
     extrusionFrame = 0
