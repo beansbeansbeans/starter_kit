@@ -39,7 +39,7 @@ void main() {
 
   if(vConstraint > eps) {
     if(edgeIntensity > eps) {
-      color = vec4(0, 1, 0, 1);
+      color = vec4(60./255., 231./255., 139./255., 1);
     }
   } else {
     if(vSupports < eps && vRenderFlag > eps) {
