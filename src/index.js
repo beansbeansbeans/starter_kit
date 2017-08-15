@@ -1,13 +1,13 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
-const { roundDown, bindAll, removeDuplicates } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator } = helpers
 import "../main.scss"
 import { getData, getShader } from './api'
 import { debounce } from 'underscore'
 import sharedState from './sharedState'
 import renderer from './GPURenderer'
-import treeData from './tree'
-const { Tree, Node } = treeData
+import Node from './CSP/treeNode'
+import AsyncTree from './CSP/asyncTree'
 import DebugVisualizer from './debugVisualizer'
 import DebugWebgl from './debugWebgl'
 import mediator from './mediator'
@@ -15,6 +15,8 @@ import processArgument from './processArgument'
 import MoralMatricesChart from './moralMatricesChart'
 import { moralMatrices, matrices } from './config'
 import Splash from './reglHP'
+import ArgumentLabels from './argumentLabels'
+import { handleResize } from './listeners'
 
 let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY, debugNode, debugReglHomepage = false
 
@@ -44,7 +46,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['updateWeb', 'resolve', 'mouseLeaveRects'])
+    bindAll(this, ['updateWeb', 'resolve', 'mouseLeaveRects', 'argumentLabelMouseOver', 'argumentLabelClick'])
   }
 
   updateWeb() {
@@ -99,8 +101,25 @@ class App extends Component {
     this.setState({ hoverInfo: '' })
   }
 
+  argumentLabelMouseOver(label) {
+    let node = web.find(label.id, '_id')
+    this.setState({ hoverInfo: node.data })
+  }
+
+  argumentLabelClick(label) {
+    let newConstraints = this.state.constraints
+    let indexOfThis = newConstraints.findIndex(c => c.id === label.id)
+    if(indexOfThis > -1) {
+      newConstraints.splice(indexOfThis, 1)
+    } else {
+      newConstraints.push(label)
+    }
+
+    this.setState({ constraints: newConstraints })
+  }
+
   render({ }, { argumentLabels, moralMatrix, hoverInfo, constraints }) {
-    let debugDOM = null, argumentLabelsDOM = null
+    let debugDOM = null
 
     if(debug) {
       debugDOM = <div id="debug">
@@ -109,34 +128,6 @@ class App extends Component {
           height={sharedState.get("windowHeight")}></canvas>
         <svg id="debug-svg"></svg>
       </div>
-    } else {
-      argumentLabelsDOM = []
-      for(let i=0; i<argumentLabels.length; i++) {
-        let label = argumentLabels[i]
-
-        argumentLabelsDOM.push(<div 
-          style={`position:fixed; top: ${label.top}px; left: ${label.left + 3}px; height: ${label.height}px; width: ${label.width}px; font-size: 11px; background-color: ${constraints.find(c => c.id === label.id) ? 'yellow' : ''}`}
-          class="debug-label"
-          onMouseOver={() => {
-            let node = web.find(label.id, '_id')
-            this.setState({ hoverInfo: node.data })
-            console.log(node)
-          } }
-          onClick={() => {
-            let newConstraints = constraints
-            let indexOfThis = newConstraints.findIndex(c => c.id === label.id)
-            if(indexOfThis > -1) {
-              newConstraints.splice(indexOfThis, 1)
-            } else {
-              newConstraints.push(label)
-            }
-
-            this.setState({ constraints: newConstraints })
-          }}
-          data-id={label.id}>
-          {label.id.substring(0, 2) + ' ' + (label.moralMatrices ? label.moralMatrices.join(" ") : '')}
-          </div>)
-      }
     }
 
     return (
@@ -154,24 +145,48 @@ class App extends Component {
           </div>
           <div class="solver">
             <button onClick={() => {
-              web.solve(constraints.map(c => ({
-                node: directory[c.id].node,
-                value: true
-              })))
+              let newConstraints = [], self = this
+
+              newConstraints.push(web.traverseDF(n => n.data.indexOf('affluent households benefit') > -1))
+              newConstraints.push(web.traverseDF(n => n.data.indexOf('straight-line increase in immigration')))
+              
+              this.setState({
+                constraints: newConstraints
+              }, () => {
+                const solveIterator = wrapIterator(web.solveAsync(constraints.map(c => ({
+                  node: directory[c.id].node,
+                  value: true
+                }))), function(result) {
+                  let consistent = result.value !== false
+
+                  console.log("iterate solver", result.value)
+
+                  if(result.value) {
+                    self.setState({
+                      argumentLabels: self.state.argumentLabels.map(d => {
+                        if(d.id === result.value._id) {
+                          if(typeof result.value.value !== 'undefined') {
+                            d.value = result.value.value
+                          } else {
+                            d.value = result.value.provisionalValue
+                          }
+                        }
+                        return d
+                      })
+                    })
+                  }
+
+                  if(!consistent) console.log("INCONSISTENCY")
+
+                  if(!result.done && consistent) setTimeout(solveIterator, 100)
+                })
+
+                solveIterator()               
+              })
             }}>solve</button>
           </div>
-          <button onClick={() => {
-            web.removeSingle(debugNode)
-
-            renderer.update(web)
-          }}>debug remove node</button>
-          <button onClick={() => {
-            web.addBack(debugNode)
-
-            renderer.update(web)
-          }}>debug add node</button>
         </div>
-        {argumentLabelsDOM}
+        <ArgumentLabels labels={argumentLabels} constraints={constraints} onMouseOver={this.argumentLabelMouseOver} onClick={this.argumentLabelClick} />
         <div style={`transform: translate3d(${mouseX}px, ${mouseY}px, 0)`} id="hover-info">{hoverInfo}</div>
       </app>
     )
@@ -264,7 +279,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
         treeNode
 
       if(typeof parent === 'undefined') {
-        web = new Tree(node.data, {
+        web = new AsyncTree(node.data, {
           moralMatrices: node.moralMatrices
         })
         
@@ -315,13 +330,10 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
   }
 
-  function iterate() {
-    result = walker.next()
-
+  const iterate = wrapIterator(walk(), function(result) {
     if(!result.done) {
       mediator.subscribe("reconcileTree", iterate, true)
     } else {
-
       if(debug) {
         DebugVisualizer.initialize(web)
         DebugVisualizer.draw()
@@ -333,7 +345,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     } else {
       renderer.update(web)
     }
-  }
+  })
 
   if(debugReglHomepage) {
     document.body.appendChild(Splash())
@@ -350,31 +362,4 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   } else {
     iterate()
   }
-})
-
-const handleResize = () => {
-  sharedState.set("windowWidth", window.innerWidth)
-  sharedState.set("windowHeight", window.innerHeight)
-
-  const rect = document.querySelector("#webgl-wrapper").getBoundingClientRect()
-  sharedState.set("containerWidth", rect.width)
-  sharedState.set("containerHeight", rect.height)
-
-  renderer.resize()
-}
-
-window.addEventListener("resize", debounce(handleResize, 250))
-
-window.addEventListener("mousemove", e => {
-  mouseX = e.clientX
-  mouseY = e.clientY
-
-  mediator.publish("mousemove", { 
-    x: mouseX, 
-    y: mouseY 
-  })
-})
-
-window.addEventListener("mouseleave", e => {
-  mediator.publish("mouseleave")
 })

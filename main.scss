@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  background: $bittersweet;
+  background: $background;
 }
 
 body, html {
@@ -34,7 +34,7 @@ button {
   margin-bottom: 1rem;
 }
 
-$webgl-buffer: 2px;
+$webgl-buffer: 0px;
 
 #webgl-wrapper {
   position: fixed;

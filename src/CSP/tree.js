@@ -1,92 +1,10 @@
-import randomModule from './helpers/random'
+import randomModule from '../helpers/random'
 const random = randomModule.random(42)
+import treeHelpers from './helpers'
+const { constraintCheck, value, isTrue, isFalse, forwardProp, backProp } = treeHelpers
+import Node from './treeNode'
 
-const constraintCheck = (fn, strict = true) => n => {
-  let pass = true
-  const constrainedValue = fn(n, strict)
-
-  if(constrainedValue) {
-    if(typeof n.value === 'undefined') {
-      if(strict) {
-        n.value = constrainedValue.value
-      } else {
-        n.provisionalValue = constrainedValue.value
-      }
-    } else {
-      if(constrainedValue.value !== n.value) {
-        pass = false
-      }
-    }
-  }
-
-  if(typeof n.value === 'undefined' && strict === false) {
-    if(typeof n.provisionalValue === 'undefined') { // if still no value...
-      n.provisionalValue = random.nextDouble() < 0.5 ? false : true
-    }
-  }
-
-  return !pass
-}
-
-function value(n, fn, strict) {
-  if(strict) return fn(n.value)
-  return fn(n.value) || fn(n.provisionalValue)
-}
-
-const isTrue = val => val === true
-const isFalse = val => val === false
-
-/*
-there are two constraints: 
-1) if a attacks b, then they can't both be true.
-2) if a is false, then one of its attackers must be true
-*/
-
-function forwardProp(n, strict) {
-  if(n.parent) {
-    if(value(n.parent, isTrue, strict)) { 
-      if(!n.supports) {
-        return { value: false } // constraint 1
-      }
-    } else if(value(n.parent, isFalse, strict)) {
-      if(!n.supports && 
-        n.parent.children
-          .filter(n => !n.supports)
-          .filter(n => value(n, isTrue, strict))
-          .length < 1) {
-        return { value: true } // constraint 2
-      }
-    }      
-  }
-
-  return false
-}
-
-function backProp(n) {
-  const attackers = n.children.filter(n => !n.supports)
-
-  // if the attackers of n are all false (or there are no attackers), then n is true
-  if(!attackers.length || attackers.every(n => n.value === false)) {
-    n.value = true
-
-  // if one of the attackers of n is true, then n is false
-  } else if(attackers.some(n => n.value === true)) {
-    n.value = false
-  }
-}
-
-class Node {
-  constructor(val, supports, extraData) {
-    this.data = val
-    this.children = []
-    this.leaves = 0
-    this._id = uuid.v4()
-    this.supports = supports
-    this.extraData = extraData    
-  }
-}
-
-class Tree {
+export default class Tree {
   constructor(val, extraData) {
     this._root = new Node(val, null, extraData)
     this._root.depth = 0    
@@ -116,23 +34,6 @@ class Tree {
 
       return this.traverseDF(matchFn, curr, find)
     }, false)  
-  }
-
-  * traverseDFAsync(matchFn, seed, find = false) {
-    if(typeof seed === 'undefined') seed = this._root
-
-    if(matchFn(seed)) return seed
-
-    function* traverse(node) {
-      yield node.children.reduce((acc, curr) => {
-        if(find && matchFn(acc)) return acc
-        if(matchFn(curr)) return curr
-
-        return traverse(curr)
-      })
-    }
-
-    yield traverse(seed) 
   }
 
   traverseBF(matchFn, seed) {
@@ -290,7 +191,7 @@ class Tree {
 
       node.value = value
       
-      let conflict = this.traverseDF(resolve, node) // traverse down from seed
+      let conflict = this.traverseDF(resolve, node, true) // traverse down from seed
 
       if(!conflict) {
         conflict = this.traverseUp(constraintCheck(backProp), node.parent) // traverse up from seed
@@ -304,7 +205,7 @@ class Tree {
     }
 
     if(consistent) {
-      let conflict = this.traverseDF(resolve) // traverse down from root
+      let conflict = this.traverseDF(resolve, this._root, true) // traverse down from root
 
       // if there's a conflict, should return true
       // how could a conflict occur? a parent dictates one thing, but a child dictates another
@@ -320,7 +221,7 @@ class Tree {
       if(!conflict) {
         const provisionalResolve = constraintCheck(forwardProp, false)
 
-        conflict = this.traverseDF(provisionalResolve)
+        conflict = this.traverseDF(provisionalResolve, this._root, true)
 
         console.log(conflict)
       }
@@ -369,5 +270,3 @@ class Tree {
     return scores
   }
 }
-
-export default { Tree, Node }

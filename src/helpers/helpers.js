@@ -1,6 +1,16 @@
 const UINT8_VIEW = new Uint8Array(4),
   FLOAT_VIEW = new Float32Array(UINT8_VIEW.buffer)
 
+const wrapIterator = (it, fn) => {
+  let result
+
+  return function() {
+    result = it.next()
+
+    fn(result)
+  }
+}
+
 const createInterpolator = ticks => (start, finish) => tick => {
   let t = tick
   t /= ticks
@@ -30,6 +40,8 @@ export default {
   },
 
   createInterpolator,
+
+  wrapIterator,
 
   decodeFloat: function(x, y, z, w) {
     UINT8_VIEW[0] = Math.floor(w)

@@ -56,7 +56,7 @@ export default {
     height = sharedState.get('containerHeight')
 
     regl = reglImport({ 
-      extensions: ['angle_instanced_arrays'],
+      extensions: ['angle_instanced_arrays', 'OES_standard_derivatives', 'EXT_shader_texture_lod'],
       container: opts.container
     })
 
@@ -79,6 +79,25 @@ export default {
       frag: opts.shaders['drawRect.fs'],
 
       vert: opts.shaders['drawRect.vs'],
+
+      depth: {
+        enable: false
+      },
+
+      blend: {
+        enable: true,
+        func: {
+          srcRGB: 'src alpha',
+          srcAlpha: 1,
+          dstRGB: 'one minus src alpha',
+          dstAlpha: 1
+        },
+        equation: {
+          rgb: 'add',
+          alpha: 'add'
+        },
+        color: [0, 0, 0, 0]
+      },
 
       uniforms: {
         bufferSize: buffer,
@@ -161,7 +180,10 @@ export default {
     indicesBuffer.subdata(indices)
 
     regl.frame(ctx => {
-      regl.clear({ color: [255/255, 100/255, 104/255, 1] })
+      // regl.clear({ color: [255/255, 100/255, 104/255, 1] })
+      regl.clear({
+        color: [30/255, 30/255, 32/255, 1] 
+      })
 
       Object.assign(state, {
         frame, extrusionFrame, mouseX, mouseY,

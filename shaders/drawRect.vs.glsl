@@ -18,8 +18,11 @@ attribute float currentHeight;
 attribute float index;
 attribute float supports;
 
-varying vec3 vColor;
 varying vec4 vCoord;
+varying vec3 vBarycentricCoord;
+varying float vRenderFlag;
+varying float vIndex;
+varying float vSupports;
 
 float eps = 0.0001;
 
@@ -68,6 +71,7 @@ void main() {
   vec2 interpolatedPos = vec2(0);
   if(abs(corner - 1.) < eps) {
     interpolatedPos = interpolatedTL;
+    vBarycentricCoord = vec3(1, 0, 0);
   } else if(abs(corner - 2.) < eps) {
     if(mod(index, 2.) < eps) {
       interpolatedPos = interp(
@@ -76,20 +80,22 @@ void main() {
     } else {
       interpolatedPos = interp(pos, nextPos);
     }
+    vBarycentricCoord = vec3(0, 1, 0);
   } else {
     interpolatedPos = interpolatedBR;
+    vBarycentricCoord = vec3(0, 0, 1);
   }
 
   float extrusion = ease(lastExtrusion, currentExtrusion, extrusionFrame);
 
   gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
 
-  if(supports > 0.) {
-    vColor = vec3(1);
-  } else {
-    vColor = vec3(203./255., 194./255., 187./255.);
+  vSupports = supports;
+
+  vRenderFlag = 1.;
+  if(currentHeight < eps) {
+    vRenderFlag = 0.;
   }
 
-  // lastTop lastLeft position, bottom right position
-  // vCoord = vec4(interpolatedPos.x, interpolatedPos.y, );
+  vIndex = index;
 }
