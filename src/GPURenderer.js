@@ -237,22 +237,27 @@ export default {
     })
   },
 
-  extrudeNode(web, node) {
-    let currentIndex = 0, lastIndex = 1,
-      index = idToIndex[node._id]
+  extrudeNode(web, arr) {
+    console.log("extruding")
+    console.log(arr)
+    for(let i=0; i<arr.length; i++) {
+      let node = arr[i]
+      let currentIndex = 0, lastIndex = 1,
+        index = idToIndex[node._id]
 
-    positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-    positions[currentIndex].extrusions[index] = -30 + random.nextDouble() * 60 
-
-    state.animationLength = 15
-    state.lastExtrusion = positions[lastIndex].extrusions
-    state.currentExtrusion = positions[currentIndex].extrusions
-
-    extrusionFrame = 0
-
-    mediator.subscribe("extrusionAnimationComplete", () => {
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-    }, true)
+      positions[currentIndex].extrusions[index] = -30 + random.nextDouble() * 60 
+
+      state.animationLength = 15
+      state.lastExtrusion = positions[lastIndex].extrusions
+      state.currentExtrusion = positions[currentIndex].extrusions
+
+      extrusionFrame = 0
+
+      mediator.subscribe("extrusionAnimationComplete", () => {
+        positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
+      }, true)
+    }
   },
 
   extrude(web, moralMatrix) {

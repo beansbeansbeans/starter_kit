@@ -147,37 +147,41 @@ class App extends Component {
             <button onClick={() => {
               let newConstraints = [], self = this
 
-              newConstraints.push(web.traverseDF(n => n.data.indexOf('affluent households benefit') > -1))
-              newConstraints.push(web.traverseDF(n => n.data.indexOf('straight-line increase in immigration') > -1))
-              
-              this.setState({
-                constraints: newConstraints
-              }, () => {
-                const solveIterator = wrapIterator(web.solveAsync(constraints.map(c => ({
-                  node: directory[c.id].node,
-                  value: true
-                }))), function(result) {
-                  let consistent = result.value !== false
+              newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('affluent households benefit') > -1, web._root, true))
+              newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('straight-line increase in immigration') > -1, web._root, true))
 
-                  console.log("iterate solver", result.value)
+              renderer.extrudeNode(web, newConstraints)
 
-                  if(result.value) {
-                    renderer.extrudeNode(web, result.value)
-                  }
+              setTimeout(() => {
+                this.setState({
+                  constraints: newConstraints
+                }, () => {
+                  const solveIterator = wrapIterator(web.solveAsync(this.state.constraints.map(c => ({
+                    node: c,
+                    value: true
+                  }))), function(result) {
+                    let consistent = result.value !== false
 
-                  if(!consistent) console.log("INCONSISTENCY")
+                    console.log("iterate solver", result.value)
 
-                  if(!result.done && consistent) {
                     if(result.value) {
-                      mediator.subscribe("extrusionAnimationComplete", solveIterator, true)
-                    } else {
-                      setTimeout(solveIterator, 100)
+                      renderer.extrudeNode(web, [result.value])
                     }
-                  }
-                })
 
-                solveIterator()               
-              })
+                    if(!consistent) console.log("INCONSISTENCY")
+
+                    if(!result.done && consistent) {
+                      if(result.value) {
+                        mediator.subscribe("extrusionAnimationComplete", solveIterator, true)
+                      } else {
+                        setTimeout(solveIterator, 100)
+                      }
+                    }
+                  })
+
+                  solveIterator()               
+                })
+              }, 2000)
             }}>solve</button>
           </div>
         </div>
