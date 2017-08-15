@@ -148,7 +148,7 @@ class App extends Component {
               let newConstraints = [], self = this
 
               newConstraints.push(web.traverseDF(n => n.data.indexOf('affluent households benefit') > -1))
-              newConstraints.push(web.traverseDF(n => n.data.indexOf('straight-line increase in immigration')))
+              newConstraints.push(web.traverseDF(n => n.data.indexOf('straight-line increase in immigration') > -1))
               
               this.setState({
                 constraints: newConstraints
@@ -162,23 +162,18 @@ class App extends Component {
                   console.log("iterate solver", result.value)
 
                   if(result.value) {
-                    self.setState({
-                      argumentLabels: self.state.argumentLabels.map(d => {
-                        if(d.id === result.value._id) {
-                          if(typeof result.value.value !== 'undefined') {
-                            d.value = result.value.value
-                          } else {
-                            d.value = result.value.provisionalValue
-                          }
-                        }
-                        return d
-                      })
-                    })
+                    renderer.extrudeNode(web, result.value)
                   }
 
                   if(!consistent) console.log("INCONSISTENCY")
 
-                  if(!result.done && consistent) setTimeout(solveIterator, 100)
+                  if(!result.done && consistent) {
+                    if(result.value) {
+                      mediator.subscribe("extrusionAnimationComplete", solveIterator, true)
+                    } else {
+                      setTimeout(solveIterator, 100)
+                    }
+                  }
                 })
 
                 solveIterator()               

@@ -79,8 +79,8 @@ void main() {
         vec2(nextPos.x + nextRectWidth - bufferSize, nextPos.y + currentHeight - bufferSize));
     } else {
       //  x _____ z
-      // |
-      // |
+      //   |
+      //   |
       interpolatedPos = interp(pos, nextPos);
     }
     vBarycentricCoord = vec3(0, 1, 0);
