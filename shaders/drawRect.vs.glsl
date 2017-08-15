@@ -26,6 +26,7 @@ varying float vRenderFlag;
 varying float vIndex;
 varying float vSupports;
 varying float vConstraint;
+varying float vActiveStatus;
 
 float eps = 0.0001;
 
@@ -103,6 +104,8 @@ void main() {
   if(currentHeight < eps) {
     vRenderFlag = 0.;
   }
+
+  vActiveStatus = activeStatus;
 
   vIndex = index;
 }

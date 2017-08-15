@@ -8,6 +8,7 @@ varying vec3 vBarycentricCoord;
 varying float vIndex;
 varying float vSupports;
 varying float vConstraint;
+varying float vActiveStatus;
 
 float eps = 0.0001;
 float f_thickness = 0.01;
@@ -37,7 +38,15 @@ void main() {
 
   vec4 color = vec4(vec3(1, 1, 1), 1. - edgeIntensity);
 
-  if(vConstraint > eps) {
+  if(abs(vActiveStatus - 1.) < eps) {
+    if(edgeIntensity > eps) {
+      color = vec4(0, 0, 1, 1);
+    }
+  } else if(abs(vActiveStatus - 2.) < eps) {
+    if(edgeIntensity > eps) {
+      color = vec4(1, 0, 0, 1);
+    }
+  } else if(vConstraint > eps) {
     if(edgeIntensity > eps) {
       color = vec4(60./255., 231./255., 139./255., 1);
     }

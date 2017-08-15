@@ -265,6 +265,7 @@ export default {
 
       if(i === arr.length - 1) {
         activeStatus[activeIndex] = 0
+        activeStatus[previousActiveIndex] = 0
 
         previousActiveIndex = activeIndex
         activeStatus[previousActiveIndex] = 2
