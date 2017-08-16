@@ -13,7 +13,7 @@ varying float vAnimationElapsed;
 varying float vActiveDirection;
 
 float eps = 0.0001;
-float f_thickness = 0.01;
+float f_thickness = 0.02;
 float innerBuffer = f_thickness * 4.;
 float attackBarThickness = 0.15;
 
@@ -39,7 +39,7 @@ void main() {
     edgeIntensity = 1.;
   }
 
-  vec4 color = vec4(vec3(1, 1, 1), 1. - edgeIntensity);
+  vec4 color = vec4(vec3(51./255., 51./255., 45./255.), 1. - edgeIntensity);
   float activeAnimationElapsed = vAnimationElapsed * 2.;
   float isAttackStrip = 0.;
 

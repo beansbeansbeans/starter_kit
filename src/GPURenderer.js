@@ -11,7 +11,7 @@ const random = randomModule.random(42)
 
 const frames = [5],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
-  buffer = 3, cameraDist = 1000,
+  buffer = 4, cameraDist = 1000,
   onResize = () => {},
   measureFPS = () => {
     const now = Date.now()
@@ -196,7 +196,7 @@ export default {
     regl.frame(ctx => {
       // regl.clear({ color: [255/255, 100/255, 104/255, 1] })
       regl.clear({
-        color: [30/255, 30/255, 32/255, 1] 
+        color: [255/255, 248/255, 227/255, 1] 
       })
 
       Object.assign(state, {
