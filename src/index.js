@@ -273,7 +273,7 @@ function resolveIterate() {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
 
-  processArgument(argument, 20)
+  processArgument(argument, 45)
 
   handleResize()
 
