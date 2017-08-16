@@ -14,7 +14,7 @@ varying float vActiveDirection;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
-float innerBuffer = f_thickness * 4.;
+float innerBuffer = f_thickness * 2.;
 float attackBarThickness = 0.15;
 
 vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
