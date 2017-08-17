@@ -19,6 +19,7 @@ attribute float index;
 attribute float supports;
 attribute float constraint;
 attribute float activeStatus;
+attribute float timers;
 
 varying vec4 vCoord;
 varying vec3 vBarycentricCoord;
@@ -29,6 +30,7 @@ varying float vConstraint;
 varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
+varying float vTimer;
 
 float eps = 0.0001;
 
@@ -113,6 +115,8 @@ void main() {
   vActiveStatus = activeStatus;
 
   vIndex = index;
+
+  vTimer = timers;
 
   vAnimationElapsed = activeFrame / animationLength;
 

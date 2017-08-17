@@ -31,7 +31,8 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
   constraint = new Float32Array(maxArgumentCount),
-  activeStatus = new Float32Array(maxArgumentCount)
+  activeStatus = new Float32Array(maxArgumentCount),
+  timers = new Float32Array(maxArgumentCount)
 
 mediator.subscribe("mousemove", data => {
   mouseX = data.x - width / 2
@@ -82,17 +83,13 @@ export default {
 
       vert: opts.shaders['drawRect.vs'],
 
-      depth: {
-        enable: true
-      },
-
       blend: {
         enable: true,
         func: {
-          srcRGB:   'src alpha',
-          srcAlpha: 'src alpha',
-          dstRGB:   'one minus src alpha',
-          dstAlpha: 'one minus src alpha'
+          srcRGB: 'src alpha',
+          srcAlpha: 1,
+          dstRGB: 'one minus src alpha',
+          dstAlpha: 1
         },
         equation: {
           rgb: 'add',
@@ -105,6 +102,7 @@ export default {
         bufferSize: buffer,
         animationLength: (ctx, props) => props.animationLength,
         canvasRect: [width, height],
+        iterations: (ctx, props) => props.iterations,
         frame: (ctx, props) => props.frame,
         extrusionFrame: (ctx, props) => props.extrusionFrame,
         activeFrame: (ctx, props) => props.activeFrame,
@@ -132,6 +130,11 @@ export default {
 
         constraint: {
           buffer: regl.prop('constraint'),
+          divisor: 2
+        },
+
+        timers: {
+          buffer: regl.prop('timers'),
           divisor: 2
         },
 
@@ -200,7 +203,7 @@ export default {
       })
 
       Object.assign(state, {
-        frame, extrusionFrame, activeFrame, mouseX, mouseY,
+        frame, extrusionFrame, iterations, activeFrame, mouseX, mouseY,
         cameraView: camera.view()
       })
 
@@ -378,10 +381,32 @@ export default {
       currentTop: positions[currentIndex].tops,
       currentLeft: positions[currentIndex].left,
       currentHeight: positions[currentIndex].heights,
-      supports, constraint, activeStatus, animationLength
+      supports, constraint, timers, activeStatus, animationLength
     })
 
     frame = 0
+  },
+
+  flashWinners() {
+    activeStatus = new Float32Array(maxArgumentCount)
+
+    web.traverseDF(n => {
+      let index = idToIndex[n._id]
+
+      timers[index] = iterations
+
+      if(n.value === true || n.provisionalValue === true) {
+        activeStatus[index] = 3
+      } else {
+        activeStatus[index] = 4
+      }
+
+      return false
+    })
+
+    state.timers = timers
+    state.activeStatus = activeStatus
+    activeFrame = 0
   },
 
   resize() {

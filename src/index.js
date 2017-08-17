@@ -188,6 +188,8 @@ class App extends Component {
                           setTimeout(solveIterator, 100)
                         }
                       } else {
+                        renderer.flashWinners(web)
+
                         const removeIterator = wrapIterator(removeLosers(), function(result) {
                           renderer.update(web)
 
@@ -196,7 +198,7 @@ class App extends Component {
                           }
                         })
 
-                        removeIterator()
+                        setTimeout(removeIterator, 1000)
                       }
                     }
                   })
@@ -388,7 +390,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
         depth: 1,
         color: [0, 0, 0, 1]
       })
-      window.context.count++
       drawOutline()
       drawTriangles()
     })
