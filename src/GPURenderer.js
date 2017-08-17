@@ -6,6 +6,7 @@ import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
 import { difference } from 'underscore'
+import { extrusionRange } from './config'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
@@ -99,6 +100,7 @@ export default {
       },
 
       uniforms: {
+        extrusionRange,
         bufferSize: buffer,
         animationLength: (ctx, props) => props.animationLength,
         canvasRect: [width, height],

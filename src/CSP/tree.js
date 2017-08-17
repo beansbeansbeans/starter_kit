@@ -1,5 +1,6 @@
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
+import { extrusionRange } from '../config'
 import treeHelpers from './helpers'
 const { constraintCheck, value, isTrue, isFalse, forwardProp, backProp } = treeHelpers
 import Node from './treeNode'
@@ -263,7 +264,7 @@ export default class Tree {
     let scores = {}
 
     this.traverseDF(n => {
-      scores[n._id] = -30 + random.nextDouble() * 60
+      scores[n._id] = -extrusionRange + random.nextDouble() * extrusionRange * 2
       return false
     })
 

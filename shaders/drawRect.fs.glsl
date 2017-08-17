@@ -3,7 +3,7 @@
 
 precision mediump float;
 
-uniform float iterations;
+uniform float iterations, extrusionRange;
 
 varying float vRenderFlag;
 varying vec3 vBarycentricCoord;
@@ -14,6 +14,7 @@ varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
+varying float vElevation;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
@@ -21,7 +22,9 @@ float innerBuffer = f_thickness * 2.;
 float attackBarThickness = 0.15;
 
 vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
-vec4 activeColor = vec4(32./255., 87./255., 154./255., 1);
+
+vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
+vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
 
 void main() {
   float f_closest_edge = min(vBarycentricCoord.x, min(vBarycentricCoord.y, vBarycentricCoord.z));
@@ -59,6 +62,8 @@ void main() {
       }
     }    
   }
+
+  vec4 activeColor = mix(activeTop, activeBottom, (vElevation + extrusionRange) / (extrusionRange * 2.));
 
   if(isAttackStrip < eps && edgeIntensity > eps) {
     if(abs(vActiveStatus - 1.) < eps) { // fill

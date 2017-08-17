@@ -31,6 +31,7 @@ varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
+varying float vElevation;
 
 float eps = 0.0001;
 
@@ -121,4 +122,6 @@ void main() {
   vAnimationElapsed = activeFrame / animationLength;
 
   vActiveDirection = activeDirection;
+
+  vElevation = extrusion;
 }

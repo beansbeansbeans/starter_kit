@@ -25,6 +25,8 @@ export const moralMatrices = [
   }
 ]
 
+export const extrusionRange = 30
+
 export const matrices = {
   A: {
     'ch': 1/6,
