@@ -198,7 +198,7 @@ class App extends Component {
                           }
                         })
 
-                        setTimeout(removeIterator, 1000)
+                        setTimeout(removeIterator, 500)
                       }
                     }
                   })
