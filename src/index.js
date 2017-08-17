@@ -178,13 +178,25 @@ class App extends Component {
                         value: value === true ? 1 : (value === false ? -1 : 0) } ])
                     }
 
-                    if(!consistent) console.log("INCONSISTENCY")
-
-                    if(!result.done && consistent) {
-                      if(result.value) {
-                        mediator.subscribe("extrusionAnimationComplete", solveIterator, true)
+                    if(!consistent) {
+                      console.log("INCONSISTENCY")
+                    } else {
+                      if(!result.done) {
+                        if(result.value) {
+                          mediator.subscribe("extrusionAnimationComplete", solveIterator, true)
+                        } else {
+                          setTimeout(solveIterator, 100)
+                        }
                       } else {
-                        setTimeout(solveIterator, 100)
+                        const removeIterator = wrapIterator(removeLosers(), function(result) {
+                          renderer.update(web)
+
+                          if(!result.done) {
+                            mediator.subscribe("reconcileTree", removeIterator, true)
+                          }
+                        })
+
+                        removeIterator()
                       }
                     }
                   })
@@ -200,6 +212,18 @@ class App extends Component {
       </app>
     )
   }
+}
+
+function* removeLosers() {
+  yield * web.traverseDFAsync(n => {
+    if(n.depth > 0) {
+      if(n.value === false || n.provisionalValue === false) {
+        directory[n._id].inWeb = false
+        web.removeSingle(n)
+      }      
+    }
+    return false
+  })
 }
 
 function* resolve(label) {
@@ -273,7 +297,7 @@ function resolveIterate() {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
 
-  processArgument(argument, 45)
+  processArgument(argument, 15)
 
   handleResize()
 
