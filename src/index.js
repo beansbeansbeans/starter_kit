@@ -319,6 +319,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
         })
         
         window.web = web
+        sharedState.set("web", web)
 
         treeNode = web._root
       } else {

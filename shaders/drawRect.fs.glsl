@@ -15,6 +15,7 @@ varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
 varying float vElevation;
+varying float vSelected;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
@@ -142,6 +143,8 @@ void main() {
           } 
         }
       }
+    } else if(vSelected > eps) {
+      color = vec4(1, 0, 0, 1);
     } else if(vConstraint > eps) {
       color = vec4(60./255., 231./255., 139./255., 1);
     } else if(abs(vActiveStatus - 3.) < eps) { // flash acceptance

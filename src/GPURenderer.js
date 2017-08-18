@@ -1,5 +1,5 @@
 import helpers from './helpers/helpers'
-const { radToDegrees, createInterpolator } = helpers
+const { radToDegrees, createInterpolator, viewportToLocal, intersectTriangle } = helpers
 import sharedState from './sharedState'
 import mediator from './mediator'
 import reglImport from 'regl'
@@ -25,12 +25,13 @@ const frames = [5],
   nextIndex = () => unusedIndices.shift()
 
 let width, height, rectWidth = 0, nextRectWidth = 0, 
-  config, regl, camera, draw, 
+  config, regl, camera, draw,
+  currentIndex = 0, lastIndex = 1, 
   projectionMatrix = new Float32Array(16),
-  mouseX = -1, mouseY = -1,
+  mouseX = -1, mouseY = -1, toLocal,
   frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
-  state = { rectWidth, nextRectWidth, activeDirection: 0 }, animationLength = 0,
+  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1 }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
   constraint = new Float32Array(maxArgumentCount),
@@ -38,8 +39,8 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   timers = new Float32Array(maxArgumentCount)
 
 mediator.subscribe("mousemove", data => {
-  mouseX = data.x - width / 2
-  mouseY = -1 * (data.y - height / 2)  
+  mouseX = 2 * data.x / width - 1
+  mouseY = -2 * data.y / height + 1  
 })
 
 mediator.subscribe("mouseleave", data => {
@@ -57,28 +58,64 @@ for(let i=0; i<2; i++) {
 }
 
 mediator.subscribe("mousedown", data => {
-  var vp = mat4.multiply([], projectionMatrix, camera.view())
-  var invVp = mat4.invert([], vp)
+  const vp = mat4.multiply([], projectionMatrix, state.cameraView),
+    invVp = mat4.invert([], vp),
+    rayPoint = vec3.transformMat4([], 
+      [mouseX, mouseY, 0], invVp), // get a single point on the camera ray
+    rayOrigin = vec3.transformMat4([],
+      [0, 0, 0], mat4.invert([], state.cameraView)), // get position of camera
+    rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin)),
+    currentPosition = positions[currentIndex]
 
-  // get a single point on the camera ray
-  var rayPoint = vec3.transformMat4([], 
-    [2 * mouseX, 2 * mouseY, 0],
-    invVp)
+  let closestDistance = Infinity, closestIndex = -1
 
-  // get position of camera
-  var rayOrigin = vec3.transformMat4([],
-    [0, 0, 0],
-    mat4.invert([], camera.view()))
+  sharedState.get("web").traverseBF(n => {
+    const index = idToIndex[n._id],
+      x = currentPosition.left[index],
+      y = currentPosition.tops[index],
+      z = currentPosition.extrusions[index],
+      topLeft = toLocal([x, y]),
+      bottomLeft = toLocal([x, y + currentPosition.heights[index]]),
+      bottomRight = toLocal([x + state.nextRectWidth, y + currentPosition.heights[index]]),
+      topRight = toLocal([x + state.nextRectWidth, y]),
 
-  var rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin))
+      tri1 = [
+        [topLeft[0], topLeft[1], z], // top left
+        [bottomLeft[0], bottomLeft[1], z], // bottom left
+        [bottomRight[0], bottomRight[1], z]], // bottom right
+      t1 = intersectTriangle([], rayPoint, rayDir, tri1),
 
-  console.log(rayDir)
+      tri2 = [
+        [topLeft[0], topLeft[1], z],
+        [bottomRight[0], bottomRight[1], z],
+        [topRight[0], topRight[1], z]],
+      t2 = intersectTriangle([], rayPoint, rayDir, tri2)
+
+    let t
+    if(typeof t1 === 'number') {
+      t = t1
+      if(typeof t2 === 'number') t = Math.min(t1, t2)
+    } else {
+      t = t2
+    }
+
+    if(typeof t === "number" && t < closestDistance) {
+      closestDistance = t
+      closestIndex = index
+    }
+
+    return false
+  })
+
+  state.selectedIndex = closestIndex
 })
 
 export default {
   initialize(opts) {
     width = sharedState.get('containerWidth')
     height = sharedState.get('containerHeight')
+
+    toLocal = viewportToLocal(width, height)
 
     regl = reglImport({ 
       extensions: ['angle_instanced_arrays', 'OES_standard_derivatives', 'EXT_shader_texture_lod'],
@@ -122,6 +159,7 @@ export default {
 
       uniforms: {
         extrusionRange,
+        selectedIndex: (ctx, props) => props.selectedIndex,
         bufferSize: buffer,
         animationLength: (ctx, props) => props.animationLength,
         canvasRect: [width, height],
@@ -131,13 +169,13 @@ export default {
         activeFrame: (ctx, props) => props.activeFrame,
         rectWidth: (ctx, props) => props.rectWidth,
         nextRectWidth: (ctx, props) => props.nextRectWidth,
-        view: (ctx, props) => props.cameraView,
+        view: (ctx, props) => camera.view(),
         projection: ({ viewportWidth, viewportHeight }) => 
           mat4.perspective(projectionMatrix,
-                           2 * Math.atan(height / (2 * cameraDist)),
-                           width / height,
-                           0.01, 
-                           3000),
+                          2 * Math.atan(height / (2 * cameraDist)),
+                          width / height,
+                          0.01,
+                          3000),
         mousePosition: (ctx, props) => 
           ([props.mouseX, props.mouseY]),
         activeDirection: (ctx, props) => props.activeDirection
@@ -279,7 +317,7 @@ export default {
   },
 
   extrudeNode(web, arr) {
-    let currentIndex = 0, lastIndex = 1, activePosition = {}, previousActivePosition = {}
+    let activePosition = {}, previousActivePosition = {}
 
     for(let i=0; i<arr.length; i++) {
       let node = arr[i].node, value = arr[i].value, index = idToIndex[node._id]

@@ -4,7 +4,7 @@ attribute float corner;
 uniform mat4 projection, view;
 uniform vec2 mousePosition;
 uniform vec2 canvasRect;
-uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame, activeFrame, activeDirection;
+uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame, activeFrame, activeDirection, selectedIndex;
 
 attribute vec3 color;
 attribute float lastExtrusion;
@@ -32,6 +32,7 @@ varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
 varying float vElevation;
+varying float vSelected;
 
 float eps = 0.0001;
 
@@ -124,4 +125,15 @@ void main() {
   vActiveDirection = activeDirection;
 
   vElevation = extrusion;
+
+  vSelected = -1.;
+
+  float argIndex = index;
+  if(mod(argIndex, 2.) > eps) {
+    argIndex = index - 1.;
+  }
+
+  if(abs(selectedIndex * 2. - argIndex) < eps) {
+    vSelected = 1.;
+  }
 }
