@@ -5,6 +5,7 @@ import mediator from './mediator'
 import reglImport from 'regl'
 import cameraModule from 'canvas-orbit-camera'
 import mat4 from 'gl-mat4'
+import vec3 from 'gl-vec3'
 import { difference } from 'underscore'
 import { extrusionRange } from './config'
 import randomModule from './helpers/random'
@@ -25,6 +26,7 @@ const frames = [5],
 
 let width, height, rectWidth = 0, nextRectWidth = 0, 
   config, regl, camera, draw, 
+  projectionMatrix = new Float32Array(16),
   mouseX = -1, mouseY = -1,
   frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
@@ -53,6 +55,25 @@ for(let i=0; i<2; i++) {
   positions[i].heights = new Float32Array(maxArgumentCount)
   positions[i].extrusions = new Float32Array(maxArgumentCount)
 }
+
+mediator.subscribe("mousedown", data => {
+  var vp = mat4.multiply([], projectionMatrix, camera.view())
+  var invVp = mat4.invert([], vp)
+
+  // get a single point on the camera ray
+  var rayPoint = vec3.transformMat4([], 
+    [2 * mouseX, 2 * mouseY, 0],
+    invVp)
+
+  // get position of camera
+  var rayOrigin = vec3.transformMat4([],
+    [0, 0, 0],
+    mat4.invert([], camera.view()))
+
+  var rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin))
+
+  console.log(rayDir)
+})
 
 export default {
   initialize(opts) {
@@ -112,7 +133,7 @@ export default {
         nextRectWidth: (ctx, props) => props.nextRectWidth,
         view: (ctx, props) => props.cameraView,
         projection: ({ viewportWidth, viewportHeight }) => 
-          mat4.perspective([],
+          mat4.perspective(projectionMatrix,
                            2 * Math.atan(height / (2 * cameraDist)),
                            width / height,
                            0.01, 

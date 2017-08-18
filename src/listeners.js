@@ -26,6 +26,10 @@ window.addEventListener("mousemove", e => {
   })
 })
 
+window.addEventListener("mousedown", e => {
+  mediator.publish("mousedown", e)
+})
+
 window.addEventListener("mouseleave", e => {
-  mediator.publish("mouseleave")
+  mediator.publish("mouseleave", e)
 })
