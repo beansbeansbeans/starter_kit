@@ -57,59 +57,6 @@ for(let i=0; i<2; i++) {
   positions[i].extrusions = new Float32Array(maxArgumentCount)
 }
 
-mediator.subscribe("mousedown", data => {
-  const vp = mat4.multiply([], projectionMatrix, state.cameraView),
-    invVp = mat4.invert([], vp),
-    rayPoint = vec3.transformMat4([], 
-      [mouseX, mouseY, 0], invVp), // get a single point on the camera ray
-    rayOrigin = vec3.transformMat4([],
-      [0, 0, 0], mat4.invert([], state.cameraView)), // get position of camera
-    rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin)),
-    currentPosition = positions[currentIndex]
-
-  let closestDistance = Infinity, closestIndex = -1
-
-  sharedState.get("web").traverseBF(n => {
-    const index = idToIndex[n._id],
-      x = currentPosition.left[index],
-      y = currentPosition.tops[index],
-      z = currentPosition.extrusions[index],
-      topLeft = toLocal([x, y]),
-      bottomLeft = toLocal([x, y + currentPosition.heights[index]]),
-      bottomRight = toLocal([x + state.nextRectWidth, y + currentPosition.heights[index]]),
-      topRight = toLocal([x + state.nextRectWidth, y]),
-
-      tri1 = [
-        [topLeft[0], topLeft[1], z], // top left
-        [bottomLeft[0], bottomLeft[1], z], // bottom left
-        [bottomRight[0], bottomRight[1], z]], // bottom right
-      t1 = intersectTriangle([], rayPoint, rayDir, tri1),
-
-      tri2 = [
-        [topLeft[0], topLeft[1], z],
-        [bottomRight[0], bottomRight[1], z],
-        [topRight[0], topRight[1], z]],
-      t2 = intersectTriangle([], rayPoint, rayDir, tri2)
-
-    let t
-    if(typeof t1 === 'number') {
-      t = t1
-      if(typeof t2 === 'number') t = Math.min(t1, t2)
-    } else {
-      t = t2
-    }
-
-    if(typeof t === "number" && t < closestDistance) {
-      closestDistance = t
-      closestIndex = index
-    }
-
-    return false
-  })
-
-  state.selectedIndex = closestIndex
-})
-
 export default {
   initialize(opts) {
     width = sharedState.get('containerWidth')
@@ -258,7 +205,6 @@ export default {
     indicesBuffer.subdata(indices)
 
     regl.frame(ctx => {
-      // regl.clear({ color: [255/255, 100/255, 104/255, 1] })
       regl.clear({
         color: [255/255, 248/255, 227/255, 1] 
       })
@@ -314,80 +260,6 @@ export default {
 
       requestAnimationFrame(nudge)
     })
-  },
-
-  extrudeNode(web, arr) {
-    let activePosition = {}, previousActivePosition = {}
-
-    for(let i=0; i<arr.length; i++) {
-      let node = arr[i].node, value = arr[i].value, index = idToIndex[node._id]
-
-      positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-      positions[currentIndex].extrusions[index] = value * random.nextDouble() * 30
-      constraint[index] = node.constraintValue === true
-
-      mediator.subscribe("extrusionAnimationComplete", () => {
-        positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-      }, true)
-
-      if(i === arr.length - 1) {
-        activeStatus[activeIndex] = 0
-        activeStatus[previousActiveIndex] = 0
-
-        previousActiveIndex = activeIndex
-        activeStatus[previousActiveIndex] = 2
-        
-        activeIndex = index
-        activeStatus[activeIndex] = 1
-
-        activePosition.left = positions[0].left[activeIndex]
-        activePosition.tops = positions[0].tops[activeIndex]
-
-        previousActivePosition.left = positions[0].left[previousActiveIndex]
-        previousActivePosition.tops = positions[0].tops[previousActiveIndex]
-      }
-    }
-
-    state.activeStatus = activeStatus
-    state.animationLength = 15
-    state.constraint = constraint
-    state.lastExtrusion = positions[lastIndex].extrusions
-    state.currentExtrusion = positions[currentIndex].extrusions
-
-    if(Math.abs(activePosition.left - previousActivePosition.left) > Math.abs(activePosition.tops - previousActivePosition.tops)) { // moving left or right
-      if(activePosition.left < previousActivePosition.left) {
-        state.activeDirection = 2
-      } else {
-        state.activeDirection = 0
-      }
-    } else { // moving top or down
-      if(activePosition.tops < previousActivePosition.tops) {
-        state.activeDirection = 3
-      } else {
-        state.activeDirection = 1
-      }
-    }
-
-    activeFrame = 0
-    extrusionFrame = 0
-  },
-
-  extrude(web, moralMatrix) {
-    let scores = web.scoreArguments(moralMatrix),
-      currentIndex = 0, lastIndex = 1
-
-    web.traverseDF(n => {
-      let index = idToIndex[n._id]
-
-      positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-      positions[currentIndex].extrusions[index] = scores[n._id]
-    })
-
-    state.animationLength = 20
-    state.lastExtrusion = positions[lastIndex].extrusions
-    state.currentExtrusion = positions[currentIndex].extrusions
-
-    extrusionFrame = 0
   },
 
   update(web) {
@@ -446,28 +318,6 @@ export default {
     })
 
     frame = 0
-  },
-
-  flashWinners() {
-    activeStatus = new Float32Array(maxArgumentCount)
-
-    web.traverseDF(n => {
-      let index = idToIndex[n._id]
-
-      timers[index] = iterations
-
-      if(n.value === true || n.provisionalValue === true) {
-        activeStatus[index] = 3
-      } else {
-        activeStatus[index] = 4
-      }
-
-      return false
-    })
-
-    state.timers = timers
-    state.activeStatus = activeStatus
-    activeFrame = 0
   },
 
   resize() {

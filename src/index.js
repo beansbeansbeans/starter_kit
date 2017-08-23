@@ -10,10 +10,6 @@ import Node from './CSP/treeNode'
 import AsyncTree from './CSP/asyncTree'
 import mediator from './mediator'
 import processArgument from './processArgument'
-import MoralMatricesChart from './moralMatricesChart'
-import { moralMatrices, matrices } from './config'
-import Splash from './reglHP'
-import ArgumentLabels from './argumentLabels'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
@@ -34,171 +30,20 @@ const shaders = {},
   }
 
 class App extends Component {
-  state = { 
-    argumentLabels: [],
-    moralMatrix: moralMatrices.map(m => ({
-      id: m.id,
-      label: m.label,
-      value: null
-    })),
-    hoverInfo: '',
-    constraints: []
-  }
+  state = { }
 
   componentWillMount() {
-    bindAll(this, ['updateWeb', 'resolve', 'mouseLeaveRects', 'argumentLabelMouseOver', 'argumentLabelClick'])
-  }
-
-  updateWeb() {
-    if(typeof web === 'undefined') return
-
-    let argumentLabels = [], 
-      depth = web.getDepth(),
-      rectWidth = sharedState.get('containerWidth') / depth
-
-    // web.traverseDF(n => {
-    //   argumentLabels.push({
-    //     top: n.top,
-    //     left: n.depth * rectWidth,
-    //     height: n.height,
-    //     width: rectWidth,
-    //     moralMatrices: n.extraData.moralMatrices,
-    //     id: n._id
-    //   })
-    // })
-
-    // this.setState({ argumentLabels })
+    bindAll(this, [])
   }
 
   componentDidMount() {
-    mediator.subscribe("reconcileTree", this.updateWeb)
 
-    mediator.subscribe("mouseleave", this.mouseLeaveRects)
   }
 
-  resolve(label) {
-    this.setState({
-      moralMatrix: this.state.moralMatrix.map(d => {
-        if(label) {
-          d.value = matrices[label][d.id]
-        } else {
-          d.value = null
-        }
-
-        return d
-      })
-    }, () => {
-      renderer.extrude(web, this.state.moralMatrix)
-
-      mediator.subscribe("extrusionAnimationComplete", () => {
-        resolver = resolve(label)
-        resolveIterate()                      
-      }, true)
-    })
-  }
-
-  mouseLeaveRects() {
-    this.setState({ hoverInfo: '' })
-  }
-
-  argumentLabelMouseOver(label) {
-    let node = web.find(label.id, '_id')
-    this.setState({ hoverInfo: node.data })
-  }
-
-  argumentLabelClick(label) {
-    let newConstraints = this.state.constraints
-    let indexOfThis = newConstraints.findIndex(c => c.id === label.id)
-    if(indexOfThis > -1) {
-      newConstraints.splice(indexOfThis, 1)
-    } else {
-      newConstraints.push(label)
-    }
-
-    this.setState({ constraints: newConstraints })
-  }
-
-  render({ }, { argumentLabels, moralMatrix, hoverInfo, constraints }) {
+  render({ }, { }) {
     return (
       <app>
         <div id="webgl-wrapper"></div>
-        <div 
-          onMouseOver={this.mouseLeaveRects}
-          id="controls">
-          <div class="matrices">
-            <MoralMatricesChart matrix={moralMatrix} />
-            <button onClick={() => this.resolve('A')}>moral matrix A</button>
-            <button onClick={() => this.resolve('B')}>moral matrix B</button>
-            <button onClick={this.resolve}>reset</button>
-          </div>
-          <div class="solver">
-            <button onClick={() => {
-              let newConstraints = [], self = this
-
-              newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('affluent households benefit') > -1, web._root, true))
-              newConstraints.push(web.traverseDF(n => n.data && n.data.indexOf('straight-line increase in immigration') > -1, web._root, true))
-
-              newConstraints.forEach(n => { n.constraintValue = true })
-
-              renderer.extrudeNode(web, newConstraints.map(node => ({ node, value: 1})))
-
-              setTimeout(() => {
-                this.setState({
-                  constraints: newConstraints
-                }, () => {
-                  const solveIterator = wrapIterator(web.solveAsync(this.state.constraints.map(c => ({
-                    node: c,
-                    value: true
-                  }))), function(result) {
-                    let consistent = result.value !== false
-
-                    console.log("iterate solver", result.value)
-
-                    if(result.value) {
-                      let value = result.value.value
-
-                      if(typeof value === 'undefined') {
-                        value = result.value.provisionalValue
-                      }
-
-                      renderer.extrudeNode(web, [{ 
-                        node: result.value,
-                        value: value === true ? 1 : (value === false ? -1 : 0) } ])
-                    }
-
-                    if(!consistent) {
-                      console.log("INCONSISTENCY")
-                    } else {
-                      if(!result.done) {
-                        if(result.value) {
-                          mediator.subscribe("extrusionAnimationComplete", solveIterator, true)
-                        } else {
-                          setTimeout(solveIterator, 100)
-                        }
-                      } else {
-                        renderer.flashWinners(web)
-
-                        const removeIterator = wrapIterator(removeLosers(), function(result) {
-                          renderer.update(web)
-
-                          if(!result.done) {
-                            mediator.subscribe("reconcileTree", removeIterator, true)
-                          }
-                        })
-
-                        setTimeout(removeIterator, 500)
-                      }
-                    }
-                  })
-
-                  solveIterator()               
-                })
-              }, 1000)
-            }}>solve</button>
-          </div>
-        </div>
-        <ArgumentLabels labels={argumentLabels} constraints={constraints} onMouseOver={this.argumentLabelMouseOver} onClick={this.argumentLabelClick} />
-        <div style={`transform: translate3d(${mouseX}px, ${mouseY}px, 0)`} id="hover-info">{hoverInfo}</div>
       </app>
     )
   }
