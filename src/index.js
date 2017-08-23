@@ -8,8 +8,6 @@ import sharedState from './sharedState'
 import renderer from './GPURenderer'
 import Node from './CSP/treeNode'
 import AsyncTree from './CSP/asyncTree'
-import DebugVisualizer from './debugVisualizer'
-import DebugWebgl from './debugWebgl'
 import mediator from './mediator'
 import processArgument from './processArgument'
 import MoralMatricesChart from './moralMatricesChart'
@@ -20,7 +18,7 @@ import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY, debugNode, debugReglHomepage = false
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, removedKeys = [], resolver, mouseX, mouseY
 
 const shaders = {},
   preload = {
@@ -121,20 +119,8 @@ class App extends Component {
   }
 
   render({ }, { argumentLabels, moralMatrix, hoverInfo, constraints }) {
-    let debugDOM = null
-
-    if(debug) {
-      debugDOM = <div id="debug">
-        <canvas 
-          width={sharedState.get("windowWidth")}
-          height={sharedState.get("windowHeight")}></canvas>
-        <svg id="debug-svg"></svg>
-      </div>
-    }
-
     return (
       <app>
-        {debugDOM}
         <div id="webgl-wrapper"></div>
         <div 
           onMouseOver={this.mouseLeaveRects}
@@ -392,11 +378,7 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     }
   }
 
-  if(debug) {
-    DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
-  } else if(!debugReglHomepage) {
-    renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
-  }
+  renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
 
   const iterators = []
 
@@ -407,32 +389,10 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
       }
 
       if(i === 0) {
-        if(result.done && debug) {
-          DebugVisualizer.initialize(web)
-          DebugVisualizer.draw()
-        }
-
-        if(debug) {
-          DebugWebgl.draw(web)
-        } else {
-          renderer.update(web)
-        } 
+        renderer.update(web)
       }
     }))
   }
 
-  if(debugReglHomepage) {
-    document.body.appendChild(Splash())
-
-    window.regl.frame(function () {
-      regl.clear({
-        depth: 1,
-        color: [0, 0, 0, 1]
-      })
-      drawOutline()
-      drawTriangles()
-    })
-  } else {
-    iterators.forEach(d => d())
-  }
+  iterators.forEach(d => d())
 })
