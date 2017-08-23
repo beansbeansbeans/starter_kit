@@ -299,7 +299,7 @@ function resolveIterate() {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   render(<App />, document.body)
 
-  processArgument(argument, 15)
+  processArgument(argument, 45)
 
   handleResize()
 
@@ -357,8 +357,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
       return
     }
   }
-
-  const walker = walk()
 
   if(debug) {
     DebugWebgl.initialize({ canvas: document.querySelector("canvas") })
