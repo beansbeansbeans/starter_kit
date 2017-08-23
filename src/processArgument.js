@@ -21,7 +21,10 @@ function walk() {
 
     directory[node._id] = node
 
-    node.children.forEach(d => newToSearch.push(d))
+    node.children.forEach(d => {
+      d.parent = node
+      newToSearch.push(d)
+    })
   }
 
   toSearch = newToSearch
@@ -45,7 +48,8 @@ const processArgument = (arg, add) => {
       "supports": random.nextDouble() < 0.5 ? true : false,
       "_id": uuid.v4(),
       moralMatrices: [],
-      children: []
+      children: [],
+      parent: randomParent
     }
 
     if(random.nextDouble() < 0.5) child.moralMatrices.push('A')

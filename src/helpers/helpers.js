@@ -1,4 +1,6 @@
 import vec3 from 'gl-vec3'
+import randomModule from './random'
+const random = randomModule.random(42)
 
 const UINT8_VIEW = new Uint8Array(4),
   FLOAT_VIEW = new Float32Array(UINT8_VIEW.buffer)
@@ -58,6 +60,26 @@ function intersectTriangle(
   return t
 }
 
+function shuffle(array) {
+  let counter = array.length;
+
+  // While there are elements in the array
+  while (counter > 0) {
+      // Pick a random index
+      let index = Math.floor(random.nextDouble() * counter);
+
+      // Decrease counter by 1
+      counter--;
+
+      // And swap the last element with it
+      let temp = array[counter];
+      array[counter] = array[index];
+      array[index] = temp;
+  }
+
+  return array;
+}
+
 export default {
   trim: function(string) {
     return string.replace(/^\s+|\s+$/gm, '')
@@ -78,6 +100,8 @@ export default {
     }
     return clean
   },
+
+  shuffle,
 
   viewportToLocal,
 

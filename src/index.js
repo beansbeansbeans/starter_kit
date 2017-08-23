@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle } = helpers
 import "../main.scss"
 import { getData, getShader } from './api'
 import { debounce } from 'underscore'
@@ -17,6 +17,8 @@ import { moralMatrices, matrices } from './config'
 import Splash from './reglHP'
 import ArgumentLabels from './argumentLabels'
 import { handleResize } from './listeners'
+import randomModule from './helpers/random'
+const random = randomModule.random(42)
 
 let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, debug = false, web, removedKeys = [], resolver, mouseX, mouseY, debugNode, debugReglHomepage = false
 
@@ -305,18 +307,46 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   let toSearch = [{ node: argument[0] }]
 
-  function* walk() {
-    let newToSearch = []
+  function getRandomUntraversedChild(node) {
+    let indices = [], randomChild
 
-    for(let i=0; i<toSearch.length; i++) {
-      let node = toSearch[i].node,
-        parent = toSearch[i].parent,
-        treeNode
+    if(typeof node === 'undefined') {
+      function traverseDF(d) {
+        return d.children.reduce((acc, curr) => {
+          if(!!acc && typeof directory[acc._id] === 'undefined') {
+            return acc
+          }
 
+          return traverseDF(curr)
+        }, d)
+      }
+
+      let match = traverseDF(argument[0])
+      if(typeof directory[match._id] === 'undefined') randomChild = match
+    } else {
+      for(let i=0; i<node.children.length; i++) indices.push(i)
+      indices = shuffle(indices)
+
+      for(let i=0; i<node.children.length; i++) { // TODO: make this random
+        let child = node.children[i]
+        if(typeof directory[child._id] === 'undefined') {
+          randomChild = child
+          break
+        }
+      }      
+    }
+
+    return randomChild
+  }
+
+  function* walk(obj) {
+    let node = obj.node, parent = obj.parent, treeNode
+
+    if(typeof directory[node._id] === 'undefined') {
       if(typeof parent === 'undefined') {
         web = new AsyncTree(node.data, {
           moralMatrices: node.moralMatrices
-        })
+        }, node._id)
         
         window.web = web
         sharedState.set("web", web)
@@ -325,36 +355,40 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
       } else {
         treeNode = new Node(node.data, node.supports, {
           moralMatrices: node.moralMatrices
-        })
+        }, node._id)
 
         web.add(treeNode, parent)
       }
 
-      if(node.debug) debugNode = treeNode
-
       directory[treeNode._id] = { 
-        node: treeNode,
-        inWeb: true 
-      }
+        node: treeNode, inWeb: true }
 
-      if(Object.keys(directory).length === 20) {
-        mediator.publish("flip")
-      }
+      if(Object.keys(directory).length === 20) mediator.publish("flip")
 
       yield treeNode
-
-      node.children.forEach(c => newToSearch.push({
-        parent: treeNode,
-        node: c
-      }))
+    } else {
+      treeNode = directory[node._id].node
     }
 
-    toSearch = newToSearch
+    let randomChild = getRandomUntraversedChild(node),
+      current = node.parent,
+      parentNode = treeNode
 
-    if(toSearch.length) {
-      yield* walk()
-    } else {
-      return
+    while(current && typeof randomChild === 'undefined') {
+      randomChild = getRandomUntraversedChild(current)
+      parentNode = directory[current._id].node
+      current = current.parent
+    }
+
+    if(!randomChild) {
+      randomChild = getRandomUntraversedChild()
+      if(randomChild) {
+        parentNode = directory[randomChild.parent._id].node
+      }
+    }
+
+    if(randomChild) {
+      yield * walk({ parent: parentNode, node: randomChild })
     }
   }
 
@@ -364,22 +398,28 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
   }
 
-  const iterate = wrapIterator(walk(), function(result) {
-    if(!result.done) {
-      mediator.subscribe("reconcileTree", iterate, true)
-    } else {
-      if(debug) {
-        DebugVisualizer.initialize(web)
-        DebugVisualizer.draw()
-      }
-    }
+  const iterators = []
 
-    if(debug) {
-      DebugWebgl.draw(web)
-    } else {
-      renderer.update(web)
-    }
-  })
+  for(let i=0; i<3; i++) {
+    iterators.push(wrapIterator(walk({ node: argument[0] }), function(result) {
+      if(!result.done) {
+        mediator.subscribe("reconcileTree", iterators[i], true)
+      }
+
+      if(i === 0) {
+        if(result.done && debug) {
+          DebugVisualizer.initialize(web)
+          DebugVisualizer.draw()
+        }
+
+        if(debug) {
+          DebugWebgl.draw(web)
+        } else {
+          renderer.update(web)
+        } 
+      }
+    }))
+  }
 
   if(debugReglHomepage) {
     document.body.appendChild(Splash())
@@ -393,6 +433,6 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
       drawTriangles()
     })
   } else {
-    iterate()
+    iterators.forEach(d => d())
   }
 })

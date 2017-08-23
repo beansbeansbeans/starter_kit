@@ -1,3 +1,5 @@
+import randomModule from '../helpers/random'
+const random = randomModule.random(42)
 import Tree from './tree'
 import treeHelpers from './helpers'
 const { constraintCheck, value, isTrue, isFalse, forwardProp, backProp } = treeHelpers
@@ -39,6 +41,23 @@ export default class AsyncTree extends Tree {
     if(result) {
       yield false
     } else if(seed.children.length) {
+      yield* iterate(seed)
+    }
+  }
+
+  * traverseRandomAsync(matchFn, seed) {
+    function* iterate(node) {
+      let randomChild = node.children[Math.floor(random.nextDouble() * node.children.length)]
+
+      matchFn(randomChild)
+
+      yield randomChild
+      yield* iterate(randomChild)
+    }
+
+    yield seed
+
+    if(seed.children.length) {
       yield* iterate(seed)
     }
   }

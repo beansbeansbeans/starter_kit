@@ -11,7 +11,7 @@ import { extrusionRange } from './config'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-const frames = [5],
+const frames = [10],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
   buffer = 4, cameraDist = 1000,
   onResize = () => {},

@@ -6,8 +6,8 @@ const { constraintCheck, value, isTrue, isFalse, forwardProp, backProp } = treeH
 import Node from './treeNode'
 
 export default class Tree {
-  constructor(val, extraData) {
-    this._root = new Node(val, null, extraData)
+  constructor(val, extraData, id) {
+    this._root = new Node(val, null, extraData, id)
     this._root.depth = 0    
   }
 
