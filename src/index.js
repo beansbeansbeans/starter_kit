@@ -14,7 +14,7 @@ import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, removedKeys = [], resolver, mouseX, mouseY
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, mouseX, mouseY
 
 const shaders = {},
   preload = {
@@ -46,86 +46,6 @@ class App extends Component {
         <div id="webgl-wrapper"></div>
       </app>
     )
-  }
-}
-
-function* removeLosers() {
-  yield * web.traverseDFAsync(n => {
-    if(n.depth > 0) {
-      if(n.value === false || n.provisionalValue === false) {
-        directory[n._id].inWeb = false
-        web.removeSingle(n)
-      }      
-    }
-    return false
-  })
-}
-
-function* resolve(label) {
-  if(label) {
-    let keys = Object.keys(directory)
-
-    for(let i=0; i<keys.length; i++) {
-      let obj = directory[keys[i]], node = obj.node
-      
-      if(!obj.inWeb) continue // don't remove nodes that are descendents of nodes that have been removed
-
-      if(node.extraData.moralMatrices.indexOf(label) < 0) {
-        obj.inWeb = false
-
-        removedKeys.push(node._id)
-        web.removeSingle(node)
-
-        yield node
-      }
-    }
-
-    removedKeys = removeDuplicates(removedKeys)
-  }
-
-  for(let i=0; i<removedKeys.length; i++) {
-    let node = directory[removedKeys[i]].node
-
-    if((label && node.extraData.moralMatrices.indexOf(label) > -1) || typeof label === 'undefined') {
-      if(!directory[node._id].inWeb) {
-        let nearestActiveAncestor = web.traverseUp(n => {
-          return directory[n._id].inWeb
-        }, node)
-
-        directory[node._id].inWeb = true
-        node.parent = nearestActiveAncestor
-
-        // in case a child of this node had been reassigned to a different parent when this node was deleted, and is no longer in the tree
-        let toDelete = []
-        for(let i=0; i<node.children.length; i++) {
-          let child = node.children[i]
-
-          if(!directory[child._id].inWeb) {
-            toDelete.push(i)
-          }
-        }
-
-        for(let i=0; i<toDelete.length; i++) {
-          node.children.splice(toDelete[i] - i, 1)
-        }
-
-        web.addBack(node)
-
-        yield node
-      }
-    }
-  }
-
-  return
-}
-
-function resolveIterate() {
-  let result = resolver.next()
-
-  renderer.update(web)
-
-  if(!result.done) {
-    mediator.subscribe("reconcileTree", resolveIterate, true)
   }
 }
 
