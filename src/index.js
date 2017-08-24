@@ -47,7 +47,7 @@ class App extends Component {
   }
 
   addAttack() {
-    let node = new Node("blerg", false)
+    let node = new Node("blerg", false, { user: true })
     web.add(node, directory[this.state.lastMove].node)
     directory[node._id] = { node, inWeb: true }
 
@@ -61,7 +61,7 @@ class App extends Component {
   }
 
   addDefense() {
-    let node = new Node('blerg', true)
+    let node = new Node('blerg', true, { user: true })
     web.add(node, web._root)
 
     directory[node._id] = {
@@ -85,7 +85,6 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(this.state.computerTurn === true && prevState.computerTurn === false) {
-      console.log("here")
       let newNode = new Node('blerg', false)
       directory[newNode._id] = {
         node: newNode, inWeb: true

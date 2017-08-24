@@ -261,6 +261,7 @@ export default {
       positions[currentIndex].heights[index] = n.height
 
       supports[index] = (n.supports || n.depth === 0) ? 1 : 0
+      constraint[index] = n.extraData.user === true ? 1 : 0
 
       traversed.push(n._id)
     })

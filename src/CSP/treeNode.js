@@ -1,5 +1,5 @@
 export default class Node {
-  constructor(val, supports, extraData, id) {
+  constructor(val, supports, extraData = {}, id) {
     this._id = typeof id === 'undefined' ? uuid.v4() : id
     
     this.data = val
