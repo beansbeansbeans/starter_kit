@@ -1,8 +1,7 @@
 #user-turn-input {
   position: fixed;
   left: 3vw;
-  right: 3vw;
   top: 3vh;
-  bottom: 3vh;
-  background: white;
+  max-width: 20vw;
+  max-height: 20vh;
 }
