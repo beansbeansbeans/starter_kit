@@ -67,17 +67,25 @@ class App extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if(this.state.userTurn === false && prevState.userTurn === true) {
-      if(this.state.lastMove === web._root._id) {
-        let node = new Node('blerg', false)
-        web.add(node, web._root)
+      let newNode
 
-        directory[node._id] = {
-          node, inWeb: true
+      if(this.state.lastMove === web._root._id) {
+        newNode = new Node('blerg', false)
+        web.add(newNode, web._root)
+
+        directory[newNode._id] = {
+          node: newNode, inWeb: true
         }
 
         renderer.update(web)
-        this.setState({ userTurn: false })
+        this.setState({ 
+          lastMove: newNode._id,
+          userTurn: false })
       }
+
+      setTimeout(() => {
+        this.setState({ userTurn: true })
+      }, 1500)
     }
   }
 
@@ -86,6 +94,7 @@ class App extends Component {
 
     if(userTurn) {
       userTurnDOM = <UserTurnInput
+        lastMove={lastMove}
         addAttack={this.addAttack}
         addDefense={this.addDefense}
         submitPosition={this.submitPosition} />
