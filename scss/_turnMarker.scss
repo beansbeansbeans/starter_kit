@@ -1,0 +1,12 @@
+#turn-marker {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 2rem;
+  background: white;
+  .player {
+    &[data-active="true"] {
+      background: green;
+    }
+  }
+}

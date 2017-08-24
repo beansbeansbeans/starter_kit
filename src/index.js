@@ -11,6 +11,7 @@ import AsyncTree from './CSP/asyncTree'
 import mediator from './mediator'
 import processArgument from './processArgument'
 import UserTurnInput from './userTurnInput'
+import TurnMarker from './components/turnMarker'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
@@ -98,12 +99,10 @@ class App extends Component {
       }
 
       renderer.update(web)
-      this.setState({ 
-        lastMove: newNode._id,
-        computerTurn: false })
+      this.setState({ lastMove: newNode._id })
 
       setTimeout(() => {
-        this.setState({ userTurn: true })
+        this.setState({ userTurn: true, computerTurn: false })
       }, 1500)
     }
   }
@@ -123,6 +122,7 @@ class App extends Component {
       <app>
         <div id="webgl-wrapper"></div>
         {userTurnDOM}
+        <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
       </app>
     )
   }
