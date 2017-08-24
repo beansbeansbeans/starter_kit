@@ -175,7 +175,7 @@ class App extends Component {
         exit={() => this.setState({ showUserDialogue: false })} />
     } else if(selectedArg) {
       argumentControlsDOM = <ArgumentControls
-        supportive={!!directory[selectedArg].node.byUser}
+        supportive={!!directory[selectedArg].byUser}
         left={selectedArgLeft}
         top={selectedArgTop}
         addDefense={this.addDefense}
