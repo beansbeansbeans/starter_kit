@@ -234,7 +234,7 @@ export default class Tree {
   reconcile(width, height) {
     let leaves = this.countLeaves(),
       depth = this.getDepth(),
-      minHeight = height / leaves
+      minHeight = Math.min(height, height / leaves)
 
     this.traverseDF(n => {
       let top = 0
