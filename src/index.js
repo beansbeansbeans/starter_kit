@@ -10,6 +10,7 @@ import Node from './CSP/treeNode'
 import AsyncTree from './CSP/asyncTree'
 import mediator from './mediator'
 import processArgument from './processArgument'
+import UserTurnInput from './userTurnInput'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
@@ -30,30 +31,54 @@ const shaders = {},
   }
 
 class App extends Component {
-  state = { }
+  state = {
+    userTurn: true,
+    lastMove: null,
+    userPosition: null
+  }
 
   componentWillMount() {
-    bindAll(this, [])
+    bindAll(this, ['addAttack', 'addDefense', 'submitPosition'])
   }
 
   componentDidMount() {
 
   }
 
-  render({ }, { }) {
+  addAttack() {
+    this.setState({ userTurn: false })
+  }
+
+  addDefense() {
+    let node = new Node('blerg', true)
+    web.add(node, web._root)
+
+    directory[node._id] = {
+      node, inWeb: true
+    }
+
+    renderer.update(web)
+    this.setState({ userTurn: false })
+  }
+
+  submitPosition(userPosition) {
+    this.setState({ userPosition, userTurn: false })
+  }
+
+  render({ }, { userTurn, lastMove }) {
+    let userTurnDOM = null
+
+    if(userTurn) {
+      userTurnDOM = <UserTurnInput
+        addAttack={this.addAttack}
+        addDefense={this.addDefense}
+        submitPosition={this.submitPosition}
+       />
+    }
     return (
       <app>
         <div id="webgl-wrapper"></div>
-        <button style="position:absolute" onClick={() => {
-          let node = new Node('blerg', true)
-          web.add(node, web._root)
-
-          directory[node._id] = {
-            node, inWeb: true
-          }
-
-          renderer.update(web)
-        }}>add arg</button>
+        {userTurnDOM}
       </app>
     )
   }

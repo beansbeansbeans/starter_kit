@@ -1,6 +1,7 @@
 @import "scss/variables";
 @import "scss/controls";
 @import "scss/moralMatricesChart";
+@import "scss/userTurnInput";
 
 body {
   margin: 0;
@@ -60,12 +61,3 @@ svg {
   }
 }
 
-.debug-label {
-  // color: transparent;
-}
-
-#hover-info {
-  position: fixed;
-  max-width: 30rem;
-  pointer-events: none;
-}
