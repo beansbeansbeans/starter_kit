@@ -53,7 +53,9 @@ class App extends Component {
 
     renderer.update(web)
 
-    this.setState({ userTurn: false })
+    this.setState({ 
+      lastMove: node._id,
+      userTurn: false })
 
     setTimeout(() => {
       this.setState({ computerTurn: true })
