@@ -297,6 +297,26 @@ export default {
     frame = 0
   },
 
+  activateNode(id) {
+    let index = idToIndex[id]
+
+    activeStatus[previousActiveIndex] = 0
+    activeStatus[index] = 1
+
+    previousActiveIndex = index
+    state.activeStatus = activeStatus
+  },
+
+  deactivateNode(id) {
+    if(typeof id !== 'undefined') {
+      let index = idToIndex[id]
+      activeStatus[index] = 0      
+    } else {
+      activeStatus[previousActiveIndex] = 0
+    }
+    state.activeStatus = activeStatus
+  },
+
   resize() {
     onResize()
   }

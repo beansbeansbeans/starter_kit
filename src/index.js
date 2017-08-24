@@ -59,6 +59,8 @@ class App extends Component {
       lastMove: node._id,
       showUserDialogue: false })
 
+    renderer.deactivateNode()
+
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
     }, 1500)
@@ -75,6 +77,8 @@ class App extends Component {
       lastMove: node._id,
       showUserDialogue: false })
 
+    renderer.deactivateNode()
+
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
     }, 1500)
@@ -89,6 +93,8 @@ class App extends Component {
       userPosition, 
       showUserDialogue: false,
       userTurn: false, computerTurn: true })
+
+    renderer.deactivateNode()
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -106,6 +112,7 @@ class App extends Component {
 
       renderer.update(web)
       this.setState({ lastMove: newNode._id })
+      renderer.activateNode(newNode._id)
 
       setTimeout(() => {
         this.setState({ showUserDialogue: true, userTurn: true, computerTurn: false })
