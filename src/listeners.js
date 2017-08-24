@@ -26,7 +26,7 @@ window.addEventListener("mousemove", e => {
   })
 })
 
-window.addEventListener("mousedown", e => {
+window.addEventListener("click", e => {
   mediator.publish("mousedown", e)
 })
 

@@ -57,6 +57,62 @@ for(let i=0; i<2; i++) {
   positions[i].extrusions = new Float32Array(maxArgumentCount)
 }
 
+mediator.subscribe("mousedown", data => {
+  const vp = mat4.multiply([], projectionMatrix, state.cameraView),
+    invVp = mat4.invert([], vp),
+    rayPoint = vec3.transformMat4([], 
+      [mouseX, mouseY, 0], invVp), // get a single point on the camera ray
+    rayOrigin = vec3.transformMat4([],
+      [0, 0, 0], mat4.invert([], state.cameraView)), // get position of camera
+    rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin)),
+    currentPosition = positions[currentIndex]
+
+  let closestDistance = Infinity, closestIndex = -1
+
+  sharedState.get("web").traverseBF(n => {
+    const index = idToIndex[n._id],
+      x = currentPosition.left[index],
+      y = currentPosition.tops[index],
+      z = currentPosition.extrusions[index],
+      topLeft = toLocal([x, y]),
+      bottomLeft = toLocal([x, y + currentPosition.heights[index]]),
+      bottomRight = toLocal([x + state.nextRectWidth, y + currentPosition.heights[index]]),
+      topRight = toLocal([x + state.nextRectWidth, y]),
+
+      tri1 = [
+        [topLeft[0], topLeft[1], z], // top left
+        [bottomLeft[0], bottomLeft[1], z], // bottom left
+        [bottomRight[0], bottomRight[1], z]], // bottom right
+      t1 = intersectTriangle([], rayPoint, rayDir, tri1),
+
+      tri2 = [
+        [topLeft[0], topLeft[1], z],
+        [bottomRight[0], bottomRight[1], z],
+        [topRight[0], topRight[1], z]],
+      t2 = intersectTriangle([], rayPoint, rayDir, tri2)
+
+    let t
+    if(typeof t1 === 'number') {
+      t = t1
+      if(typeof t2 === 'number') t = Math.min(t1, t2)
+    } else {
+      t = t2
+    }
+
+    if(typeof t === "number" && t < closestDistance) {
+      closestDistance = t
+      closestIndex = index
+    }
+
+    return false
+  })
+
+  activeStatus[previousActiveIndex] = 0
+
+  state.selectedIndex = closestIndex
+  state.activeStatus = activeStatus
+})
+
 export default {
   initialize(opts) {
     width = sharedState.get('containerWidth')
