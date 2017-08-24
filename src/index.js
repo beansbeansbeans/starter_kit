@@ -85,7 +85,7 @@ class App extends Component {
   }
 
   concede() {
-    console.log("lol")
+    renderer.extrudeNode(web, [directory[this.state.lastMove].node])
   }
 
   submitPosition(userPosition) {

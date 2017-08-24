@@ -297,6 +297,27 @@ export default {
     frame = 0
   },
 
+  extrudeNode(web, arr) {
+    let activePosition = {}, previousActivePosition = {}
+
+    for(let i=0; i<arr.length; i++) {
+      let node = arr[i], index = idToIndex[node._id]
+
+      positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
+      positions[currentIndex].extrusions[index] = 30
+
+      mediator.subscribe("extrusionAnimationComplete", () => {
+        positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
+      }, true)
+    }
+
+    state.lastExtrusion = positions[lastIndex].extrusions
+    state.currentExtrusion = positions[currentIndex].extrusions
+
+    activeFrame = 0
+    extrusionFrame = 0
+  },
+
   activateNode(id) {
     let index = idToIndex[id]
 
