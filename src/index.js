@@ -126,13 +126,11 @@ class App extends Component {
           if(arg.byUser) userArgs.push(Object.keys(directory)[i])
         }
 
-        if(userArgs.length) {
-          randomUserArgID = userArgs[Math.floor(random.nextDouble() * userArgs.length)]
-        } else {
-          randomUserArgID = this.state.lastMove
+        if(this.state.userPosition === true) {
+          userArgs.push(web._root._id)
         }
 
-        web.add(newNode, directory[randomUserArgID].node)
+        web.add(newNode, directory[userArgs[Math.floor(random.nextDouble() * userArgs.length)]].node)
       }
 
       renderer.update(web)
