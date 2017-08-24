@@ -67,7 +67,7 @@ mediator.subscribe("mousedown", data => {
     rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin)),
     currentPosition = positions[currentIndex]
 
-  let closestDistance = Infinity, closestIndex = -1
+  let closestDistance = Infinity, closestIndex = -1, closestID
 
   sharedState.get("web").traverseBF(n => {
     const index = idToIndex[n._id],
@@ -102,6 +102,7 @@ mediator.subscribe("mousedown", data => {
     if(typeof t === "number" && t < closestDistance) {
       closestDistance = t
       closestIndex = index
+      closestID = n._id
     }
 
     return false
@@ -111,6 +112,10 @@ mediator.subscribe("mousedown", data => {
 
   state.selectedIndex = closestIndex
   state.activeStatus = activeStatus
+
+  if(closestIndex > -1) {
+    config.selectedArgCB({ id: closestID })
+  }
 })
 
 export default {

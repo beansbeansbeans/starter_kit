@@ -12,6 +12,7 @@ import mediator from './mediator'
 import processArgument from './processArgument'
 import UserTurnInput from './userTurnInput'
 import TurnMarker from './components/turnMarker'
+import ArgumentControls from './components/argumentControls'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
@@ -37,20 +38,39 @@ class App extends Component {
     computerTurn: false,
     showUserDialogue: true,
     lastMove: null,
-    userPosition: null
+    userPosition: null,
+    selectedArg: null,
+    selectedArgLeft: 0,
+    selectedArgTop: 0
   }
 
   componentWillMount() {
-    bindAll(this, ['addAttack', 'concede', 'addDefense', 'submitPosition'])
+    bindAll(this, ['addAttack', 'concede', 'addDefense', 'submitPosition', 'selectedArg'])
   }
 
   componentDidMount() {
     this.setState({ lastMove: web._root._id })
+
+    handleResize()
+    renderer.initialize({ 
+      selectedArgCB: this.selectedArg,
+      container: document.querySelector("#webgl-wrapper"), 
+      shaders })
+    renderer.update(web)
+  }
+
+  selectedArg({ id }) {
+    this.setState({ 
+      selectedArg: id,
+      selectedArgLeft: sharedState.get("mouseX"),
+      selectedArgTop: sharedState.get("mouseY")
+    })
   }
 
   addAttack() {
+    let parentID = this.state.selectedArg || this.state.lastMove
     let node = new Node("blerg", false, { user: true })
-    web.add(node, directory[this.state.lastMove].node)
+    web.add(node, directory[parentID].node)
     directory[node._id] = { node, inWeb: true, byUser: true }
 
     renderer.update(web)
@@ -62,11 +82,12 @@ class App extends Component {
     renderer.deactivateNode()
 
     setTimeout(() => {
-      this.setState({ userTurn: false, computerTurn: true })
+      this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
     }, 1000)
   }
 
   addDefense() {
+    let parentID = this.state.selectedArg || this.state.lastMove
     let node = new Node('blerg', true, { user: true })
     web.add(node, directory[this.state.lastMove].node.parent)
     directory[node._id] = { node, inWeb: true, byUser: true }
@@ -80,19 +101,18 @@ class App extends Component {
     renderer.deactivateNode()
 
     setTimeout(() => {
-      this.setState({ userTurn: false, computerTurn: true })
+      this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
     }, 1000)
   }
 
   concede() {
-    renderer.extrudeNode(web, [directory[this.state.lastMove].node])
+    let id = this.state.selectedArg || this.state.lastMove
+    renderer.extrudeNode(web, [directory[id].node])
 
-    this.setState({
-      showUserDialogue: false
-    })
+    this.setState({ showUserDialogue: false })
 
     setTimeout(() => {
-      this.setState({ userTurn: false, computerTurn: true })
+      this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
     }, 1000)
   }
 
@@ -143,8 +163,8 @@ class App extends Component {
     }
   }
 
-  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn }) {
-    let userTurnDOM = null
+  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop }) {
+    let userTurnDOM = null, argumentControlsDOM = null
 
     if(showUserDialogue) {
       userTurnDOM = <UserTurnInput
@@ -153,12 +173,21 @@ class App extends Component {
         concede={this.concede}
         submitPosition={this.submitPosition}
         exit={() => this.setState({ showUserDialogue: false })} />
+    } else if(selectedArg) {
+      argumentControlsDOM = <ArgumentControls
+        supportive={!!directory[selectedArg].node.byUser}
+        left={selectedArgLeft}
+        top={selectedArgTop}
+        addDefense={this.addDefense}
+        addAttack={this.addAttack}
+        concede={this.concede} />
     }
 
     return (
       <app>
         <div id="webgl-wrapper"></div>
         {userTurnDOM}
+        {argumentControlsDOM}
         <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
       </app>
     )
@@ -182,9 +211,4 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
     node: web._root, inWeb: true }
 
   render(<App />, document.body)
-  
-  handleResize()
-
-  renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
-  renderer.update(web)
 })
