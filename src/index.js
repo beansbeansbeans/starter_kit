@@ -63,7 +63,7 @@ class App extends Component {
 
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
-    }, 1500)
+    }, 1000)
   }
 
   addDefense() {
@@ -81,7 +81,7 @@ class App extends Component {
 
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
-    }, 1500)
+    }, 1000)
   }
 
   concede() {
@@ -91,10 +91,13 @@ class App extends Component {
   submitPosition(userPosition) {
     this.setState({ 
       userPosition, 
-      showUserDialogue: false,
-      userTurn: false, computerTurn: true })
+      showUserDialogue: false })
 
     renderer.deactivateNode()
+
+    setTimeout(() => {
+      this.setState({ userTurn: false, computerTurn: true })
+    }, 1000)
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -116,7 +119,7 @@ class App extends Component {
 
       setTimeout(() => {
         this.setState({ showUserDialogue: true, userTurn: true, computerTurn: false })
-      }, 1500)
+      }, 1000)
     }
   }
 
