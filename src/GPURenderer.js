@@ -232,6 +232,10 @@ export default {
     })
 
     setInterval(measureFPS, 1000)
+
+    camera.lookAt([0, 800, 700],
+      [-250, 0, 0],
+      [-0.5, 0.25, 0.1])
   },
 
   update(web) {
