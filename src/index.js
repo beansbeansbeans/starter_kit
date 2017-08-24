@@ -86,6 +86,14 @@ class App extends Component {
 
   concede() {
     renderer.extrudeNode(web, [directory[this.state.lastMove].node])
+
+    this.setState({
+      showUserDialogue: false
+    })
+
+    setTimeout(() => {
+      this.setState({ userTurn: false, computerTurn: true })
+    }, 1000)
   }
 
   submitPosition(userPosition) {
