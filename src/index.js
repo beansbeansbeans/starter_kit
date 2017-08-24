@@ -51,7 +51,7 @@ class App extends Component {
   addAttack() {
     let node = new Node("blerg", false, { user: true })
     web.add(node, directory[this.state.lastMove].node)
-    directory[node._id] = { node, inWeb: true }
+    directory[node._id] = { node, inWeb: true, byUser: true }
 
     renderer.update(web)
 
@@ -69,7 +69,7 @@ class App extends Component {
   addDefense() {
     let node = new Node('blerg', true, { user: true })
     web.add(node, directory[this.state.lastMove].node.parent)
-    directory[node._id] = { node, inWeb: true }
+    directory[node._id] = { node, inWeb: true, byUser: true }
 
     renderer.update(web)
 
@@ -118,7 +118,21 @@ class App extends Component {
       if(this.state.lastMove === web._root._id) {
         web.add(newNode, web._root)
       } else {
-        web.add(newNode, directory[this.state.lastMove].node)
+        let randomUserArgID
+
+        let userArgs = []
+        for(let i=0; i<Object.keys(directory).length; i++) {
+          let arg = directory[Object.keys(directory)[i]]
+          if(arg.byUser) userArgs.push(Object.keys(directory)[i])
+        }
+
+        if(userArgs.length) {
+          randomUserArgID = userArgs[Math.floor(random.nextDouble() * userArgs.length)]
+        } else {
+          randomUserArgID = this.state.lastMove
+        }
+
+        web.add(newNode, directory[randomUserArgID].node)
       }
 
       renderer.update(web)
