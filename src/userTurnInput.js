@@ -4,7 +4,7 @@ import sharedState from './sharedState'
 
 export default class UserTurnInput extends Component {
   render({ addAttack, addDefense, submitPosition, lastMove }) {
-
+    
     let controls = []
 
     if(lastMove === sharedState.get("web")._root._id) {

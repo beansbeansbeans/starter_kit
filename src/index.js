@@ -33,6 +33,7 @@ const shaders = {},
 class App extends Component {
   state = {
     userTurn: true,
+    computerTurn: false,
     lastMove: null,
     userPosition: null
   }
@@ -46,7 +47,17 @@ class App extends Component {
   }
 
   addAttack() {
+    let node = new Node("blerg", false)
+    web.add(node, directory[this.state.lastMove].node)
+    directory[node._id] = { node, inWeb: true }
+
+    renderer.update(web)
+
     this.setState({ userTurn: false })
+
+    setTimeout(() => {
+      this.setState({ computerTurn: true })
+    }, 1500)
   }
 
   addDefense() {
@@ -58,30 +69,38 @@ class App extends Component {
     }
 
     renderer.update(web)
+
     this.setState({ userTurn: false })
+
+    setTimeout(() => {
+      this.setState({ computerTurn: true })
+    }, 1500)
   }
 
   submitPosition(userPosition) {
-    this.setState({ userPosition, userTurn: false })
+    this.setState({ 
+      userPosition, 
+      userTurn: false, computerTurn: true })
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(this.state.userTurn === false && prevState.userTurn === true) {
-      let newNode
+    if(this.state.computerTurn === true && prevState.computerTurn === false) {
+      console.log("here")
+      let newNode = new Node('blerg', false)
+      directory[newNode._id] = {
+        node: newNode, inWeb: true
+      }
 
       if(this.state.lastMove === web._root._id) {
-        newNode = new Node('blerg', false)
         web.add(newNode, web._root)
-
-        directory[newNode._id] = {
-          node: newNode, inWeb: true
-        }
-
-        renderer.update(web)
-        this.setState({ 
-          lastMove: newNode._id,
-          userTurn: false })
+      } else {
+        web.add(newNode, directory[this.state.lastMove].node)
       }
+
+      renderer.update(web)
+      this.setState({ 
+        lastMove: newNode._id,
+        computerTurn: false })
 
       setTimeout(() => {
         this.setState({ userTurn: true })
@@ -89,7 +108,7 @@ class App extends Component {
     }
   }
 
-  render({ }, { userTurn, lastMove }) {
+  render({ }, { userTurn, lastMove, computerTurn }) {
     let userTurnDOM = null
 
     if(userTurn) {
