@@ -64,15 +64,14 @@ class App extends Component {
 
   addDefense() {
     let node = new Node('blerg', true, { user: true })
-    web.add(node, web._root)
-
-    directory[node._id] = {
-      node, inWeb: true
-    }
+    web.add(node, directory[this.state.lastMove].node.parent)
+    directory[node._id] = { node, inWeb: true }
 
     renderer.update(web)
 
-    this.setState({ userTurn: false })
+    this.setState({ 
+      lastMove: node._id,
+      userTurn: false })
 
     setTimeout(() => {
       this.setState({ computerTurn: true })
