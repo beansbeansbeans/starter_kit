@@ -3,8 +3,8 @@ import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 
 export default class UserTurnInput extends Component {
-  render({ addAttack, addDefense, submitPosition, lastMove }) {
-    
+  render({ addAttack, concede, exit, submitPosition, lastMove }) {
+
     let controls = []
 
     if(lastMove === sharedState.get("web")._root._id) {
@@ -12,7 +12,8 @@ export default class UserTurnInput extends Component {
       controls.push(<button onClick={() => submitPosition(false)}>disagree</button>)
     } else {
       controls.push(<button onClick={addAttack}>attack</button>)
-      controls.push(<button onClick={addDefense}>defend</button>)
+      controls.push(<button onClick={concede}>concede</button>)
+      controls.push(<button onClick={exit}>exit</button>)
     }
 
     return (

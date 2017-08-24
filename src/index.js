@@ -41,7 +41,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['addAttack', 'addDefense', 'submitPosition'])
+    bindAll(this, ['addAttack', 'concede', 'addDefense', 'submitPosition'])
   }
 
   componentDidMount() {
@@ -80,6 +80,10 @@ class App extends Component {
     }, 1500)
   }
 
+  concede() {
+    console.log("lol")
+  }
+
   submitPosition(userPosition) {
     this.setState({ 
       userPosition, 
@@ -116,8 +120,9 @@ class App extends Component {
       userTurnDOM = <UserTurnInput
         lastMove={lastMove}
         addAttack={this.addAttack}
-        addDefense={this.addDefense}
-        submitPosition={this.submitPosition} />
+        concede={this.concede}
+        submitPosition={this.submitPosition}
+        exit={() => this.setState({ showUserDialogue: false })} />
     }
 
     return (
