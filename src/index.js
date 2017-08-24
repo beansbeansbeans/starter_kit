@@ -138,19 +138,32 @@ class App extends Component {
       if(this.state.lastMove === web._root._id) {
         web.add(newNode, web._root)
       } else {
-        let randomUserArgID
-
-        let userArgs = []
+        let userArgs = [], computerArgs = []
         for(let i=0; i<Object.keys(directory).length; i++) {
-          let arg = directory[Object.keys(directory)[i]]
-          if(arg.byUser) userArgs.push(Object.keys(directory)[i])
+          let key = Object.keys(directory)[i], arg = directory[key]
+
+          if(key === newNode._id) continue
+
+          if(arg.byUser) {
+            userArgs.push(key)
+          } else {
+            computerArgs.push(key)
+          }
         }
 
         if(this.state.userPosition === true) {
           userArgs.push(web._root._id)
+        } else {
+          computerArgs.push(web._root._id)
         }
+      
+        if(random.nextDouble() < 0.75 && userArgs.length) {
+          web.add(newNode, directory[userArgs[Math.floor(random.nextDouble() * userArgs.length)]].node)
+        } else {
+          newNode.supports = true
 
-        web.add(newNode, directory[userArgs[Math.floor(random.nextDouble() * userArgs.length)]].node)
+          web.add(newNode, directory[computerArgs[Math.floor(random.nextDouble() * computerArgs.length)]].node)
+        }
       }
 
       renderer.update(web)
