@@ -35,6 +35,7 @@ class App extends Component {
   state = {
     userTurn: true,
     computerTurn: false,
+    showUserDialogue: true,
     lastMove: null,
     userPosition: null
   }
@@ -56,10 +57,10 @@ class App extends Component {
 
     this.setState({ 
       lastMove: node._id,
-      userTurn: false })
+      showUserDialogue: false })
 
     setTimeout(() => {
-      this.setState({ computerTurn: true })
+      this.setState({ userTurn: false, computerTurn: true })
     }, 1500)
   }
 
@@ -72,16 +73,17 @@ class App extends Component {
 
     this.setState({ 
       lastMove: node._id,
-      userTurn: false })
+      showUserDialogue: false })
 
     setTimeout(() => {
-      this.setState({ computerTurn: true })
+      this.setState({ userTurn: false, computerTurn: true })
     }, 1500)
   }
 
   submitPosition(userPosition) {
     this.setState({ 
       userPosition, 
+      showUserDialogue: false,
       userTurn: false, computerTurn: true })
   }
 
@@ -102,15 +104,15 @@ class App extends Component {
       this.setState({ lastMove: newNode._id })
 
       setTimeout(() => {
-        this.setState({ userTurn: true, computerTurn: false })
+        this.setState({ showUserDialogue: true, userTurn: true, computerTurn: false })
       }, 1500)
     }
   }
 
-  render({ }, { userTurn, lastMove, computerTurn }) {
+  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn }) {
     let userTurnDOM = null
 
-    if(userTurn) {
+    if(showUserDialogue) {
       userTurnDOM = <UserTurnInput
         lastMove={lastMove}
         addAttack={this.addAttack}
