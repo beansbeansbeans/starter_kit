@@ -42,7 +42,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-
+    this.setState({ lastMove: web._root._id })
   }
 
   addAttack() {
@@ -65,6 +65,22 @@ class App extends Component {
     this.setState({ userPosition, userTurn: false })
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.userTurn === false && prevState.userTurn === true) {
+      if(this.state.lastMove === web._root._id) {
+        let node = new Node('blerg', false)
+        web.add(node, web._root)
+
+        directory[node._id] = {
+          node, inWeb: true
+        }
+
+        renderer.update(web)
+        this.setState({ userTurn: false })
+      }
+    }
+  }
+
   render({ }, { userTurn, lastMove }) {
     let userTurnDOM = null
 
@@ -72,9 +88,9 @@ class App extends Component {
       userTurnDOM = <UserTurnInput
         addAttack={this.addAttack}
         addDefense={this.addDefense}
-        submitPosition={this.submitPosition}
-       />
+        submitPosition={this.submitPosition} />
     }
+
     return (
       <app>
         <div id="webgl-wrapper"></div>
@@ -85,11 +101,8 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  render(<App />, document.body)
 
   processArgument(argument, 45)
-
-  handleResize()
 
   let node = argument[0]
 
@@ -103,7 +116,10 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   directory[web._root._id] = { 
     node: web._root, inWeb: true }
 
-  renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
+  render(<App />, document.body)
+  
+  handleResize()
 
+  renderer.initialize({ container: document.querySelector("#webgl-wrapper"), shaders })
   renderer.update(web)
 })
