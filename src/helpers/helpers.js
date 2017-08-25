@@ -5,6 +5,16 @@ const random = randomModule.random(42)
 const UINT8_VIEW = new Uint8Array(4),
   FLOAT_VIEW = new Float32Array(UINT8_VIEW.buffer)
 
+const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x)
+
+const withConstructor = constructor => o => {
+  const proto = Object.assign({},
+    Object.getPrototypeOf(o),
+    { constructor }
+  );
+  return Object.assign(Object.create(proto), o);
+}
+
 const wrapIterator = (it, fn) => {
   let result
 
@@ -100,6 +110,10 @@ export default {
     }
     return clean
   },
+
+  pipe,
+
+  withConstructor,
 
   shuffle,
 
