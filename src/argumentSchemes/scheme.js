@@ -7,6 +7,11 @@ const schemeGenerators = {}
 const canDisplay = o => {
   return {
     ...o,
+    
+    get variables() {
+      return []
+    },
+
     display() {
       return o.conclusion.replace(/{{([^}]+)}}/g, 
         (_, match) => o.variables[match])
@@ -20,7 +25,7 @@ for(scheme in schemes) {
   schemeGenerators[scheme] = config => pipe(
     canDisplay,
     withConstructor(schemeGenerators[scheme]))
-  (Object.assign(obj, config))
+  (Object.assign(obj, config, {}))
 }
 
 const anExpertOpinion = schemeGenerators.expertOpinion({
@@ -33,3 +38,5 @@ const anExpertOpinion = schemeGenerators.expertOpinion({
 })
 
 console.log(anExpertOpinion.display())
+
+export default schemeGenerators

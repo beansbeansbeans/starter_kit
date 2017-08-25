@@ -16,7 +16,7 @@ import ArgumentControls from './components/argumentControls'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
-import './argumentSchemes/scheme'
+import createStore from './argumentSchemes/store'
 
 let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, mouseX, mouseY
 
@@ -211,6 +211,9 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
 
   processArgument(argument, 45)
+
+  const store = createStore(45)
+  console.log(store)
 
   let node = argument[0]
 
