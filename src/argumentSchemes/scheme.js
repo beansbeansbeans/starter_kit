@@ -4,15 +4,21 @@ const { pipe, withConstructor } = helpers
 const schemes = {
   "expertOpinion": {
     "label": "Expert Opinion",
-    "data": "Source {{E}} is an expert in subject domain {{S}} containing proposition {{A}}"
+    "premises": [
+      "Source {{E}} is an expert in subject domain {{S}} containing proposition {{A}}",
+      "{{E}} asserts that proposition {{A}} is {{B}}."
+    ],
+    "conclusion": "Conclusion: {{A}} is {{B}}"
   }
 }
 
-const canDisplay = data => o => {
+const schemeGenerators = {}
+
+const canDisplay = o => {
   return {
     ...o,
     display() {
-      return data.replace(/{{([^}]+)}}/g, (_, o) => this.variables[o])
+      return o.conclusion.replace(/{{([^}]+)}}/g, (_, match) => o.variables[match])
     }
   }
 }
@@ -20,16 +26,18 @@ const canDisplay = data => o => {
 for(scheme in schemes) {
   let obj = schemes[scheme]
 
-  obj.generate = ({ variables }) => pipe(
-    canDisplay(obj.data),
-    withConstructor(obj.generate))({ variables })
+  schemeGenerators[scheme] = config => pipe(
+    canDisplay,
+    withConstructor(schemeGenerators[scheme]))
+  (Object.assign(obj, config))
 }
 
-const anExpertOpinion = schemes.expertOpinion.generate({
+const anExpertOpinion = schemeGenerators.expertOpinion({
   variables: {
     'E': 'Doug',
     'S': 'pool',
-    'A': 'pool is the best sport'
+    'A': 'pool is the best sport',
+    'B': 'true'
   }
 })
 
