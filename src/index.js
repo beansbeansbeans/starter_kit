@@ -16,6 +16,7 @@ import ArgumentControls from './components/argumentControls'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
+import './argumentSchemes/scheme'
 
 let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, mouseX, mouseY
 
