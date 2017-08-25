@@ -2,29 +2,34 @@ import helpers from '../helpers/helpers'
 const { pipe, withConstructor } = helpers
 import schemes from './config'
 
-const schemeGenerators = {}
+const schemeGenerators = {}, matchInterpolator = /{{([^}]+)}}/g
 
 const canDisplay = o => {
   return {
     ...o,
 
     display() {
-      return o.conclusion.replace(/{{([^}]+)}}/g, 
+      return o.conclusion.replace(matchInterpolator, 
         (_, match) => o.variables[match])
     }
   }
 }
 
 for(scheme in schemes) {
-  let obj = schemes[scheme]
+  let obj = schemes[scheme],
+    variableSources = obj.premises.join(" ").concat(obj.conclusion),
+    variables = [],
+    res
+
+  while((res = matchInterpolator.exec(variableSources)) !== null) {
+    if(variables.indexOf(res[1]) === -1) variables.push(res[1])
+  }
 
   let defaults = {
-    variables: {
-      'E': 'Doug',
-      'S': 'pool',
-      'A': 'pool is the best sport',
-      'B': 'true'
-    }
+    variables: variables.reduce((acc, curr) => {
+      acc[curr] = Math.random().toFixed(3)
+      return acc
+    }, {})
   }
 
   schemeGenerators[scheme] = config => pipe(
