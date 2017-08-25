@@ -1,16 +1,6 @@
 import helpers from '../helpers/helpers'
 const { pipe, withConstructor } = helpers
-
-const schemes = {
-  "expertOpinion": {
-    "label": "Expert Opinion",
-    "premises": [
-      "Source {{E}} is an expert in subject domain {{S}} containing proposition {{A}}",
-      "{{E}} asserts that proposition {{A}} is {{B}}."
-    ],
-    "conclusion": "Conclusion: {{A}} is {{B}}"
-  }
-}
+import schemes from './config'
 
 const schemeGenerators = {}
 
@@ -18,7 +8,8 @@ const canDisplay = o => {
   return {
     ...o,
     display() {
-      return o.conclusion.replace(/{{([^}]+)}}/g, (_, match) => o.variables[match])
+      return o.conclusion.replace(/{{([^}]+)}}/g, 
+        (_, match) => o.variables[match])
     }
   }
 }
