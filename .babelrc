@@ -1,7 +1,11 @@
 {
-  "presets": ["es2016"],
+  "presets": ["es2016", 'stage-2'],
   "plugins": [
     [ "transform-class-properties", 
+      "transform-object-rest-spread",
+      "transform-es2015-parameters",
+      "transform-es2015-destructuring",
+      "syntax-object-rest-spread",
       "transform-regenerator", 
       "transform-runtime" ],
     [ "transform-react-jsx", { "pragma":"h" } ]
