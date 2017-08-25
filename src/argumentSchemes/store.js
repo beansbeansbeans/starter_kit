@@ -11,6 +11,18 @@ function randomScheme() {
   return schemes[Math.floor(random.nextDouble() * schemes.length)] 
 }
 
+const find = (id, seed) => {
+  if(typeof seed === 'undefined') seed = root
+
+  if(seed.id === id) return seed
+
+  return seed.attackers.reduce((acc, curr) => {
+    if(acc.id === id) return acc
+
+    return find(id, curr)
+  }, false)
+}
+
 const create = num => {
   root = schemeGenerators[randomScheme()]({ id: uuid.v4() })
 
@@ -33,7 +45,15 @@ const create = num => {
     })
   }
 
-  return root
+  return {
+    root,
+    find,
+    getRandomAttacker: function(id) {
+      let attackers = find(id).attackers
+
+      return attackers[Math.floor(random.nextDouble() * attackers.length)].node
+    }
+  }
 }
 
 export default create

@@ -18,7 +18,7 @@ import randomModule from './helpers/random'
 const random = randomModule.random(42)
 import createStore from './argumentSchemes/store'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, mouseX, mouseY
+let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, store, mouseX, mouseY
 
 const shaders = {},
   preload = {
@@ -137,6 +137,8 @@ class App extends Component {
       }
 
       if(this.state.lastMove === web._root._id) {
+        newNode.extraData.argument = store.getRandomAttacker(store.root.id).id
+
         web.add(newNode, web._root)
       } else {
         let userArgs = [], computerArgs = []
@@ -209,17 +211,12 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-
   processArgument(argument, 45)
-
-  const store = createStore(45)
-  console.log(store)
-
+  
   let node = argument[0]
 
-  web = new AsyncTree(node.data, {
-    moralMatrices: node.moralMatrices
-  }, node._id)
+  store = createStore(45)
+  web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   
   window.web = web
   sharedState.set("web", web)
