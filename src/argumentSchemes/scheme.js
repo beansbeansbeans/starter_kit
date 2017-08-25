@@ -29,7 +29,8 @@ for(scheme in schemes) {
     variables: variables.reduce((acc, curr) => {
       acc[curr] = Math.random().toFixed(3)
       return acc
-    }, {})
+    }, {}),
+    attackers: []
   }
 
   schemeGenerators[scheme] = config => pipe(
@@ -37,14 +38,5 @@ for(scheme in schemes) {
     withConstructor(schemeGenerators[scheme]))
   (Object.assign(defaults, obj, config))
 }
-
-const anExpertOpinion = schemeGenerators.expertOpinion({
-  variables: {
-    'E': 'Doug',
-    'S': 'pool',
-    'A': 'pool is the best sport',
-    'B': 'true'
-  }
-})
 
 export default schemeGenerators
