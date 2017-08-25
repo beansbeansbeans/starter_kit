@@ -12,6 +12,7 @@ basically, every time the computer or the human lodges an argument, it needs to 
 
 
 - Have the user's attacks / defenses conform to this store
+- How do we think about defenses? There's no clear way to model them within the store
 - build infrastructure for storing actual argument data
 
 
