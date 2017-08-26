@@ -168,6 +168,7 @@ class App extends Component {
         web.add(newNode, web._root)
       } else {
         let userArgs = [], computerArgs = [], parentNode
+
         for(let i=0; i<Object.keys(directory).length; i++) {
           let key = Object.keys(directory)[i], arg = directory[key]
 
@@ -185,33 +186,67 @@ class App extends Component {
         } else {
           computerArgs.push(web._root._id)
         }
+
+        function attack() {
+          let found = false
+
+          while(!found && userArgs.length) {
+            let randomUserArg = userArgs.splice(Math.floor(random.nextDouble() * userArgs.length), 1)
+            parentNode = directory[randomUserArg].node
+
+            let attacker = store.getRandomAttacker(parentNode.extraData.argument)
+            if(attacker && !web.traverseDF(function(n) {
+              if(n && n.extraData.argument === attacker.id) {
+                return true
+              }
+              return false
+            }, web._root, true)) {
+              found = true
+              newNode.extraData.argument = attacker.id
+              web.add(newNode, parentNode)
+            }  
+          }
+
+          return found
+        }
+
+        function defend() {
+          let found = false
+
+          while(!found && computerArgs.length) {
+            let randomComputerArg = computerArgs.splice(Math.floor(random.nextDouble() * computerArgs.length), 1)
+            parentNode = directory[randomComputerArg].node
+            let defender = store.getRandomDefender(parentNode.extraData.argument)
+
+            if(defender && !web.traverseDF(function(n) {
+              if(n && n.extraData.argument === defender.id) {
+                return true
+              }
+              return false
+            }, web._root, true)) {
+              found = true
+              newNode.extraData.argument = defender.id
+              web.add(newNode, parentNode)
+            }
+          }
+
+          return found
+        }
       
         if(random.nextDouble() < 0.75 && userArgs.length) {
-          parentNode = directory[userArgs[Math.floor(random.nextDouble() * userArgs.length)]].node
-          let attacker = store.getRandomAttacker(parentNode.extraData.argument)
-
-          if(!attacker) {
-            console.log("none found")
-            return
+          if(!attack()) {
+            console.log("CONCEDE")
+            return            
           }
-
-          newNode.extraData.argument = attacker.id
-
-          web.add(newNode, parentNode)
         } else {
-          newNode.supports = true
-
-          parentNode = directory[computerArgs[Math.floor(random.nextDouble() * computerArgs.length)]].node
-          let defender = store.getRandomDefender(parentNode.extraData.argument)
-
-          if(!defender) {
-            console.log("none found")
-            return
+          if(!defend()) {
+            if(!attack()) {
+              console.log("CONCEDE")
+              return
+            }
+          } else {
+            newNode.supports = true
           }
-
-          newNode.extraData.argument = defender.id
-
-          web.add(newNode, parentNode)
         }
       }
 
@@ -257,11 +292,11 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  processArgument(argument, 45)
+  processArgument(argument, 10)
   
   let node = argument[0]
 
-  store = createStore(45)
+  store = createStore(10)
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   
   window.web = web
