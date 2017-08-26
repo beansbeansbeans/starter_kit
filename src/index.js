@@ -96,7 +96,7 @@ class App extends Component {
       selectedArgTop: sharedState.get("mouseY")
     })
 
-    console.log(directory[id].node)
+    console.log(store.find(directory[id].node.extraData.argument).description)
   }
 
   addAttack() {
