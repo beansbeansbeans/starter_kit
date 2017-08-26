@@ -33,6 +33,13 @@ const shaders = {},
         .then(data => argument = data)
   }
 
+const matchingArgument = id => n => {
+  if(n && n.extraData.argument === id) {
+    return true
+  }
+  return false
+}
+
 const getRandomChild = (attack, optionIDs) => {
   let found = false,
     parentNode, id, resp = false,
@@ -46,10 +53,7 @@ const getRandomChild = (attack, optionIDs) => {
     parentNode = directory[randomOption].node
     let child = store[getChild](parentNode.extraData.argument)
 
-    if(child && !web.traverseDF(n => {
-      if(n && n.extraData.argument === child.id) return true
-      return false
-    }, web._root, true)) {
+    if(child && !web.traverseDF(matchingArgument(child.id), web._root, true)) {
       found = true
       resp = { parentNode, id: child.id }
     }
@@ -108,12 +112,7 @@ class App extends Component {
 
     for(let i=0; i<parentArgNode.attackers.length; i++) {
       let d = parentArgNode.attackers[shuffledIndices[i]]
-      if(!web.traverseDF(function(n) {
-        if(n && n.extraData.argument === d.id) {
-          return true
-        }
-        return false
-      })) {
+      if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
         attacker = d.node
         break
       }
@@ -158,12 +157,7 @@ class App extends Component {
 
     for(let i=0; i<parentArgNode.defenders.length; i++) {
       let d = parentArgNode.defenders[shuffledIndices[i]]
-      if(!web.traverseDF(n => {
-        if(n && n.extraData.argument === d.id) {
-          return true
-        }
-        return false
-      })) {
+      if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
         defender = d
         break
       }
