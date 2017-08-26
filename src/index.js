@@ -33,6 +33,31 @@ const shaders = {},
         .then(data => argument = data)
   }
 
+const getRandomChild = (attack, optionIDs) => {
+  let found = false,
+    parentNode, id, resp = false,
+    getChild = "getRandomAttacker"
+
+  if(!attack) getChild = "getRandomDefender"
+
+  while(!found && optionIDs.length) {
+    let randomOption = optionIDs.splice(Math.floor(random.nextDouble() * optionIDs.length), 1)
+
+    parentNode = directory[randomOption].node
+    let child = store[getChild](parentNode.extraData.argument)
+
+    if(child && !web.traverseDF(n => {
+      if(n && n.extraData.argument === child.id) return true
+      return false
+    }, web._root, true)) {
+      found = true
+      resp = { parentNode, id: child.id }
+    }
+  }
+
+  return resp
+}
+
 class App extends Component {
   state = {
     userTurn: true,
@@ -224,68 +249,37 @@ class App extends Component {
         } else {
           computerArgs.push(web._root._id)
         }
-
-        function attack() {
-          let found = false
-
-          while(!found && userArgs.length) {
-            let randomUserArg = userArgs.splice(Math.floor(random.nextDouble() * userArgs.length), 1)
-            parentNode = directory[randomUserArg].node
-
-            let attacker = store.getRandomAttacker(parentNode.extraData.argument)
-            if(attacker && !web.traverseDF(function(n) {
-              if(n && n.extraData.argument === attacker.id) {
-                return true
-              }
-              return false
-            }, web._root, true)) {
-              found = true
-              newNode.extraData.argument = attacker.id
-              web.add(newNode, parentNode)
-            }  
-          }
-
-          return found
-        }
-
-        function defend() {
-          let found = false
-
-          while(!found && computerArgs.length) {
-            let randomComputerArg = computerArgs.splice(Math.floor(random.nextDouble() * computerArgs.length), 1)
-            parentNode = directory[randomComputerArg].node
-            let defender = store.getRandomDefender(parentNode.extraData.argument)
-
-            if(defender && !web.traverseDF(function(n) {
-              if(n && n.extraData.argument === defender.id) {
-                return true
-              }
-              return false
-            }, web._root, true)) {
-              found = true
-              newNode.extraData.argument = defender.id
-              web.add(newNode, parentNode)
-            }
-          }
-
-          return found
-        }
       
         if(random.nextDouble() < 0.75 && userArgs.length) {
-          if(!attack()) {
-            if(!defend()) {
+          let attacker = getRandomChild(true, userArgs)
+          if(attacker) {
+            newNode.extraData.argument = attacker.id
+            web.add(newNode, attacker.parentNode)
+          } else {
+            let defender = getRandomChild(false, computerArgs)
+            if(defender) {
+              newNode.extraData.argument = defender.id
+              web.add(newNode, defender.parentNode)
+            } else {
               console.log("CONCEDE")
-              return                          
+              return                                        
             }
           }
         } else {
-          if(!defend()) {
-            if(!attack()) {
-              console.log("CONCEDE")
-              return
-            }
-          } else {
+          let defender = getRandomChild(false, computerArgs)
+          if(defender) {
+            newNode.extraData.argument = defender.id
             newNode.supports = true
+            web.add(newNode, defender.parentNode)
+          } else {
+            let attacker = getRandomChild(true, userArgs)
+            if(attacker) {
+              newNode.extraData.argument = attacker.id
+              web.add(newNode, attacker.parentNode)
+            } else {
+              console.log("CONCEDE")
+              return                                        
+            }
           }
         }
       }
