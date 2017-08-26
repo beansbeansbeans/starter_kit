@@ -4,19 +4,57 @@ import schemeGenerators from './scheme'
 import schemeData from './config'
 
 let root,
-  directory = {},
+  directory = {}, toSearch = []
   schemes = Object.keys(schemeGenerators)
 
 function randomScheme() { 
   return schemes[Math.floor(random.nextDouble() * schemes.length)] 
 }
 
-const find = (id) => directory[id]
+const find = id => directory[id]
 
-const create = num => {
-  root = schemeGenerators[randomScheme()]({ id: uuid.v4() })
+function walk() {
+  let newToSearch = []
 
-  directory[root.id] = root
+  for(let i=0; i<toSearch.length; i++) {
+    let node = toSearch[i], 
+      randomSchemeType = randomScheme(),
+
+      child = schemeGenerators[randomSchemeType]({
+        id: uuid.v4(),
+        description: node.data
+      })
+
+    directory[child.id] = child
+
+    if(typeof root === 'undefined') root = child
+
+    if(node.parent) {
+      directory[node.parent][node.type].push({ node: child })
+    }
+
+    node.attackers.forEach(d => {
+      d.parent = child.id
+      d.type = 'attackers'
+      newToSearch.push(d)
+    })
+
+    node.defenders.forEach(d => {
+      d.parent = child.id
+      d.type = 'defenders'
+      newToSearch.push(d)
+    })
+  }
+
+  toSearch = newToSearch
+
+  if(toSearch.length) walk()
+}
+
+const create = (data, num) => {
+  toSearch.push(data[0])
+
+  walk()
 
   for(let i=0; i<num; i++) {
     let keys = Object.keys(directory),
@@ -24,7 +62,10 @@ const create = num => {
       randomParent = directory[randomID],
       randomSchemeType = randomScheme(),
 
-      child = schemeGenerators[randomSchemeType]({ id: uuid.v4() })
+      child = schemeGenerators[randomSchemeType]({ 
+        id: uuid.v4(),
+        description: 'lol'
+      })
 
     directory[child.id] = child
 

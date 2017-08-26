@@ -1,20 +1,24 @@
 [
   {
     "data": "there is no difference between men and women",
-    "scheme": 42,
-    "premises": [],
-    "critical_questions": [
+    "attackers": [
       {
-        
+        "data": "blerg",
+        "attackers": [
+          {
+            "data": "foo",
+            "attackers": [],
+            "defenders": []
+          }
+        ],
+        "defenders": []
       }
     ],
-    "challenges": [
+    "defenders": [
       {
-        "data": "that's not true because",
-        "scheme": 12,
-        "challenges": [
-
-        ]
+        "data": "blegity",
+        "attackers": [],
+        "defenders": []
       }
     ]
   }

@@ -29,7 +29,7 @@ const shaders = {},
       })
     ,
     getData: () => 
-      Promise.all(['immigration'].map(getData))
+      Promise.all(['damore'].map(getData))
         .then(data => argument = data)
   }
 
@@ -320,11 +320,10 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  processArgument(argument, 10)
-  
   let node = argument[0]
 
-  store = createStore(15)
+  store = createStore(argument[0], 30)
+
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   
   window.web = web
