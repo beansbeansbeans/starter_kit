@@ -72,7 +72,25 @@ class App extends Component {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
     let parentArgID = parentNode.extraData.argument
+    let parentArgNode = store.find(parentArgID)
     let attacker = store.getRandomAttacker(parentArgID)
+    let shuffledIndices = []
+
+    for(let i=0; i<parentArgNode.attackers.length; i++) shuffledIndices.push(i)
+    shuffledIndices = shuffle(shuffledIndices)
+
+    for(let i=0; i<parentArgNode.attackers.length; i++) {
+      let d = parentArgNode.attackers[shuffledIndices[i]]
+      if(!web.traverseDF(function(n) {
+        if(n && n.extraData.argument === d.id) {
+          return true
+        }
+        return false
+      })) {
+        attacker = d
+        break
+      }
+    }
 
     if(!attacker) {
       console.log("NO MATCHES")
@@ -235,8 +253,10 @@ class App extends Component {
       
         if(random.nextDouble() < 0.75 && userArgs.length) {
           if(!attack()) {
-            console.log("CONCEDE")
-            return            
+            if(!defend()) {
+              console.log("CONCEDE")
+              return                          
+            }
           }
         } else {
           if(!defend()) {
