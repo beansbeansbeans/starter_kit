@@ -66,6 +66,8 @@ class App extends Component {
       selectedArgLeft: sharedState.get("mouseX"),
       selectedArgTop: sharedState.get("mouseY")
     })
+
+    console.log(directory[id].node)
   }
 
   addAttack() {
@@ -87,7 +89,7 @@ class App extends Component {
         }
         return false
       })) {
-        attacker = d
+        attacker = d.node
         break
       }
     }
@@ -334,10 +336,11 @@ Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   
   let node = argument[0]
 
-  store = createStore(10)
+  store = createStore(15)
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   
   window.web = web
+  window.store = store
   sharedState.set("web", web)
 
   directory[web._root._id] = { 

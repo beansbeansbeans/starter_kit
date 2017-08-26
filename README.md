@@ -19,6 +19,9 @@ I feel like right now I have it kind of backwards... I'm using Walton's formalis
 I think this is just going to be in the form of a JSON object, that I traverse and convert into a tree structure, much like I do in processArgument.js
 
 
+- Come up with a script that navigates through the fixed dataset that we'll have
+
+
 Critical questions vs other arguments:
 
 I don't think it's possible to collapse the notions of critical questions and other arguments. 
