@@ -28,11 +28,17 @@ const create = num => {
 
     directory[child.id] = child
 
-    randomParent.attackers.push({
-      critical_question_id: 
-        Math.floor(random.nextDouble() * schemeData[randomSchemeType].critical_questions.length),
-      node: child
-    })
+    if(random.nextDouble() < 0.75) {
+      randomParent.attackers.push({
+        critical_question_id: 
+          Math.floor(random.nextDouble() * schemeData[randomSchemeType].critical_questions.length),
+        node: child
+      })      
+    } else {
+      randomParent.defenders.push({
+        node: child
+      })
+    }
   }
 
   return {
@@ -40,10 +46,18 @@ const create = num => {
     find,
     getRandomAttacker: function(id) {
       let match = find(id)
-      if(!match) return false
+      if(!match || !match.attackers.length) return false
 
       let attackers = match.attackers
       return attackers[Math.floor(random.nextDouble() * attackers.length)].node
+    },
+
+    getRandomDefender: function(id) {
+      let match = find(id)
+      if(!match || !match.defenders.length) return false
+
+      let defenders = match.defenders
+      return defenders[Math.floor(random.nextDouble() * defenders.length)].node
     }
   }
 }

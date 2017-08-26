@@ -103,8 +103,18 @@ class App extends Component {
   addDefense() {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
+    let parentArgID = parentNode.extraData.argument
+    let defender = store.getRandomDefender(parentArgID)
 
-    let node = new Node('blerg', true, { user: true })
+    if(!defender) {
+      console.log("NO MATCHES")
+      return
+    }
+
+    let node = new Node('blerg', true, { 
+      user: true,
+      argument: defender.id
+    })
 
     web.add(node, parentNode.parent)
     directory[node._id] = { node, inWeb: true, byUser: true }
@@ -157,7 +167,7 @@ class App extends Component {
 
         web.add(newNode, web._root)
       } else {
-        let userArgs = [], computerArgs = []
+        let userArgs = [], computerArgs = [], parentNode
         for(let i=0; i<Object.keys(directory).length; i++) {
           let key = Object.keys(directory)[i], arg = directory[key]
 
@@ -177,7 +187,7 @@ class App extends Component {
         }
       
         if(random.nextDouble() < 0.75 && userArgs.length) {
-          let parentNode = directory[userArgs[Math.floor(random.nextDouble() * userArgs.length)]].node
+          parentNode = directory[userArgs[Math.floor(random.nextDouble() * userArgs.length)]].node
           let attacker = store.getRandomAttacker(parentNode.extraData.argument)
 
           if(!attacker) {
@@ -191,7 +201,17 @@ class App extends Component {
         } else {
           newNode.supports = true
 
-          web.add(newNode, directory[computerArgs[Math.floor(random.nextDouble() * computerArgs.length)]].node)
+          parentNode = directory[computerArgs[Math.floor(random.nextDouble() * computerArgs.length)]].node
+          let defender = store.getRandomDefender(parentNode.extraData.argument)
+
+          if(!defender) {
+            console.log("none found")
+            return
+          }
+
+          newNode.extraData.argument = defender.id
+
+          web.add(newNode, parentNode)
         }
       }
 

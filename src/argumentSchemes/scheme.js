@@ -30,7 +30,8 @@ for(scheme in schemes) {
       acc[curr] = Math.random().toFixed(3)
       return acc
     }, {}),
-    attackers: []
+    attackers: [],
+    defenders: []
   }
 
   schemeGenerators[scheme] = config => pipe(
