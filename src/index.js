@@ -73,7 +73,7 @@ class App extends Component {
     let parentNode = directory[parentID].node
     let parentArgID = parentNode.extraData.argument
     let parentArgNode = store.find(parentArgID)
-    let attacker = store.getRandomAttacker(parentArgID)
+    let attacker
     let shuffledIndices = []
 
     for(let i=0; i<parentArgNode.attackers.length; i++) shuffledIndices.push(i)
@@ -92,7 +92,7 @@ class App extends Component {
       }
     }
 
-    if(!attacker) {
+    if(typeof attacker === 'undefined') {
       console.log("NO MATCHES")
       return
     }
@@ -122,9 +122,27 @@ class App extends Component {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
     let parentArgID = parentNode.extraData.argument
-    let defender = store.getRandomDefender(parentArgID)
+    let parentArgNode = store.find(parentArgID)
+    let defender
+    let shuffledIndices = []
 
-    if(!defender) {
+    for(let i=0; i<parentArgNode.defenders.length; i++) shuffledIndices.push(i)
+    shuffledIndices = shuffle(shuffledIndices)
+
+    for(let i=0; i<parentArgNode.defenders.length; i++) {
+      let d = parentArgNode.defenders[shuffledIndices[i]]
+      if(!web.traverseDF(n => {
+        if(n && n.extraData.argument === d.id) {
+          return true
+        }
+        return false
+      })) {
+        defender = d
+        break
+      }
+    }
+
+    if(typeof defender === 'undefined') {
       console.log("NO MATCHES")
       return
     }
