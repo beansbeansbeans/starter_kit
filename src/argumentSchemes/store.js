@@ -33,17 +33,21 @@ function walk() {
       directory[node.parent][node.type].push({ node: child })
     }
 
-    node.attackers.forEach(d => {
-      d.parent = child.id
-      d.type = 'attackers'
-      newToSearch.push(d)
-    })
+    if(typeof node.attackers !== 'undefined') {
+      node.attackers.forEach(d => {
+        d.parent = child.id
+        d.type = 'attackers'
+        newToSearch.push(d)
+      })      
+    }
 
-    node.defenders.forEach(d => {
-      d.parent = child.id
-      d.type = 'defenders'
-      newToSearch.push(d)
-    })
+    if(typeof node.defenders !== 'undefined') {
+      node.defenders.forEach(d => {
+        d.parent = child.id
+        d.type = 'defenders'
+        newToSearch.push(d)
+      })      
+    }
   }
 
   toSearch = newToSearch
