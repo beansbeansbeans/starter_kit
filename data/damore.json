@@ -1,9 +1,40 @@
-[
-  {
+{
+  "catalogue": [
+    {
+      "id": 0,
+      "description": "Just because there are differences does not mean they are innate.",
+      "attackers": [
+        {
+          "data": "Nature and nurture are not alternatives - explanations for sex differences probably involve some of each. The only issue is whether the contribution of biology is 0, and there is lots of evidence that the contribution of biology is greater than 0.",
+          "defenders": [
+            {
+              "data": "There are many biological mechanisms by which a sex difference could occur (e.g. prenatal hormones)."
+            },
+            {
+              "data": "Sex differences are culturally consistent."
+            },
+            {
+              "data": "Sex differences are stable over time."
+            },
+            {
+              "data": "Sex differences are observed in other mammals."
+            },
+            {
+              "data": "Sex differences emerge in early childhood - even the first week of life."
+            },
+            {
+              "data": "Biological males raised as females exhibit boy-typical behavior patterns."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "tree": {
     "data": "Males and females are biologically indistinguishable - all relevant sex differences are products of socialization and bias.",
     "attackers": [
       {
-        "data": "blerg",
+        "data": "We must distinguish the moral claim (we should not discriminate against women) from the empirical claim (there is no difference between men and women).",
         "attackers": [
           {
             "data": "foo",
@@ -14,14 +45,93 @@
           }
         ],
         "defenders": []
+      },
+      {
+        "data": "Sex differences are obvious."
+      },
+      {
+        "data": "A departure from a 50-50 sex ratio in any profession does not, by itself, imply that we are seeing discrimination. Interests and aptitudes also play a role."
+      },
+      {
+        "data": "Men are much more variable, which means there are more men on the upper end of the distribution. That means even if on average the sexes are indistinguishable, we would still expect more men in exceptionally demanding careers, e.g. scientific academia."
       }
     ],
     "defenders": [
       {
-        "data": "blegity",
-        "attackers": [],
+        "data": "There is not a shred of evidence that differences exist.",
+        "attackers": [
+            {
+              "data": "It's impossible that shreds of evidence do not exist.",
+              "attackers": [
+                {
+                  "data": "In cases where there are differences, there are as many instances in which women do better than men as ones in which men do better than women. Men are better at throwing, but women are more dexterous. Men are better at mentally rotating shapes; women are better at visual memory. Men are better at mathematical problem-solving; women are better at mathematical calculation."
+                }
+              ]
+            },
+            {
+              "data": "It's been observed by psychologist Diane Halpern that differences do exist.",
+              "attackers": [
+                {
+                  "ref": 0
+                }
+              ]
+            },
+            {
+              "data": "There's evidence that on average, men pursue status at the expense of family, while women prioritize family.",
+              "attackers": [
+                {
+                  "ref": 0
+                }
+              ]
+            },
+            {
+              "data": "There's evidence that on average, men are more interested in things and abstract rule systems, while women are more interested in people. This difference causes people to gravitate towards different careers.",
+              "attackers": [
+                {
+                  "ref": 0
+                }
+              ]
+            },
+            {
+              "data": "There's evidence that men are more risk-taking, which also leads them to pursue different careers.",
+              "attackers": [
+                {
+                  "ref": 0
+                }
+              ]
+            },
+            {
+              "data": "There's evidence that men are better at 3-D mental transformations, and that this relates to scientific ability.",
+              "defenders": [
+                {
+                  "data": "In the memoirs of Faraday, Maxwell, Tesla, Kéekulé, and Lawrence, they claim to have hit upon their discoveries by dynamic visual imagery."
+                }
+              ],
+              "attackers": [
+                {
+                  "ref": 0
+                }
+              ]
+            },
+            {
+              "data": "There's evidence in SAT score differences that men are superior at mathematical reasoning.",
+              "attackers": [
+                {
+                  "ref": 0
+                },
+                {
+                  "data": "But women get better grades.",
+                  "attackers": [
+                    {
+                      "data": "But SAT is a better indicator of aptitude. Women's better grades is explained by conscientiousness and choice of major."
+                    }
+                  ]
+                }
+              ]
+            }
+        ],
         "defenders": []
       }
     ]
   }
-]
+}
