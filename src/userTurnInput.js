@@ -3,7 +3,7 @@ import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 
 export default class UserTurnInput extends Component {
-  render({ addAttack, concede, exit, submitPosition, lastMove }) {
+  render({ addAttack, concede, exit, submitPosition, lastMove, data }) {
 
     let controls = []
 
@@ -18,7 +18,7 @@ export default class UserTurnInput extends Component {
 
     return (
       <div id="user-turn-input">
-        <div>[insert text of argument here]</div>
+        <div>{data}</div>
         {controls}
       </div>
     )

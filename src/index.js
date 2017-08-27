@@ -292,7 +292,13 @@ class App extends Component {
     let userTurnDOM = null, argumentControlsDOM = null
 
     if(showUserDialogue) {
+      let argText = ''
+      if(lastMove) {
+        argText = store.find(directory[lastMove].node.extraData.argument).description
+      }
+
       userTurnDOM = <UserTurnInput
+        data={argText}
         lastMove={lastMove}
         addAttack={this.addAttack}
         concede={this.concede}
