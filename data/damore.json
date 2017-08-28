@@ -8,7 +8,26 @@
           "data": "Nature and nurture are not alternatives - explanations for sex differences probably involve some of each. The only issue is whether the contribution of biology is 0, and there is lots of evidence that the contribution of biology is greater than 0.",
           "defenders": [
             {
-              "data": "There are many biological mechanisms by which a sex difference could occur (e.g. prenatal hormones)."
+              "data": "There are many biological mechanisms by which a sex difference could occur.",
+              "attackers": [
+                {
+                  "data": "Data is inconclusive."
+                }
+              ],
+              "defenders": [
+                {
+                  "data": "In the condition called congenital adrenal hyperplasia, girls in utero are subjected to an increased dose of androgens, which is neutralized postnatally. But when they grow up they have male-typical toy preferences — trucks and guns — compared to other girls, male-typical play patterns, more competitiveness, less cooperativeness, and male-typical occupational preferences."
+                },
+                {
+                  "data": "fetal testosterone has a nonmonotic relationship to reduced eye contact and face perception at 12 months, to reduced vocabulary at 18 months, to reduced social skills and greater narrowness of interest at 48 months, and to enhanced mental rotation abilities in the school-age years"
+                },
+                {
+                  "data": "There are studies showing that testosterone levels in the low-normal male range are associated with better abilities in spatial manipulation. And there is evidence for statistical changes in the strengths and weaknesses in women's cognition during the menstrual cycle."
+                },
+                {
+                  "data": "In the phenomenon called genetic imprinting the X chromosome can be altered depending on whether it was passed on from one's mother or from one's father. This makes a difference in the condition called Turner syndrome, in which a child has just one X chromosome, but can get it either from her mother or her father. When she inherits an X that is specific to girls, on average she has a better vocabulary and better social skills, and is better at reading emotions, at reading body language, and at reading faces."
+                }
+              ]
             },
             {
               "data": "Sex differences are culturally consistent."
@@ -24,6 +43,9 @@
             },
             {
               "data": "Biological males raised as females exhibit boy-typical behavior patterns."
+            },
+            {
+              "data": "Parents do not treat their children differently based on sex."
             }
           ]
         }
@@ -34,20 +56,25 @@
     "data": "Males and females are biologically indistinguishable - all relevant sex differences are products of socialization and bias.",
     "attackers": [
       {
-        "data": "We must distinguish the moral claim (we should not discriminate against women) from the empirical claim (there is no difference between men and women).",
-        "attackers": [
-          {
-            "data": "foo",
-            "attackers": [
-              { "data": "lol" }
-            ],
-            "defenders": []
-          }
-        ],
-        "defenders": []
+        "data": "We must distinguish the moral claim (we should not discriminate against women) from the empirical claim (there is no difference between men and women)."
       },
       {
-        "data": "Sex differences are obvious."
+        "data": "Sex differences are obvious.",
+        "attackers": [
+          {
+            "data": "Those are stereotypes.",
+            "attackers": [
+              {
+                "data": "Stereotypes could reflect reality.",
+                "defenders": [
+                  {
+                    "data": "People can be good intuitive statisticians when forming categories and that their prototypes for conceptual categories track the statistics of the natural world pretty well."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "data": "A departure from a 50-50 sex ratio in any profession does not, by itself, imply that we are seeing discrimination. Interests and aptitudes also play a role."
@@ -131,6 +158,14 @@
             }
         ],
         "defenders": []
+      },
+      {
+        "data": "Teachers perpetuate gender inequities by failing to call on girls in class.",
+        "attackers": [
+          {
+            "data": "This is a myth."
+          }
+        ]
       }
     ]
   }
