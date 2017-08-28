@@ -18,7 +18,7 @@ export default class UserTurnInput extends Component {
 
     return (
       <div id="user-turn-input">
-        <div>{data}</div>
+        <div>{`computer says: ${data}`}</div>
         {controls}
       </div>
     )

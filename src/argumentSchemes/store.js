@@ -25,8 +25,9 @@ function walk() {
         description: node.data ? node.data : catalogue[node.ref].description
       })
 
-      child.attackers = []
-      child.defenders = []
+    // TODO: figure out wtf
+    child.attackers = []
+    child.defenders = []
 
     if(typeof node.ref !== 'undefined') {
       let ref = catalogue[node.ref]
@@ -80,7 +81,7 @@ const create = (data, num) => {
 
       child = schemeGenerators[randomSchemeType]({ 
         id: uuid.v4(),
-        description: 'lol'
+        description: random.nextDouble().toFixed(4)
       })
 
     directory[child.id] = child

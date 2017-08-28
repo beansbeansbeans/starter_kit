@@ -279,45 +279,54 @@ class App extends Component {
       }
 
       renderer.update(web)
-      this.setState({ lastMove: newNode._id })
       renderer.activateNode(newNode._id)
 
       setTimeout(() => {
-        this.setState({ showUserDialogue: true, userTurn: true, computerTurn: false })
+        this.setState({ 
+          lastMove: newNode._id,
+          showUserDialogue: true, 
+          userTurn: true, 
+          computerTurn: false })
       }, 1000)
     }
   }
 
   render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop }) {
-    let userTurnDOM = null, argumentControlsDOM = null
+    let turnDOM = null, argumentControlsDOM = null
 
-    if(showUserDialogue) {
-      let argText = ''
+    if(computerTurn || !showUserDialogue) {
       if(lastMove) {
-        argText = store.find(directory[lastMove].node.extraData.argument).description
+        turnDOM = <div style="position:fixed;top:2rem;left:2rem;">{`user says: ${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
       }
+    } else {
+      if(showUserDialogue) {
+        let argText = ''
+        if(lastMove) {
+          argText = store.find(directory[lastMove].node.extraData.argument).description
+        }
 
-      userTurnDOM = <UserTurnInput
-        data={argText}
-        lastMove={lastMove}
-        addAttack={this.addAttack}
-        concede={this.concede}
-        submitPosition={this.submitPosition}
-        exit={() => this.setState({ showUserDialogue: false })} />
-    } else if(selectedArg) {
-      argumentControlsDOM = <ArgumentControls
-        supportive={!!directory[selectedArg].byUser}
-        left={selectedArgLeft}
-        top={selectedArgTop}
-        addDefense={this.addDefense}
-        addAttack={this.addAttack}
-        concede={this.concede} />
+        turnDOM = <UserTurnInput
+          data={argText}
+          lastMove={lastMove}
+          addAttack={this.addAttack}
+          concede={this.concede}
+          submitPosition={this.submitPosition}
+          exit={() => this.setState({ showUserDialogue: false })} />
+      } else if(selectedArg) {
+        argumentControlsDOM = <ArgumentControls
+          supportive={!!directory[selectedArg].byUser}
+          left={selectedArgLeft}
+          top={selectedArgTop}
+          addDefense={this.addDefense}
+          addAttack={this.addAttack}
+          concede={this.concede} />
+      }
     }
 
     return (
       <app>
         <div id="webgl-wrapper"></div>
-        {userTurnDOM}
+        {turnDOM}
         {argumentControlsDOM}
         <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
       </app>
