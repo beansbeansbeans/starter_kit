@@ -1,6 +1,7 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
 import sharedState from './sharedState'
+import ChildSelector from './components/childSelector'
 
 export default class UserTurnInput extends Component {
   render({ attackers, addAttack, concede, exit, submitPosition, lastMove, data }) {
@@ -14,7 +15,9 @@ export default class UserTurnInput extends Component {
     } else {
       argText = `computer says: ${data}`
       if(attackers.length) {
-        controls.push(<button onClick={addAttack}>attack</button>)
+        controls.push(<ChildSelector 
+          options={attackers}
+          select={addAttack} />)
       }
 
       if(concede) {

@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
-import AttackSelector from './attackSelector'
+import ChildSelector from './childSelector'
 
 export default class ArgumentControls extends Component {
   render({ supportive, left, top, attackers, defenders, addDefense, addAttack, concede, text }) {
@@ -8,13 +8,17 @@ export default class ArgumentControls extends Component {
 
     if(supportive) {
       if(defenders.length) {
-        controls.push(<button onClick={addDefense}>defend</button>)
+        controls.push(<ChildSelector 
+          options={defenders}
+          select={addDefense} />)
       } else {
         controls.push(<div>No options available</div>)
       }
     } else {
       if(attackers.length) {
-        controls.push(<button onClick={addAttack}>attack</button>)
+        controls.push(<ChildSelector 
+          options={attackers}
+          select={addAttack} />)
       }
 
       if(concede) {

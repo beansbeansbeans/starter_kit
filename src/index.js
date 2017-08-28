@@ -113,17 +113,12 @@ class App extends Component {
     })
   }
 
-  addChild(type) {
+  addChild(type, id) {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
-    let children = getUnusedChildren(parentID, type)
 
-    if(!children.length) {
-      console.log("NO MATCHES")
-      return      
-    }
+    let child = store.find(id)
 
-    let child = children[Math.floor(random.nextDouble() * children.length)]
     let node = new Node("blerg", false, { 
       user: true,
       argument: child.id
@@ -145,12 +140,12 @@ class App extends Component {
     }, 1000)
   }
 
-  addAttack() {
-    this.addChild('attackers')
+  addAttack(id) {
+    this.addChild('attackers', id)
   }
 
-  addDefense() {
-    this.addChild('defenders')
+  addDefense(id) {
+    this.addChild('defenders', id)
   }
 
   concede() {
