@@ -3,7 +3,7 @@ import helpers from './helpers/helpers'
 const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle } = helpers
 import "../main.scss"
 import { getData, getShader } from './api'
-import { debounce } from 'underscore'
+import { debounce, defer } from 'underscore'
 import sharedState from './sharedState'
 import renderer from './GPURenderer'
 import Node from './CSP/treeNode'
@@ -281,13 +281,13 @@ class App extends Component {
       renderer.update(web)
       renderer.activateNode(newNode._id)
 
-      setTimeout(() => {
+      defer(() => {
         this.setState({ 
           lastMove: newNode._id,
           showUserDialogue: true, 
           userTurn: true, 
           computerTurn: false })
-      }, 1000)
+      })
     }
   }
 
