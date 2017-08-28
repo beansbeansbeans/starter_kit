@@ -6,9 +6,13 @@ export default class ArgumentControls extends Component {
     let controls = []
 
     if(supportive) {
-      controls.push(<button onClick={addDefense}>defend</button>)
+      if(addDefense) {
+        controls.push(<button onClick={addDefense}>defend</button>)
+      }
     } else {
-      controls.push(<button onClick={addAttack}>attack</button>)
+      if(addAttack) {
+        controls.push(<button onClick={addAttack}>attack</button>)
+      }
       controls.push(<button onClick={concede}>concede</button>)
     }
 

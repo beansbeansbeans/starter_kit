@@ -39,6 +39,8 @@ const matchingArgument = id => n => {
 }
 
 const getUnusedChild = (parentID, type) => {
+  if(parentID === null) return
+    
   let parentNode = directory[parentID].node
   let parentArgID = parentNode.extraData.argument
   let parentArgNode = store.find(parentArgID)
@@ -114,8 +116,6 @@ class App extends Component {
       selectedArgLeft: sharedState.get("mouseX"),
       selectedArgTop: sharedState.get("mouseY")
     })
-
-    console.log(store.find(directory[id].node.extraData.argument).description)
   }
 
   addChild(type) {
@@ -268,8 +268,8 @@ class App extends Component {
         supportive={!!directory[selectedArg].byUser}
         left={selectedArgLeft}
         top={selectedArgTop}
-        addDefense={this.addDefense}
-        addAttack={this.addAttack}
+        addDefense={getUnusedChild(selectedArg || lastMove, 'defenders') ? this.addDefense : false}
+        addAttack={getUnusedChild(selectedArg || lastMove, 'attackers') ? this.addAttack : false}
         concede={this.concede} />
     } else {
       if(computerTurn || !showUserDialogue) {
@@ -286,7 +286,7 @@ class App extends Component {
           turnDOM = <UserTurnInput
             data={argText}
             lastMove={lastMove}
-            addAttack={this.addAttack}
+            addAttack={getUnusedChild(selectedArg || lastMove, 'attackers') ? this.addAttack : false}
             concede={this.concede}
             submitPosition={this.submitPosition}
             exit={() => this.setState({ showUserDialogue: false })} />

@@ -13,7 +13,10 @@ export default class UserTurnInput extends Component {
       controls.push(<button onClick={() => submitPosition(false)}>disagree</button>)
     } else {
       argText = `computer says: ${data}`
-      controls.push(<button onClick={addAttack}>attack</button>)
+      if(addAttack) {
+        controls.push(<button onClick={addAttack}>attack</button>)
+      }
+      
       controls.push(<button onClick={concede}>concede</button>)
       controls.push(<button onClick={exit}>exit</button>)
     }
