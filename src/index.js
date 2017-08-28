@@ -294,32 +294,34 @@ class App extends Component {
   render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop }) {
     let turnDOM = null, argumentControlsDOM = null
 
-    if(computerTurn || !showUserDialogue) {
-      if(lastMove && lastMove !== sharedState.get("web")._root._id) {
-        turnDOM = <div style="position:fixed;top:2rem;left:2rem;">{`user says: ${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
-      }
+    if(selectedArg) {
+      argumentControlsDOM = <ArgumentControls
+        supportive={!!directory[selectedArg].byUser}
+        left={selectedArgLeft}
+        top={selectedArgTop}
+        addDefense={this.addDefense}
+        addAttack={this.addAttack}
+        concede={this.concede} />
     } else {
-      if(showUserDialogue) {
-        let argText = ''
-        if(lastMove) {
-          argText = store.find(directory[lastMove].node.extraData.argument).description
+      if(computerTurn || !showUserDialogue) {
+        if(lastMove && lastMove !== sharedState.get("web")._root._id) {
+          turnDOM = <div style="position:fixed;top:2rem;left:2rem;">{`user says: ${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
         }
+      } else {
+        if(showUserDialogue) {
+          let argText = ''
+          if(lastMove) {
+            argText = store.find(directory[lastMove].node.extraData.argument).description
+          }
 
-        turnDOM = <UserTurnInput
-          data={argText}
-          lastMove={lastMove}
-          addAttack={this.addAttack}
-          concede={this.concede}
-          submitPosition={this.submitPosition}
-          exit={() => this.setState({ showUserDialogue: false })} />
-      } else if(selectedArg) {
-        argumentControlsDOM = <ArgumentControls
-          supportive={!!directory[selectedArg].byUser}
-          left={selectedArgLeft}
-          top={selectedArgTop}
-          addDefense={this.addDefense}
-          addAttack={this.addAttack}
-          concede={this.concede} />
+          turnDOM = <UserTurnInput
+            data={argText}
+            lastMove={lastMove}
+            addAttack={this.addAttack}
+            concede={this.concede}
+            submitPosition={this.submitPosition}
+            exit={() => this.setState({ showUserDialogue: false })} />
+        }
       }
     }
 
