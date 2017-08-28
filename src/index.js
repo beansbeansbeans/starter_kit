@@ -295,7 +295,7 @@ class App extends Component {
     let turnDOM = null, argumentControlsDOM = null
 
     if(computerTurn || !showUserDialogue) {
-      if(lastMove) {
+      if(lastMove && lastMove !== sharedState.get("web")._root._id) {
         turnDOM = <div style="position:fixed;top:2rem;left:2rem;">{`user says: ${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
       }
     } else {
