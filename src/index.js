@@ -91,7 +91,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['addAttack', 'addChild', 'concede', 'addDefense', 'submitPosition', 'selectedArg'])
+    bindAll(this, ['addChild', 'concede', 'submitPosition', 'selectedArg'])
   }
 
   componentDidMount() {
@@ -113,7 +113,7 @@ class App extends Component {
     })
   }
 
-  addChild(type, id) {
+  addChild(id) {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
 
@@ -138,14 +138,6 @@ class App extends Component {
     setTimeout(() => {
       this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
     }, 1000)
-  }
-
-  addAttack(id) {
-    this.addChild('attackers', id)
-  }
-
-  addDefense(id) {
-    this.addChild('defenders', id)
   }
 
   concede() {
@@ -263,8 +255,7 @@ class App extends Component {
         top={selectedArgTop}
         attackers={getUnusedChildren(selectedArg, 'attackers')}
         defenders={getUnusedChildren(selectedArg, 'defenders')}
-        addDefense={this.addDefense}
-        addAttack={this.addAttack}
+        addChild={this.addChild}
         concede={directory[selectedArg].conceded ? false : this.concede} />
     } else if(lastMove) {
       if(computerTurn || !showUserDialogue) {
@@ -282,7 +273,7 @@ class App extends Component {
             data={argText}
             lastMove={lastMove}
             attackers={getUnusedChildren(lastMove, 'attackers')}
-            addAttack={this.addAttack}
+            addChild={this.addChild}
             concede={directory[lastMove].conceded ? false : this.concede}
             submitPosition={this.submitPosition}
             exit={() => this.setState({ showUserDialogue: false })} />

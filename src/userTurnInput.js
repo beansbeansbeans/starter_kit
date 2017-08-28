@@ -4,7 +4,7 @@ import sharedState from './sharedState'
 import ChildSelector from './components/childSelector'
 
 export default class UserTurnInput extends Component {
-  render({ attackers, addAttack, concede, exit, submitPosition, lastMove, data }) {
+  render({ attackers, addChild, concede, exit, submitPosition, lastMove, data }) {
 
     let controls = [], argText
 
@@ -17,7 +17,7 @@ export default class UserTurnInput extends Component {
       if(attackers.length) {
         controls.push(<ChildSelector 
           options={attackers}
-          select={addAttack} />)
+          select={addChild} />)
       }
 
       if(concede) {

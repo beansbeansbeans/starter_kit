@@ -3,14 +3,14 @@ import helpers from '../helpers/helpers'
 import ChildSelector from './childSelector'
 
 export default class ArgumentControls extends Component {
-  render({ supportive, left, top, attackers, defenders, addDefense, addAttack, concede, text }) {
+  render({ supportive, left, top, attackers, defenders, addChild, concede, text }) {
     let controls = []
 
     if(supportive) {
       if(defenders.length) {
         controls.push(<ChildSelector 
           options={defenders}
-          select={addDefense} />)
+          select={addChild} />)
       } else {
         controls.push(<div>No options available</div>)
       }
@@ -18,7 +18,7 @@ export default class ArgumentControls extends Component {
       if(attackers.length) {
         controls.push(<ChildSelector 
           options={attackers}
-          select={addAttack} />)
+          select={addChild} />)
       }
 
       if(concede) {
