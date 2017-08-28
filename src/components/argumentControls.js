@@ -8,6 +8,8 @@ export default class ArgumentControls extends Component {
     if(supportive) {
       if(addDefense) {
         controls.push(<button onClick={addDefense}>defend</button>)
+      } else {
+        controls.push(<div>No options available</div>)
       }
     } else {
       if(addAttack) {
@@ -16,6 +18,10 @@ export default class ArgumentControls extends Component {
 
       if(concede) {
         controls.push(<button onClick={concede}>concede</button>)
+      }
+
+      if(!controls.length) {
+        controls.push(<div>No options available</div>)
       }
     }
 

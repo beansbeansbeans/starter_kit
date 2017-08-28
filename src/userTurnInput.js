@@ -20,6 +20,11 @@ export default class UserTurnInput extends Component {
       if(concede) {
         controls.push(<button onClick={concede}>concede</button>)
       }
+
+      if(!addAttack && !concede) {
+        controls.push(<div>No options available</div>)
+      }
+      
       controls.push(<button onClick={exit}>exit</button>)
     }
 
