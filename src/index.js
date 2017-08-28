@@ -34,10 +34,29 @@ const shaders = {},
   }
 
 const matchingArgument = id => n => {
-  if(n && n.extraData.argument === id) {
-    return true
-  }
+  if(n && n.extraData.argument === id) return true
   return false
+}
+
+const getUnusedChild = (parentID, type) => {
+  let parentNode = directory[parentID].node
+  let parentArgID = parentNode.extraData.argument
+  let parentArgNode = store.find(parentArgID)
+  let child
+  let shuffledIndices = []
+
+  for(let i=0; i<parentArgNode[type].length; i++) shuffledIndices.push(i)
+  shuffledIndices = shuffle(shuffledIndices)
+
+  for(let i=0; i<parentArgNode[type].length; i++) {
+    let d = parentArgNode[type][shuffledIndices[i]]
+    if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
+      child = d.node
+      break
+    }
+  }
+
+  return child
 }
 
 const getRandomChild = (attack, optionIDs) => {
@@ -102,21 +121,7 @@ class App extends Component {
   addAttack() {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
-    let parentArgID = parentNode.extraData.argument
-    let parentArgNode = store.find(parentArgID)
-    let attacker
-    let shuffledIndices = []
-
-    for(let i=0; i<parentArgNode.attackers.length; i++) shuffledIndices.push(i)
-    shuffledIndices = shuffle(shuffledIndices)
-
-    for(let i=0; i<parentArgNode.attackers.length; i++) {
-      let d = parentArgNode.attackers[shuffledIndices[i]]
-      if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
-        attacker = d.node
-        break
-      }
-    }
+    let attacker = getUnusedChild(parentID, 'attackers')
 
     if(typeof attacker === 'undefined') {
       console.log("NO MATCHES")
@@ -147,21 +152,7 @@ class App extends Component {
   addDefense() {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
-    let parentArgID = parentNode.extraData.argument
-    let parentArgNode = store.find(parentArgID)
-    let defender
-    let shuffledIndices = []
-
-    for(let i=0; i<parentArgNode.defenders.length; i++) shuffledIndices.push(i)
-    shuffledIndices = shuffle(shuffledIndices)
-
-    for(let i=0; i<parentArgNode.defenders.length; i++) {
-      let d = parentArgNode.defenders[shuffledIndices[i]]
-      if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
-        defender = d
-        break
-      }
-    }
+    let defender = getUnusedChild(parentID, 'defenders')
 
     if(typeof defender === 'undefined') {
       console.log("NO MATCHES")
