@@ -38,27 +38,22 @@ const matchingArgument = id => n => {
   return false
 }
 
-const getUnusedChild = (parentID, type) => {
+const getUnusedChildren = (parentID, type) => {
   if(parentID === null) return
     
   let parentNode = directory[parentID].node
   let parentArgID = parentNode.extraData.argument
   let parentArgNode = store.find(parentArgID)
-  let child
-  let shuffledIndices = []
-
-  for(let i=0; i<parentArgNode[type].length; i++) shuffledIndices.push(i)
-  shuffledIndices = shuffle(shuffledIndices)
+  let children = []
 
   for(let i=0; i<parentArgNode[type].length; i++) {
-    let d = parentArgNode[type][shuffledIndices[i]]
+    let d = parentArgNode[type][i]
     if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
-      child = d.node
-      break
+      children.push(d.node)
     }
   }
 
-  return child
+  return children
 }
 
 const getRandomChild = (attack, optionIDs) => {
@@ -121,13 +116,14 @@ class App extends Component {
   addChild(type) {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
-    let child = getUnusedChild(parentID, type)
+    let children = getUnusedChildren(parentID, type)
 
-    if(typeof child === 'undefined') {
+    if(!children.length) {
       console.log("NO MATCHES")
-      return
+      return      
     }
 
+    let child = children[Math.floor(random.nextDouble() * children.length)]
     let node = new Node("blerg", false, { 
       user: true,
       argument: child.id
@@ -270,8 +266,10 @@ class App extends Component {
         supportive={!!directory[selectedArg].byUser}
         left={selectedArgLeft}
         top={selectedArgTop}
-        addDefense={getUnusedChild(selectedArg, 'defenders') ? this.addDefense : false}
-        addAttack={getUnusedChild(selectedArg, 'attackers') ? this.addAttack : false}
+        attackers={getUnusedChildren(selectedArg, 'attackers')}
+        defenders={getUnusedChildren(selectedArg, 'defenders')}
+        addDefense={this.addDefense}
+        addAttack={this.addAttack}
         concede={directory[selectedArg].conceded ? false : this.concede} />
     } else if(lastMove) {
       if(computerTurn || !showUserDialogue) {
@@ -288,7 +286,8 @@ class App extends Component {
           turnDOM = <UserTurnInput
             data={argText}
             lastMove={lastMove}
-            addAttack={getUnusedChild(lastMove, 'attackers') ? this.addAttack : false}
+            attackers={getUnusedChildren(lastMove, 'attackers')}
+            addAttack={this.addAttack}
             concede={directory[lastMove].conceded ? false : this.concede}
             submitPosition={this.submitPosition}
             exit={() => this.setState({ showUserDialogue: false })} />

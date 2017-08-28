@@ -3,7 +3,7 @@ import helpers from './helpers/helpers'
 import sharedState from './sharedState'
 
 export default class UserTurnInput extends Component {
-  render({ addAttack, concede, exit, submitPosition, lastMove, data }) {
+  render({ attackers, addAttack, concede, exit, submitPosition, lastMove, data }) {
 
     let controls = [], argText
 
@@ -13,7 +13,7 @@ export default class UserTurnInput extends Component {
       controls.push(<button onClick={() => submitPosition(false)}>disagree</button>)
     } else {
       argText = `computer says: ${data}`
-      if(addAttack) {
+      if(attackers.length) {
         controls.push(<button onClick={addAttack}>attack</button>)
       }
 
@@ -21,10 +21,10 @@ export default class UserTurnInput extends Component {
         controls.push(<button onClick={concede}>concede</button>)
       }
 
-      if(!addAttack && !concede) {
+      if(!attackers.length && !concede) {
         controls.push(<div>No options available</div>)
       }
-      
+
       controls.push(<button onClick={exit}>exit</button>)
     }
 
