@@ -3,7 +3,7 @@ const random = randomModule.random(42)
 import schemeGenerators from './scheme'
 import schemeData from './config'
 
-let root,
+let root, catalogue,
   directory = {}, toSearch = []
   schemes = Object.keys(schemeGenerators)
 
@@ -22,8 +22,18 @@ function walk() {
 
       child = schemeGenerators[randomSchemeType]({
         id: uuid.v4(),
-        description: node.data
+        description: node.data ? node.data : catalogue[node.ref].description
       })
+
+      child.attackers = []
+      child.defenders = []
+
+    if(typeof node.ref !== 'undefined') {
+      let ref = catalogue[node.ref]
+      node.defenders = ref.defenders
+      node.attackers = ref.attackers
+      node.description = ref.description
+    }
 
     directory[child.id] = child
 
@@ -56,7 +66,9 @@ function walk() {
 }
 
 const create = (data, num) => {
-  toSearch.push(data[0])
+  catalogue = data.catalogue
+
+  toSearch.push(data.tree)
 
   walk()
 

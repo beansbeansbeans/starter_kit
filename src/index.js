@@ -326,7 +326,7 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  let node = argument[0]
+  let node = argument[0].tree
 
   store = createStore(argument[0], 30)
 
