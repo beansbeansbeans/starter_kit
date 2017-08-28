@@ -296,6 +296,7 @@ class App extends Component {
 
     if(selectedArg) {
       argumentControlsDOM = <ArgumentControls
+        text={store.find(directory[selectedArg].node.extraData.argument).description}
         supportive={!!directory[selectedArg].byUser}
         left={selectedArgLeft}
         top={selectedArgTop}

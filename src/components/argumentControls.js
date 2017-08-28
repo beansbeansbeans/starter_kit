@@ -2,7 +2,7 @@ import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 
 export default class ArgumentControls extends Component {
-  render({ supportive, left, top, addDefense, addAttack, concede }) {
+  render({ supportive, left, top, addDefense, addAttack, concede, text }) {
     let controls = []
 
     if(supportive) {
@@ -13,7 +13,10 @@ export default class ArgumentControls extends Component {
     }
 
     return (
-      <div style={`left: ${left}px; top: ${top}px`} id="argument-controls">{controls}</div>
+      <div style={`left: ${left}px; top: ${top}px`} id="argument-controls">
+        <div class="text">{text}</div>
+        <div>{controls}</div>
+      </div>
     )
   }
 }
