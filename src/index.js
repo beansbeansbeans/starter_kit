@@ -161,6 +161,8 @@ class App extends Component {
     let id = this.state.selectedArg || this.state.lastMove
     renderer.extrudeNode(web, [directory[id].node])
 
+    directory[id].conceded = true
+
     this.setState({ showUserDialogue: false })
 
     setTimeout(() => {
@@ -268,12 +270,12 @@ class App extends Component {
         supportive={!!directory[selectedArg].byUser}
         left={selectedArgLeft}
         top={selectedArgTop}
-        addDefense={getUnusedChild(selectedArg || lastMove, 'defenders') ? this.addDefense : false}
-        addAttack={getUnusedChild(selectedArg || lastMove, 'attackers') ? this.addAttack : false}
-        concede={this.concede} />
-    } else {
+        addDefense={getUnusedChild(selectedArg, 'defenders') ? this.addDefense : false}
+        addAttack={getUnusedChild(selectedArg, 'attackers') ? this.addAttack : false}
+        concede={directory[selectedArg].conceded ? false : this.concede} />
+    } else if(lastMove) {
       if(computerTurn || !showUserDialogue) {
-        if(lastMove && lastMove !== sharedState.get("web")._root._id) {
+        if(lastMove !== sharedState.get("web")._root._id) {
           turnDOM = <div style="position:fixed;top:2rem;left:2rem;">{`user says: ${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
         }
       } else {
@@ -286,8 +288,8 @@ class App extends Component {
           turnDOM = <UserTurnInput
             data={argText}
             lastMove={lastMove}
-            addAttack={getUnusedChild(selectedArg || lastMove, 'attackers') ? this.addAttack : false}
-            concede={this.concede}
+            addAttack={getUnusedChild(lastMove, 'attackers') ? this.addAttack : false}
+            concede={directory[lastMove].conceded ? false : this.concede}
             submitPosition={this.submitPosition}
             exit={() => this.setState({ showUserDialogue: false })} />
         }

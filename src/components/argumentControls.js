@@ -13,7 +13,10 @@ export default class ArgumentControls extends Component {
       if(addAttack) {
         controls.push(<button onClick={addAttack}>attack</button>)
       }
-      controls.push(<button onClick={concede}>concede</button>)
+
+      if(concede) {
+        controls.push(<button onClick={concede}>concede</button>)
+      }
     }
 
     return (
