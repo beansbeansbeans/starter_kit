@@ -94,7 +94,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['addAttack', 'concede', 'addDefense', 'submitPosition', 'selectedArg'])
+    bindAll(this, ['addAttack', 'addChild', 'concede', 'addDefense', 'submitPosition', 'selectedArg'])
   }
 
   componentDidMount() {
@@ -118,19 +118,19 @@ class App extends Component {
     console.log(store.find(directory[id].node.extraData.argument).description)
   }
 
-  addAttack() {
+  addChild(type) {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
-    let attacker = getUnusedChild(parentID, 'attackers')
+    let child = getUnusedChild(parentID, type)
 
-    if(typeof attacker === 'undefined') {
+    if(typeof child === 'undefined') {
       console.log("NO MATCHES")
       return
     }
 
     let node = new Node("blerg", false, { 
       user: true,
-      argument: attacker.id
+      argument: child.id
     })
 
     web.add(node, parentNode)
@@ -149,35 +149,12 @@ class App extends Component {
     }, 1000)
   }
 
+  addAttack() {
+    this.addChild('attackers')
+  }
+
   addDefense() {
-    let parentID = this.state.selectedArg || this.state.lastMove
-    let parentNode = directory[parentID].node
-    let defender = getUnusedChild(parentID, 'defenders')
-
-    if(typeof defender === 'undefined') {
-      console.log("NO MATCHES")
-      return
-    }
-
-    let node = new Node('blerg', true, { 
-      user: true,
-      argument: defender.id
-    })
-
-    web.add(node, parentNode.parent)
-    directory[node._id] = { node, inWeb: true, byUser: true }
-
-    renderer.update(web)
-
-    this.setState({ 
-      lastMove: node._id,
-      showUserDialogue: false })
-
-    renderer.deactivateNode()
-
-    setTimeout(() => {
-      this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
-    }, 1000)
+    this.addChild('defenders')
   }
 
   concede() {
