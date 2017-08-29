@@ -96,26 +96,15 @@ export default class AsyncTree extends Tree {
     const isWarranted = node => {
       if(!node.children.length) return true
 
-      // trying to find a warranted attacker
-      const warrantedAttacker = this.traverseDF(n => {
-        console.log("traversing")
-        console.log(n)
-        if(n._id === node._id) return false
+      const warrantedAttacker = this.traverseChildren(n => {
         if(n.supports) return false
 
-        if(n && (!n.children.length || isWarranted(n))) {
-          return true
-        }
+        if(n && (!n.children.length || isWarranted(n))) return true
+
         return false
-      }, node, true)
+      }, node)
 
-      console.log("LOL")
-      console.log(warrantedAttacker)
-
-      if(warrantedAttacker) {
-        return false
-      }
-
+      if(warrantedAttacker) return false
       return true
     }
 

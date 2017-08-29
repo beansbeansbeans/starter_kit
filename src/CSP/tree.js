@@ -25,6 +25,18 @@ export default class Tree {
     return apply(seed)    
   }
 
+  traverseChildren(matchFn, seed) {
+    let match
+    for(let i=0; i<seed.children.length; i++) {
+      if(matchFn(seed.children[i])) {
+        match = seed.children[i]
+        break
+      }
+    }
+
+    return match
+  }
+
   traverseDF(matchFn, seed, find = false) {
     if(typeof seed === 'undefined') seed = this._root
 
