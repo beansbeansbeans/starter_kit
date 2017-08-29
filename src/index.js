@@ -180,10 +180,12 @@ class App extends Component {
       }
 
       if(!result.done) {
-        renderer.extrudeNode(web, [{
-          node: result.value,
-          value: true
-        }])
+        if(typeof result.value._id !== 'undefined') {
+          renderer.extrudeNode(web, [{
+            node: result.value,
+            value: true
+          }])          
+        }
 
         setTimeout(solveIterator, 500)
       } else {

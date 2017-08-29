@@ -116,10 +116,8 @@ export default class AsyncTree extends Tree {
     }
 
     if(yield * isWarranted(this._root)) {
-      console.log("root warranted")
       yield true
     } else {
-      console.log("root defeated")
       yield false
     }
   }
