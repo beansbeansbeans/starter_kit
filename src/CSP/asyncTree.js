@@ -100,6 +100,7 @@ export default class AsyncTree extends Tree {
 
       for(let i=0; i<node.children.length; i++) {
         let child = node.children[i]
+        yield child
 
         if(!child.supports) {
           let result = yield * isWarranted(child)
@@ -111,7 +112,7 @@ export default class AsyncTree extends Tree {
         }
       }
 
-      yield isUndefeated
+      return isUndefeated
     }
 
     if(yield * isWarranted(this._root)) {
