@@ -142,7 +142,10 @@ class App extends Component {
 
   concede() {
     let id = this.state.selectedArg || this.state.lastMove
-    renderer.extrudeNode(web, [directory[id].node])
+    renderer.extrudeNode(web, [{
+      node: directory[id].node,
+      value: true
+    }])
 
     directory[id].conceded = true
 
@@ -167,10 +170,13 @@ class App extends Component {
 
   score() {
     const solveIterator = wrapIterator(web.resolveAsync(), function(result) {
-      console.log("iterate solver", result)
-
       if(!result.done) {
-        setTimeout(solveIterator, 1000)
+        renderer.extrudeNode(web, [{
+          node: result.value,
+          value: true
+        }])
+
+        setTimeout(solveIterator, 500)
       }
     })
 
@@ -311,7 +317,7 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   let node = argument[0].tree
 
-  store = createStore(argument[0], 25)
+  store = createStore(argument[0], 50)
 
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   

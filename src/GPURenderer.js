@@ -362,18 +362,53 @@ export default {
     let activePosition = {}, previousActivePosition = {}
 
     for(let i=0; i<arr.length; i++) {
-      let node = arr[i], index = idToIndex[node._id]
+      let node = arr[i].node, value = arr[i].value, index = idToIndex[node._id]
 
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
-      positions[currentIndex].extrusions[index] = 30
+      positions[currentIndex].extrusions[index] = value * random.nextDouble() * 30
+      constraint[index] = node.constraintValue === true
 
       mediator.subscribe("extrusionAnimationComplete", () => {
         positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       }, true)
+
+      if(i === arr.length - 1) {
+        activeStatus[activeIndex] = 0
+        activeStatus[previousActiveIndex] = 0
+
+        previousActiveIndex = activeIndex
+        activeStatus[previousActiveIndex] = 2
+        
+        activeIndex = index
+        activeStatus[activeIndex] = 1
+
+        activePosition.left = positions[0].left[activeIndex]
+        activePosition.tops = positions[0].tops[activeIndex]
+
+        previousActivePosition.left = positions[0].left[previousActiveIndex]
+        previousActivePosition.tops = positions[0].tops[previousActiveIndex]
+      }
     }
 
+    state.activeStatus = activeStatus
+    state.animationLength = 15
+    state.constraint = constraint
     state.lastExtrusion = positions[lastIndex].extrusions
     state.currentExtrusion = positions[currentIndex].extrusions
+
+    if(Math.abs(activePosition.left - previousActivePosition.left) > Math.abs(activePosition.tops - previousActivePosition.tops)) { // moving left or right
+      if(activePosition.left < previousActivePosition.left) {
+        state.activeDirection = 2
+      } else {
+        state.activeDirection = 0
+      }
+    } else { // moving top or down
+      if(activePosition.tops < previousActivePosition.tops) {
+        state.activeDirection = 3
+      } else {
+        state.activeDirection = 1
+      }
+    }
 
     activeFrame = 0
     extrusionFrame = 0
