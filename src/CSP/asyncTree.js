@@ -45,26 +45,6 @@ export default class AsyncTree extends Tree {
     }
   }
 
-  * traverseChildrenAsync(matchFn, seed) {
-    let match
-    for(let i=0; i<seed.children.length; i++) {
-      console.log("traverse child", i, seed.children[i].data)
-      let result = matchFn(seed.children[i])
-      console.log(result)
-      console.log("YIELDING")
-      yield result
-
-      if(result) {
-        match = result
-        break
-      }
-    }
-
-    console.log("YIELDING OUTCOME OF CHILDREN TRAVERSAL")
-    console.log(match)
-    yield match
-  }
-
   * traverseRandomAsync(matchFn, seed) {
     function* iterate(node) {
       let randomChild = node.children[Math.floor(random.nextDouble() * node.children.length)]
@@ -116,26 +96,32 @@ export default class AsyncTree extends Tree {
     let self = this
 
     function* isWarranted(node) {
-      console.log("is warranted?", node)
       if(!node.children.length) yield true
 
-      const warrantedAttacker = yield * self.traverseChildrenAsync(n => {
-        console.log('in match fn', n.data)
-        if(n.supports) return false
+      let isUndefeated = true
 
-        if(n && (!n.children.length || isWarranted(n))) return true
+      for(let i=0; i<node.children.length; i++) {
+        let child = node.children[i]
 
-        return false
-      }, node)
+        if(!child.supports) {
+          let result = yield * isWarranted(child)
 
-      if(warrantedAttacker) return false
-      return true
+          if(!child.children.length || result) {
+            isUndefeated = false
+            break            
+          }
+        }
+      }
+
+      return isUndefeated
     }
 
     if(yield * isWarranted(this._root)) {
       console.log("root warranted")
+      yield true
     } else {
       console.log("root defeated")
+      yield false
     }
   }
 }
