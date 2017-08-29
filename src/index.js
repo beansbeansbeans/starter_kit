@@ -13,6 +13,7 @@ import processArgument from './processArgument'
 import UserTurnInput from './userTurnInput'
 import TurnMarker from './components/turnMarker'
 import ArgumentControls from './components/argumentControls'
+import Result from './components/result'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
@@ -87,11 +88,12 @@ class App extends Component {
     userPosition: null,
     selectedArg: null,
     selectedArgLeft: 0,
-    selectedArgTop: 0
+    selectedArgTop: 0,
+    showResult: false
   }
 
   componentWillMount() {
-    bindAll(this, ['addChild', 'concede', 'submitPosition', 'selectedArg'])
+    bindAll(this, ['addChild', 'concede', 'submitPosition', 'selectedArg', 'score'])
   }
 
   componentDidMount() {
@@ -169,7 +171,14 @@ class App extends Component {
   }
 
   score() {
+    let lastResult, self = this
+
     const solveIterator = wrapIterator(web.resolveAsync(), function(result) {
+
+      if(typeof result.value !== 'undefined') {
+        lastResult = result.value
+      }
+
       if(!result.done) {
         renderer.extrudeNode(web, [{
           node: result.value,
@@ -177,6 +186,11 @@ class App extends Component {
         }])
 
         setTimeout(solveIterator, 500)
+      } else {
+        self.setState({
+          rootWarranted: lastResult,
+          showResult: true
+        })
       }
     })
 
@@ -265,8 +279,8 @@ class App extends Component {
     }
   }
 
-  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop }) {
-    let turnDOM = null, argumentControlsDOM = null
+  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop, showResult, rootWarranted, userPosition }) {
+    let turnDOM = null, argumentControlsDOM = null, resultDOM
 
     if(selectedArg) {
       argumentControlsDOM = <ArgumentControls
@@ -302,6 +316,13 @@ class App extends Component {
       }
     }
 
+    if(showResult) {
+      resultDOM = <Result 
+        userWon={(rootWarranted && userPosition === true) || (!rootWarranted && userPosition === false)}
+        rootWarranted={rootWarranted} 
+        rootText={web._root.data} />
+    }
+
     return (
       <app>
         <div id="webgl-wrapper"></div>
@@ -309,6 +330,7 @@ class App extends Component {
         {argumentControlsDOM}
         <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
         <button style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>score game</button>
+        {resultDOM}
       </app>
     )
   }
