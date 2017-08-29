@@ -167,7 +167,7 @@ class App extends Component {
 
   score() {
     const solveIterator = wrapIterator(web.resolveAsync(), function(result) {
-      console.log("iterate solver", result.value)
+      console.log("iterate solver", result)
 
       if(!result.done) {
         setTimeout(solveIterator, 1000)
