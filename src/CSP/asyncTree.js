@@ -91,4 +91,38 @@ export default class AsyncTree extends Tree {
     console.log("traversing down with forward prop")
     yield * self.traverseDFAsync(constraintCheck(forwardProp, false))
   }
+
+  * resolveAsync() { // is the root warranted?
+    const isWarranted = node => {
+      if(!node.children.length) return true
+
+      // trying to find a warranted attacker
+      const warrantedAttacker = this.traverseDF(n => {
+        console.log("traversing")
+        console.log(n)
+        if(n._id === node._id) return false
+        if(n.supports) return false
+
+        if(n && (!n.children.length || isWarranted(n))) {
+          return true
+        }
+        return false
+      }, node, true)
+
+      console.log("LOL")
+      console.log(warrantedAttacker)
+
+      if(warrantedAttacker) {
+        return false
+      }
+
+      return true
+    }
+
+    if(isWarranted(this._root)) {
+      console.log("root warranted")
+    } else {
+      console.log("root defeated")
+    }
+  }
 }

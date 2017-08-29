@@ -71,7 +71,7 @@ const getRandomChild = (attack, optionIDs) => {
 
     if(child && !web.traverseDF(matchingArgument(child.id), web._root, true)) {
       found = true
-      resp = { parentNode, id: child.id }
+      resp = { parentNode, id: child.id, node: child }
     }
   }
 
@@ -119,7 +119,7 @@ class App extends Component {
 
     let child = store.find(id)
 
-    let node = new Node("blerg", false, { 
+    let node = new Node(child.description, false, { 
       user: true,
       argument: child.id
     })
@@ -165,6 +165,18 @@ class App extends Component {
     }, 1000)
   }
 
+  score() {
+    const solveIterator = wrapIterator(web.resolveAsync(), function(result) {
+      console.log("iterate solver", result.value)
+
+      if(!result.done) {
+        setTimeout(solveIterator, 1000)
+      }
+    })
+
+    solveIterator()
+  }
+
   componentDidUpdate(prevProps, prevState) {
     let getChild = 'getRandomAttacker'
     if(this.state.userPosition === false) {
@@ -172,66 +184,64 @@ class App extends Component {
     }
 
     if(this.state.computerTurn === true && prevState.computerTurn === false) {
-      let newNode = new Node('blerg', false)
+      let newNode = new Node('', false)
       directory[newNode._id] = {
         node: newNode, inWeb: true
       }
 
-      if(this.state.lastMove === web._root._id) {
-        newNode.extraData.argument = store[getChild](store.root.id).id
+      let userArgs = [], computerArgs = [], parentNode
 
-        web.add(newNode, web._root)
-      } else {
-        let userArgs = [], computerArgs = [], parentNode
+      for(let i=0; i<Object.keys(directory).length; i++) {
+        let key = Object.keys(directory)[i], arg = directory[key]
 
-        for(let i=0; i<Object.keys(directory).length; i++) {
-          let key = Object.keys(directory)[i], arg = directory[key]
+        if(key === newNode._id) continue
 
-          if(key === newNode._id) continue
-
-          if(arg.byUser) {
-            userArgs.push(key)
-          } else {
-            computerArgs.push(key)
-          }
-        }
-
-        if(this.state.userPosition === true) {
-          userArgs.push(web._root._id)
+        if(arg.byUser) {
+          userArgs.push(key)
         } else {
-          computerArgs.push(web._root._id)
+          computerArgs.push(key)
         }
-      
-        if(random.nextDouble() < 0.75 && userArgs.length) {
-          let attacker = getRandomChild(true, userArgs)
-          if(attacker) {
-            newNode.extraData.argument = attacker.id
-            web.add(newNode, attacker.parentNode)
-          } else {
-            let defender = getRandomChild(false, computerArgs)
-            if(defender) {
-              newNode.extraData.argument = defender.id
-              web.add(newNode, defender.parentNode)
-            } else {
-              console.log("CONCEDE")
-              return                                        
-            }
-          }
+      }
+
+      if(this.state.userPosition === true) {
+        userArgs.push(web._root._id)
+      } else {
+        computerArgs.push(web._root._id)
+      }
+    
+      if(random.nextDouble() < 0.75 && userArgs.length) {
+        let attacker = getRandomChild(true, userArgs)
+        if(attacker) {
+          newNode.extraData.argument = attacker.id
+          newNode.data = attacker.node.description
+          web.add(newNode, attacker.parentNode)
         } else {
           let defender = getRandomChild(false, computerArgs)
           if(defender) {
             newNode.extraData.argument = defender.id
-            newNode.supports = true
+            newNode.data = defender.node.description
             web.add(newNode, defender.parentNode)
           } else {
-            let attacker = getRandomChild(true, userArgs)
-            if(attacker) {
-              newNode.extraData.argument = attacker.id
-              web.add(newNode, attacker.parentNode)
-            } else {
-              console.log("CONCEDE")
-              return                                        
-            }
+            console.log("CONCEDE")
+            return                                        
+          }
+        }
+      } else {
+        let defender = getRandomChild(false, computerArgs)
+        if(defender) {
+          newNode.extraData.argument = defender.id
+          newNode.supports = true
+          newNode.data = defender.node.description
+          web.add(newNode, defender.parentNode)
+        } else {
+          let attacker = getRandomChild(true, userArgs)
+          if(attacker) {
+            newNode.extraData.argument = attacker.id
+            newNode.data = attacker.node.description
+            web.add(newNode, attacker.parentNode)
+          } else {
+            console.log("CONCEDE")
+            return                                        
           }
         }
       }
@@ -292,6 +302,7 @@ class App extends Component {
         {turnDOM}
         {argumentControlsDOM}
         <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
+        <button style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>score game</button>
       </app>
     )
   }
@@ -300,7 +311,7 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   let node = argument[0].tree
 
-  store = createStore(argument[0], 30)
+  store = createStore(argument[0], 50)
 
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   
