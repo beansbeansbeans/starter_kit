@@ -40,7 +40,7 @@ const matchingArgument = id => n => {
 
 const getUnusedChildren = (parentID, type) => {
   if(parentID === null) return
-    
+
   let parentNode = directory[parentID].node
   let parentArgID = parentNode.extraData.argument
   let parentArgNode = store.find(parentArgID)
@@ -166,6 +166,11 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    let getChild = 'getRandomAttacker'
+    if(this.state.userPosition === false) {
+      getChild = 'getRandomDefender'
+    }
+
     if(this.state.computerTurn === true && prevState.computerTurn === false) {
       let newNode = new Node('blerg', false)
       directory[newNode._id] = {
@@ -173,7 +178,7 @@ class App extends Component {
       }
 
       if(this.state.lastMove === web._root._id) {
-        newNode.extraData.argument = store.getRandomAttacker(store.root.id).id
+        newNode.extraData.argument = store[getChild](store.root.id).id
 
         web.add(newNode, web._root)
       } else {

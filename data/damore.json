@@ -116,6 +116,14 @@
               "attackers": [
                 {
                   "ref": 0
+                },
+                {
+                  "data": "The classic reference on the nature and development of sex differences is a book by Eleanor Maccoby and Carol Jacklin that came out in the 1970s. They reviewed evidence for all sorts of sex differences, across large numbers of studies, but they also concluded that certain ideas about differences between the genders were myths. At the top of their list of myths was the idea that males are primarily interested in objects and females are primarily interested in people. They reviewed an enormous literature, in which babies were presented with objects and people to see if they were more interested in one than the other. They concluded that there were no sex differences in these interests.",
+                  "attackers": [
+                    {
+                      "data": "This conclusion was made in the early 70s. At that time, we didn't know much about babies' understanding of objects and people, or how their understanding grows."
+                    }
+                  ]
                 }
               ]
             },
@@ -153,6 +161,12 @@
                       "data": "But SAT is a better indicator of aptitude. Women's better grades is explained by conscientiousness and choice of major."
                     }
                   ]
+                },
+                {
+                  "data": "There are 5 systems at the foundations of mathematical reasoning. All have been studied extensively, and there's no evidence of sex differences for them."
+                },
+                {
+                  "data": "You don't start seeing sex differences until later in child development."
                 }
               ]
             }
