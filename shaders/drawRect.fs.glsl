@@ -14,7 +14,6 @@ varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
 varying float vElevation;
-varying float vSelected;
 varying float vByUser;
 varying float vRightsideUp;
 varying vec2 vSize;
@@ -150,8 +149,6 @@ void main() {
           } 
         }
       }
-    } else if(vSelected > eps) {
-      color = vec4(1, 0, 0, 1);
     } else if(abs(vActiveStatus - 3.) < eps) { // flash acceptance
       float diff = (iterations - vTimer) / 20.;
       float alpha = diff;

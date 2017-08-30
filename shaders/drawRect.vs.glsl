@@ -31,7 +31,6 @@ varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
 varying float vElevation;
-varying float vSelected;
 varying float vByUser;
 varying vec2 vSize;
 varying float vRightsideUp;
@@ -132,14 +131,8 @@ void main() {
 
   vElevation = extrusion;
 
-  vSelected = -1.;
-
   float argIndex = index;
   if(mod(argIndex, 2.) > eps) {
     argIndex = index - 1.;
-  }
-
-  if(abs(selectedIndex * 2. - argIndex) < eps) {
-    vSelected = 1.;
   }
 }
