@@ -108,11 +108,13 @@ class App extends Component {
   }
 
   selectedArg({ id }) {
-    this.setState({ 
-      selectedArg: id,
-      selectedArgLeft: sharedState.get("mouseX"),
-      selectedArgTop: sharedState.get("mouseY")
-    })
+    if(id !== this.state.selectedArg) {
+      this.setState({ 
+        selectedArg: id,
+        selectedArgLeft: sharedState.get("mouseX"),
+        selectedArgTop: sharedState.get("mouseY")
+      })      
+    }
   }
 
   addChild(id) {
