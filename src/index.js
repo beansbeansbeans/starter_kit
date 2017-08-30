@@ -133,14 +133,14 @@ class App extends Component {
 
     renderer.update(web)
 
-    this.setState({ 
-      lastMove: node._id,
-      showUserDialogue: false })
+    this.setState({ lastMove: node._id, showUserDialogue: false })
+
+    defer(() => this.setState({ selectedArg: null }))
 
     renderer.deactivateNode()
 
     setTimeout(() => {
-      this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
+      this.setState({ userTurn: false, computerTurn: true })
     }, 1000)
   }
 
@@ -314,8 +314,7 @@ class App extends Component {
             attackers={getUnusedChildren(lastMove, 'attackers')}
             addChild={this.addChild}
             concede={directory[lastMove].conceded ? false : this.concede}
-            submitPosition={this.submitPosition}
-            exit={() => this.setState({ showUserDialogue: false })} />
+            submitPosition={this.submitPosition} />
         }
       }
     }

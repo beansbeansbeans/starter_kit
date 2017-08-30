@@ -28,8 +28,6 @@ export default class UserTurnInput extends Component {
       if(!attackers.length && !concede) {
         controls.push(<div>No options available</div>)
       }
-
-      controls.push(<button onClick={exit}>exit</button>)
     }
 
     return (
