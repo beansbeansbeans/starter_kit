@@ -49,7 +49,7 @@ const getUnusedChildren = (parentID, type) => {
 
   for(let i=0; i<parentArgNode[type].length; i++) {
     let d = parentArgNode[type][i]
-    if(!web.traverseDF(matchingArgument(d.id), web._root, true)) {
+    if(!web.traverseDF(matchingArgument(d.node.id), parentNode, true)) {
       children.push(d.node)
     }
   }
