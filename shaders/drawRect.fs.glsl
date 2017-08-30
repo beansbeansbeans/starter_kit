@@ -21,14 +21,14 @@ varying vec2 vSize;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
-float innerBuffer = f_thickness * 2.;
-float attackBarThickness = 0.15;
+float innerBuffer = 0.;
+float attackBarThickness = 0.1;
 
-vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
+vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
+vec4 attackColor = vec4(edgeColor, 1.);
 
 vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
 vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
-vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
 
 float circle(in vec2 _st, in float _radius, in vec2 center){
   vec2 dist = _st - center;
@@ -166,7 +166,7 @@ void main() {
     }
   }
 
-  if(edgeIntensity > eps && vByUser > eps && vRightsideUp > eps) {
+  if(color.a < eps && vByUser > eps && vRightsideUp > eps) {
     vec2 st = vBarycentricCoord.xz;
 
     vec2 sizeRatio = vSize / 300.;
