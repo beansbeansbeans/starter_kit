@@ -25,6 +25,7 @@ float innerBuffer = 0.;
 float attackBarThickness = 0.1;
 
 vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
+vec3 lightEdgeColor = vec3(175./255.);
 vec4 attackColor = vec4(edgeColor, 1.);
 
 vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
@@ -42,7 +43,7 @@ void main() {
 
   float f_width = fwidth(f_closest_edge);
 
-  float edgeIntensity = step(2. * f_width, f_closest_edge);
+  float edgeIntensity = step(1.5 * f_width, f_closest_edge);
 
   if(abs(f_closest_edge - vBarycentricCoord.y) < eps) { // remove center lines
     edgeIntensity = 1.;
@@ -52,7 +53,7 @@ void main() {
     edgeIntensity = 1.;
   }
 
-  vec4 color = vec4(edgeColor, 1. - edgeIntensity);
+  vec4 color = vec4(lightEdgeColor, 1. - edgeIntensity);
   float activeAnimationElapsed = vAnimationElapsed * 2.;
   float isAttackStrip = 0.;
 

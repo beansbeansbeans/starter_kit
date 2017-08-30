@@ -14,7 +14,7 @@ const random = randomModule.random(42)
 
 const frames = [10],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
-  buffer = 4, cameraDist = 1000,
+  buffer = 5, cameraDist = 1000,
   onResize = () => {},
   measureFPS = () => {
     const now = Date.now()
