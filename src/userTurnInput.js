@@ -16,6 +16,7 @@ export default class UserTurnInput extends Component {
       argText = `computer says: ${data}`
       if(attackers.length) {
         controls.push(<ChildSelector 
+          attacking={true}
           options={attackers}
           select={addChild} />)
       }

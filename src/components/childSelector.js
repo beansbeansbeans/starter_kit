@@ -8,7 +8,7 @@ export default class ChildSelector extends Component {
     this.setState({ selected: event.target.value })
   }
 
-  render({ options, select }, { selected }) {
+  render({ options, select, attacking }, { selected }) {
     return (
       <div>
         <select onChange={this.handleChange.bind(this)}>{options.map(o => {
@@ -16,7 +16,7 @@ export default class ChildSelector extends Component {
               value={o.id}>{o.description}</option>
           })}
         </select>
-        <button onClick={e => select(selected)}>attack</button>
+        <button onClick={e => select(selected)}>{attacking ? 'attack' : 'defend'}</button>
       </div>
     )
   }

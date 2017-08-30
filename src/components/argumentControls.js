@@ -9,6 +9,7 @@ export default class ArgumentControls extends Component {
     if(supportive) {
       if(defenders.length) {
         controls.push(<ChildSelector 
+          attacking={false}
           options={defenders}
           select={addChild} />)
       } else {
@@ -17,6 +18,7 @@ export default class ArgumentControls extends Component {
     } else {
       if(attackers.length) {
         controls.push(<ChildSelector 
+          attacking={true}
           options={attackers}
           select={addChild} />)
       }

@@ -287,7 +287,7 @@ class App extends Component {
     if(selectedArg) {
       argumentControlsDOM = <ArgumentControls
         text={store.find(directory[selectedArg].node.extraData.argument).description}
-        supportive={!!directory[selectedArg].byUser}
+        supportive={!!directory[selectedArg].byUser || (userPosition === true && web._root._id === selectedArg)}
         left={selectedArgLeft}
         top={selectedArgTop}
         attackers={getUnusedChildren(selectedArg, 'attackers')}
