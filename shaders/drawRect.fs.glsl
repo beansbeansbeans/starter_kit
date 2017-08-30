@@ -172,12 +172,12 @@ void main() {
 
     st *= sizeRatio;
 
-    vec2 center = vec2(0.2) * sizeRatio * (vSize.x / vSize.y);
+    vec2 center = vec2(0.15) * sizeRatio * (vSize.x / vSize.y);
 
     center.x *= (vSize.y / vSize.x);
 
     float circleStatus = circle(st, 
-      0.002, // how far from center
+      0.00125, // how far from center
       center);
 
     if(circleStatus < eps) {
