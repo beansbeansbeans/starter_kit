@@ -4,11 +4,9 @@ attribute float corner;
 uniform mat4 projection, view;
 uniform vec2 mousePosition;
 uniform vec2 canvasRect;
-uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, extrusionFrame, activeFrame, activeDirection, selectedIndex;
+uniform float rectWidth, animationLength, bufferSize, nextRectWidth, frame, activeFrame, activeDirection, selectedIndex;
 
 attribute vec3 color;
-attribute float lastExtrusion;
-attribute float currentExtrusion;
 attribute float lastTop;
 attribute float lastLeft;
 attribute float lastHeight;
@@ -31,7 +29,6 @@ varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
-varying float vElevation;
 varying float vSelected;
 
 float eps = 0.0001;
@@ -102,9 +99,7 @@ void main() {
     vBarycentricCoord = vec3(0, 0, 1);
   }
 
-  float extrusion = ease(lastExtrusion, currentExtrusion, extrusionFrame);
-
-  gl_Position = projection * view * vec4(interpolatedPos, extrusion, 1);
+  gl_Position = projection * view * vec4(interpolatedPos, -10., 1);
 
   vSupports = supports;
   vConstraint = constraint;
@@ -123,8 +118,6 @@ void main() {
   vAnimationElapsed = activeFrame / animationLength;
 
   vActiveDirection = activeDirection;
-
-  vElevation = extrusion;
 
   vSelected = -1.;
 

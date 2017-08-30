@@ -14,7 +14,6 @@ varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
-varying float vElevation;
 varying float vSelected;
 
 float eps = 0.0001;
@@ -64,7 +63,7 @@ void main() {
     }    
   }
 
-  vec4 activeColor = mix(activeTop, activeBottom, (vElevation + extrusionRange) / (extrusionRange * 2.));
+  vec4 activeColor = activeTop;
 
   if(isAttackStrip < eps && edgeIntensity > eps) {
     if(abs(vActiveStatus - 1.) < eps) { // fill
@@ -162,9 +161,7 @@ void main() {
     }
   }
 
-  if(color.a < 0.05) {
-    discard;
-  }
+  color = vec4(1, 0, 0, 1);
 
   gl_FragColor = color;
 }

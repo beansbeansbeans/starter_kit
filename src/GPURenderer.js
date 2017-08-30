@@ -9,6 +9,7 @@ import vec3 from 'gl-vec3'
 import { difference } from 'underscore'
 import { extrusionRange } from './config'
 import randomModule from './helpers/random'
+import deepAssign from 'deep-assign'
 const random = randomModule.random(42)
 
 const frames = [10],
@@ -160,14 +161,12 @@ export default {
       },
 
       uniforms: {
-        extrusionRange,
         selectedIndex: (ctx, props) => props.selectedIndex,
         bufferSize: buffer,
         animationLength: (ctx, props) => props.animationLength,
         canvasRect: [width, height],
         iterations: (ctx, props) => props.iterations,
         frame: (ctx, props) => props.frame,
-        extrusionFrame: (ctx, props) => props.extrusionFrame,
         activeFrame: (ctx, props) => props.activeFrame,
         rectWidth: (ctx, props) => props.rectWidth,
         nextRectWidth: (ctx, props) => props.nextRectWidth,
@@ -239,16 +238,6 @@ export default {
         index: {
           buffer: indicesBuffer,
           divisor: 1
-        },
-
-        currentExtrusion: {
-          buffer: regl.prop('currentExtrusion'),
-          divisor: 2
-        },
-
-        lastExtrusion: {
-          buffer: regl.prop('lastExtrusion'),
-          divisor: 2
         }
       },
 
@@ -257,12 +246,27 @@ export default {
       instances: nTriangles
     }
 
-    draw = regl(Object.assign({}, renderObject, {
+    draw = regl(deepAssign({}, renderObject, {
       frag: opts.shaders['drawRect.fs'],
-      vert: opts.shaders['drawRect.vs']
+      vert: opts.shaders['drawRect.vs'],
+      uniforms: {
+        extrusionRange,
+        extrusionFrame: (ctx, props) => props.extrusionFrame
+      },
+      attributes: {
+        currentExtrusion: {
+          buffer: regl.prop('currentExtrusion'),
+          divisor: 2
+        },
+
+        lastExtrusion: {
+          buffer: regl.prop('lastExtrusion'),
+          divisor: 2
+        }        
+      }
     }))
 
-    drawShadows = regl(Object.assign({}, renderObject, {
+    drawShadows = regl(deepAssign({}, renderObject, {
       frag: opts.shaders['drawShadow.fs'],
       vert: opts.shaders['drawShadow.vs']
     }))
