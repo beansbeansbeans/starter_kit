@@ -19,7 +19,7 @@ import randomModule from './helpers/random'
 const random = randomModule.random(42)
 import createStore from './argumentSchemes/store'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs'], argument, directory = {}, web, store, mouseX, mouseY
+let shaderFiles = ['drawRect.fs', 'drawRect.vs', 'drawShadow.fs', 'drawShadow.vs'], argument, directory = {}, web, store, mouseX, mouseY
 
 const shaders = {},
   preload = {

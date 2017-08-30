@@ -25,7 +25,7 @@ const frames = [10],
   nextIndex = () => unusedIndices.shift()
 
 let width, height, rectWidth = 0, nextRectWidth = 0, 
-  config, regl, camera, draw,
+  config, regl, camera, draw, drawShadows,
   currentIndex = 0, lastIndex = 1, 
   projectionMatrix = new Float32Array(16),
   mouseX = -1, mouseY = -1, toLocal,
@@ -143,11 +143,7 @@ export default {
       usage: 'dynamic'
     })
 
-    draw = regl({
-      frag: opts.shaders['drawRect.fs'],
-
-      vert: opts.shaders['drawRect.vs'],
-
+    const renderObject = {
       blend: {
         enable: true,
         func: {
@@ -259,7 +255,17 @@ export default {
       count: 3,
 
       instances: nTriangles
-    })
+    }
+
+    draw = regl(Object.assign({}, renderObject, {
+      frag: opts.shaders['drawRect.fs'],
+      vert: opts.shaders['drawRect.vs']
+    }))
+
+    drawShadows = regl(Object.assign({}, renderObject, {
+      frag: opts.shaders['drawShadow.fs'],
+      vert: opts.shaders['drawShadow.vs']
+    }))
 
     indicesBuffer.subdata(indices)
 
@@ -279,6 +285,7 @@ export default {
       }
 
       draw(state)
+      drawShadows(state)
       camera.tick()
 
       iterations++
