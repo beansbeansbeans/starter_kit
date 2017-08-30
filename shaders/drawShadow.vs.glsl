@@ -15,7 +15,7 @@ attribute float currentLeft;
 attribute float currentHeight;
 attribute float index;
 attribute float supports;
-attribute float constraint;
+attribute float byUser;
 attribute float activeStatus;
 attribute float timers;
 
@@ -24,7 +24,6 @@ varying vec3 vBarycentricCoord;
 varying float vRenderFlag;
 varying float vIndex;
 varying float vSupports;
-varying float vConstraint;
 varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
@@ -102,7 +101,6 @@ void main() {
   gl_Position = projection * view * vec4(interpolatedPos, -10., 1);
 
   vSupports = supports;
-  vConstraint = constraint;
 
   vRenderFlag = 1.;
   if(currentHeight < eps) {

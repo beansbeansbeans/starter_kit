@@ -35,7 +35,7 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1 }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
-  constraint = new Float32Array(maxArgumentCount),
+  byUser = new Float32Array(maxArgumentCount),
   activeStatus = new Float32Array(maxArgumentCount),
   timers = new Float32Array(maxArgumentCount)
 
@@ -190,8 +190,8 @@ export default {
           divisor: 2
         },
 
-        constraint: {
-          buffer: regl.prop('constraint'),
+        byUser: {
+          buffer: regl.prop('byUser'),
           divisor: 2
         },
 
@@ -335,7 +335,7 @@ export default {
       positions[currentIndex].heights[index] = n.height
 
       supports[index] = (n.supports || n.depth === 0) ? 1 : 0
-      constraint[index] = n.extraData.user === true ? 1 : 0
+      byUser[index] = n.extraData.user === true ? 1 : 0
 
       traversed.push(n._id)
     })
@@ -361,7 +361,7 @@ export default {
       currentTop: positions[currentIndex].tops,
       currentLeft: positions[currentIndex].left,
       currentHeight: positions[currentIndex].heights,
-      supports, constraint, timers, activeStatus, animationLength
+      supports, byUser, timers, activeStatus, animationLength
     })
 
     frame = 0
@@ -375,7 +375,6 @@ export default {
 
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       positions[currentIndex].extrusions[index] = value * random.nextDouble() * 30
-      constraint[index] = node.constraintValue === true
 
       mediator.subscribe("extrusionAnimationComplete", () => {
         positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
@@ -401,7 +400,7 @@ export default {
 
     state.activeStatus = activeStatus
     state.animationLength = 15
-    state.constraint = constraint
+    state.byUser = byUser
     state.lastExtrusion = positions[lastIndex].extrusions
     state.currentExtrusion = positions[currentIndex].extrusions
 

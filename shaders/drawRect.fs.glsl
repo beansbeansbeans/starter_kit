@@ -9,7 +9,6 @@ varying float vRenderFlag;
 varying vec3 vBarycentricCoord;
 varying float vIndex;
 varying float vSupports;
-varying float vConstraint;
 varying float vActiveStatus;
 varying float vAnimationElapsed;
 varying float vActiveDirection;
@@ -145,8 +144,6 @@ void main() {
       }
     } else if(vSelected > eps) {
       color = vec4(1, 0, 0, 1);
-    } else if(vConstraint > eps) {
-      color = vec4(60./255., 231./255., 139./255., 1);
     } else if(abs(vActiveStatus - 3.) < eps) { // flash acceptance
       float diff = (iterations - vTimer) / 20.;
       float alpha = diff;
