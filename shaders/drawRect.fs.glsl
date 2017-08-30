@@ -172,7 +172,7 @@ void main() {
 
     float circleStatus = circle(st, 
       0.002, // how far from center
-      vec2(0.1, 0.1 * vWidthOverHeight));
+      vec2(0.1, 0.1));
 
     if(circleStatus < eps) {
       color = vec4(edgeColor, 1);
