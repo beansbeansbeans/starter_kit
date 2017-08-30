@@ -168,11 +168,13 @@ void main() {
   if(edgeIntensity > eps && vByUser > eps && vRightsideUp > eps) {
     vec2 st = vBarycentricCoord.xz;
 
-    st.x *= (vSize.x / vSize.y);
+    vec2 sizeRatio = vSize / 300.;
+
+    st *= sizeRatio;
 
     float circleStatus = circle(st, 
       0.002, // how far from center
-      vec2(0.1, 0.1));
+      vec2(0.1, 0.1) * sizeRatio);
 
     if(circleStatus < eps) {
       color = vec4(edgeColor, 1);
