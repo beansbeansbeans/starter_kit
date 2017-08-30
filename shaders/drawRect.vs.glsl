@@ -33,7 +33,7 @@ varying float vTimer;
 varying float vElevation;
 varying float vSelected;
 varying float vByUser;
-varying float vWidthOverHeight;
+varying vec2 vSize;
 varying float vRightsideUp;
 
 float eps = 0.0001;
@@ -79,8 +79,7 @@ void main() {
 
   vec2 interpolatedTL = interp(topLeft, nextTopLeft);
   vec2 interpolatedBR = interp(bottomRight, nextBottomRight);
-  vec2 size = interpolatedBR - interpolatedTL;
-  vWidthOverHeight = size.x / size.y;
+  vSize = (interpolatedBR - interpolatedTL);
 
   vec2 interpolatedPos = vec2(0);
   if(abs(corner - 1.) < eps) {

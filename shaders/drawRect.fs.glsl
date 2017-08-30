@@ -16,8 +16,8 @@ varying float vTimer;
 varying float vElevation;
 varying float vSelected;
 varying float vByUser;
-varying float vWidthOverHeight;
 varying float vRightsideUp;
+varying vec2 vSize;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
@@ -168,7 +168,7 @@ void main() {
   if(edgeIntensity > eps && vByUser > eps && vRightsideUp > eps) {
     vec2 st = vBarycentricCoord.xz;
 
-    st.x *= vWidthOverHeight;
+    st.x *= (vSize.x / vSize.y);
 
     float circleStatus = circle(st, 
       0.002, // how far from center
