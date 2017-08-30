@@ -40,13 +40,9 @@ void main() {
 
   float f_width = fwidth(f_closest_edge);
 
-  float edgeIntensity = smoothstep(f_width, 3. * f_width, f_closest_edge);
+  float edgeIntensity = step(2. * f_width, f_closest_edge);
 
   if(abs(f_closest_edge - vBarycentricCoord.y) < eps) { // remove center lines
-    edgeIntensity = 1.;
-  }
-
-  if(abs(vBarycentricCoord.x - vBarycentricCoord.y) < eps) {
     edgeIntensity = 1.;
   }
 
