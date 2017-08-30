@@ -16,6 +16,8 @@ varying float vTimer;
 varying float vElevation;
 varying float vSelected;
 varying float vByUser;
+varying float vWidthOverHeight;
+varying float vRightsideUp;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
@@ -28,11 +30,10 @@ vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
 vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
 vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
 
-float circle(in vec2 _st, in float _radius){
-  vec2 dist = _st-vec2(0.5);
-  return smoothstep(_radius-(_radius*0.01),
-                         _radius+(_radius*0.01),
-                         dot(dist,dist)*4.0);
+float circle(in vec2 _st, in float _radius, in vec2 center){
+  vec2 dist = _st - center;
+  return step(_radius, 
+    dot(dist, dist)); // square of the magnitude of the distance
 }
 
 void main() {
@@ -164,9 +165,15 @@ void main() {
     }
   }
 
-  if(edgeIntensity > eps && vByUser > eps) {
-    vec2 st = vBarycentricCoord.xy;
-    float circleStatus = circle(st,0.5);
+  if(edgeIntensity > eps && vByUser > eps && vRightsideUp > eps) {
+    vec2 st = vBarycentricCoord.xz;
+
+    st.x *= vWidthOverHeight;
+
+    float circleStatus = circle(st, 
+      0.002, // how far from center
+      vec2(0.1, 0.1 * vWidthOverHeight));
+
     if(circleStatus < eps) {
       color = vec4(edgeColor, 1);
     }
