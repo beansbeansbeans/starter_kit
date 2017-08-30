@@ -174,7 +174,7 @@ void main() {
 
     float circleStatus = circle(st, 
       0.002, // how far from center
-      vec2(0.1, 0.1) * sizeRatio);
+      vec2(0.2) * sizeRatio * (vSize.x / vSize.y));
 
     if(circleStatus < eps) {
       color = vec4(edgeColor, 1);
