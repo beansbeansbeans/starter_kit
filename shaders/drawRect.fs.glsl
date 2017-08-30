@@ -15,6 +15,7 @@ varying float vActiveDirection;
 varying float vTimer;
 varying float vElevation;
 varying float vSelected;
+varying float vByUser;
 
 float eps = 0.0001;
 float f_thickness = 0.02;
@@ -25,6 +26,14 @@ vec4 attackColor = vec4(231./255., 76./255., 60./255., 1.);
 
 vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
 vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
+vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
+
+float circle(in vec2 _st, in float _radius){
+  vec2 dist = _st-vec2(0.5);
+  return smoothstep(_radius-(_radius*0.01),
+                         _radius+(_radius*0.01),
+                         dot(dist,dist)*4.0);
+}
 
 void main() {
   float f_closest_edge = min(vBarycentricCoord.x, min(vBarycentricCoord.y, vBarycentricCoord.z));
@@ -45,7 +54,7 @@ void main() {
     edgeIntensity = 1.;
   }
 
-  vec4 color = vec4(vec3(51./255., 51./255., 45./255.), 1. - edgeIntensity);
+  vec4 color = vec4(edgeColor, 1. - edgeIntensity);
   float activeAnimationElapsed = vAnimationElapsed * 2.;
   float isAttackStrip = 0.;
 
@@ -156,6 +165,14 @@ void main() {
         }
       }
       color = vec4(60./255., 231./255., 139./255., alpha);
+    }
+  }
+
+  if(edgeIntensity > eps && vByUser > eps) {
+    vec2 st = vBarycentricCoord.xy;
+    float circleStatus = circle(st,0.5);
+    if(circleStatus < eps) {
+      color = vec4(edgeColor, 1);
     }
   }
 

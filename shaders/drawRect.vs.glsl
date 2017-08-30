@@ -32,6 +32,7 @@ varying float vActiveDirection;
 varying float vTimer;
 varying float vElevation;
 varying float vSelected;
+varying float vByUser;
 
 float eps = 0.0001;
 
@@ -117,6 +118,8 @@ void main() {
   vIndex = index;
 
   vTimer = timers;
+
+  vByUser = byUser;
 
   vAnimationElapsed = activeFrame / animationLength;
 
