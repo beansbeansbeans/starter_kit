@@ -32,7 +32,8 @@ vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
 
 float circle(in vec2 _st, in float _radius, in vec2 center){
   vec2 dist = _st - center;
-  return step(_radius, 
+  return 1. - smoothstep(_radius-(_radius*0.01),
+                   _radius+(_radius*0.01), 
     dot(dist, dist)); // square of the magnitude of the distance
 }
 
@@ -180,9 +181,7 @@ void main() {
       0.00125, // how far from center
       center);
 
-    if(circleStatus < eps) {
-      color = vec4(edgeColor, 1);
-    }
+    color = vec4(edgeColor, circleStatus);
   }
 
   if(color.a < 0.05) {
