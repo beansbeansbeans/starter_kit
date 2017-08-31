@@ -27,7 +27,7 @@ void main() {
   if(vSelected > eps) {
     color = vec4(0, 1, 0, 1);
   } else {
-    color = mix(activeTop, activeBottom, vIlluminated);
+    color = vec4(activeBottom.xyz, vIlluminated);
   }
 
   gl_FragColor = color;
