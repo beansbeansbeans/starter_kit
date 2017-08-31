@@ -132,12 +132,11 @@ class App extends Component {
     directory[node._id] = { node, inWeb: true, byUser: true }
 
     renderer.update(web)
+    renderer.activateNode(node._id)
 
     this.setState({ lastMove: node._id, showUserDialogue: false })
 
     defer(() => this.setState({ selectedArg: null }))
-
-    renderer.deactivateNode()
 
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
