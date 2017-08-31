@@ -442,11 +442,19 @@ export default {
     state.selectedIndex = -1
   },
 
-  illuminateHistory(id) {
+  illuminateHistory(id, supports) {
     web.traverseDF(n => {
-      let index = idToIndex[n._id]
+      if(n._id !== web._root._id) {
+        let index = idToIndex[n._id]
 
-      illuminated[index] = random.nextDouble()
+        if((n.supportsRoot && supports) || (!n.supportsRoot && !supports)) {
+          illuminated[index] = random.nextDouble()
+        } else {
+          illuminated[index] = 0
+        }
+      }
+
+      return false
     })
 
     state.illuminated = illuminated

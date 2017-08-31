@@ -115,6 +115,16 @@ export default class Tree {
     } else {
       parent.leaves += leaves
     }    
+
+    if(parent._id === this._root._id) {
+      n.supportsRoot = n.supports
+    } else {
+      if(n.parent.supportsRoot) {
+        n.supportsRoot = n.supports
+      } else {
+        n.supportsRoot = !n.supports
+      }
+    }
   }
 
   addBack(node) {

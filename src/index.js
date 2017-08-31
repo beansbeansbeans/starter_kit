@@ -135,7 +135,7 @@ class App extends Component {
 
     defer(() => {
       renderer.activateNode(node._id)
-      renderer.illuminateHistory(node._id)
+      renderer.illuminateHistory(node._id, this.state.userPosition)
     })
 
     this.setState({ lastMove: node._id, showUserDialogue: false })
@@ -269,7 +269,7 @@ class App extends Component {
 
       renderer.update(web)
       renderer.activateNode(newNode._id)
-      renderer.illuminateHistory(newNode._id)
+      renderer.illuminateHistory(newNode._id, !this.state.userPosition)
 
       defer(() => {
         this.setState({ 
