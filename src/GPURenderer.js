@@ -32,7 +32,7 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   mouseX = -1, mouseY = -1, toLocal,
   frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
-  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1, illuminated: new Float32Array(maxArgumentCount) }, animationLength = 0,
+  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1, illuminated: new Float32Array(maxArgumentCount), illuminateSupports: 1 }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
   illuminated = new Float32Array(maxArgumentCount),
@@ -191,11 +191,6 @@ export default {
           divisor: 2
         },
 
-        illuminated: {
-          buffer: regl.prop('illuminated'),
-          divisor: 2
-        },
-
         byUser: {
           buffer: regl.prop('byUser'),
           divisor: 2
@@ -274,7 +269,16 @@ export default {
 
     drawShadows = regl(deepAssign({}, renderObject, {
       frag: opts.shaders['drawShadow.fs'],
-      vert: opts.shaders['drawShadow.vs']
+      vert: opts.shaders['drawShadow.vs'],
+      uniforms: {
+        illuminateSupports: (ctx, props) => props.illuminateSupports
+      },
+      attributes: {
+        illuminated: {
+          buffer: regl.prop('illuminated'),
+          divisor: 2
+        }
+      }
     }))
 
     indicesBuffer.subdata(indices)
@@ -458,6 +462,7 @@ export default {
     })
 
     state.illuminated = illuminated
+    state.illuminateSupports = supports ? 1 : 0
   },
 
   resize() {
