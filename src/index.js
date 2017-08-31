@@ -146,10 +146,6 @@ class App extends Component {
 
   concede() {
     let id = this.state.selectedArg || this.state.lastMove
-    renderer.extrudeNode(web, [{
-      node: directory[id].node,
-      value: true
-    }])
 
     directory[id].conceded = true
 

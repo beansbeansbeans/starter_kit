@@ -329,10 +329,12 @@ export default {
       positions[lastIndex].tops[index] = positions[currentIndex].tops[index]
       positions[lastIndex].left[index] = positions[currentIndex].left[index]
       positions[lastIndex].heights[index] = positions[currentIndex].heights[index]
+      positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
       
       positions[currentIndex].tops[index] = n.top
       positions[currentIndex].left[index] = n.depth * rectWidth
       positions[currentIndex].heights[index] = n.height
+      positions[currentIndex].extrusions[index] = n.approbation
 
       supports[index] = (n.supports || n.depth === 0) ? 1 : 0
       byUser[index] = n.extraData.user === true ? 1 : 0
@@ -358,9 +360,11 @@ export default {
       lastTop: positions[lastIndex].tops,
       lastLeft: positions[lastIndex].left,
       lastHeight: positions[lastIndex].heights,
+      lastExtrusion: positions[lastIndex].extrusions,
       currentTop: positions[currentIndex].tops,
       currentLeft: positions[currentIndex].left,
       currentHeight: positions[currentIndex].heights,
+      currentExtrusion: positions[currentIndex].extrusions,
       supports, byUser, timers, activeStatus, animationLength
     })
 
