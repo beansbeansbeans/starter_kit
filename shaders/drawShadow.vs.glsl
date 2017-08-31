@@ -18,6 +18,7 @@ attribute float supports;
 attribute float byUser;
 attribute float activeStatus;
 attribute float timers;
+attribute float illuminated;
 
 varying vec4 vCoord;
 varying vec3 vBarycentricCoord;
@@ -29,6 +30,7 @@ varying float vAnimationElapsed;
 varying float vActiveDirection;
 varying float vTimer;
 varying float vSelected;
+varying float vIlluminated;
 
 float eps = 0.0001;
 
@@ -116,6 +118,8 @@ void main() {
   vAnimationElapsed = activeFrame / animationLength;
 
   vActiveDirection = activeDirection;
+
+  vIlluminated = illuminated;
 
   vSelected = -1.;
 

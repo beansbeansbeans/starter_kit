@@ -133,7 +133,10 @@ class App extends Component {
 
     renderer.update(web)
 
-    defer(() => renderer.activateNode(node._id))
+    defer(() => {
+      renderer.activateNode(node._id)
+      renderer.illuminateHistory(node._id)
+    })
 
     this.setState({ lastMove: node._id, showUserDialogue: false })
 
@@ -266,6 +269,7 @@ class App extends Component {
 
       renderer.update(web)
       renderer.activateNode(newNode._id)
+      renderer.illuminateHistory(newNode._id)
 
       defer(() => {
         this.setState({ 
