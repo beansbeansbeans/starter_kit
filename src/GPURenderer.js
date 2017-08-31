@@ -32,7 +32,7 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   mouseX = -1, mouseY = -1, toLocal,
   frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, illuminationFrame = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
-  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1, illuminated: new Float32Array(maxArgumentCount), lastIlluminated: new Float32Array(maxArgumentCount), illuminateSupports: 1 }, animationLength = 0,
+  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1, illuminated: new Float32Array(maxArgumentCount), lastIlluminated: new Float32Array(maxArgumentCount), illuminateSupports: 1, solving: 0 }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
   illuminated = new Float32Array(maxArgumentCount),
@@ -165,6 +165,7 @@ export default {
       uniforms: {
         selectedIndex: (ctx, props) => props.selectedIndex,
         bufferSize: buffer,
+        solving: (ctx, props) => props.solving,
         animationLength: (ctx, props) => props.animationLength,
         canvasRect: [width, height],
         iterations: (ctx, props) => props.iterations,
@@ -452,6 +453,10 @@ export default {
 
   deactivateNode(id) {
     state.selectedIndex = -1
+  },
+
+  solve() {
+    state.solving = 1
   },
 
   illuminateHistory(id, supports) {

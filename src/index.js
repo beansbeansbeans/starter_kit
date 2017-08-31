@@ -172,6 +172,8 @@ class App extends Component {
   score() {
     let lastResult, self = this
 
+    renderer.solve()
+
     const solveIterator = wrapIterator(web.resolveAsync(), function(result) {
 
       if(typeof result.value !== 'undefined') {

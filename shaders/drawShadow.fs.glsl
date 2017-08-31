@@ -3,7 +3,7 @@
 
 precision mediump float;
 
-uniform float iterations, extrusionRange, illuminateSupports, extrusionFrame;
+uniform float iterations, extrusionRange, illuminateSupports, extrusionFrame, solving;
 
 varying float vRenderFlag;
 varying vec3 vBarycentricCoord;
@@ -27,7 +27,7 @@ void main() {
 
   if(vSelected > eps) {
     color = vec4(0, 1, 0, 1);
-  } else {
+  } else if(solving < eps) {
     vec4 nextColor;
     vec4 lastColor;
 
