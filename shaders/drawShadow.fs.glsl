@@ -21,89 +21,10 @@ vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
 vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
 
 void main() {
-  vec4 color = vec4(0);
-  float activeAnimationElapsed = vAnimationElapsed * 2.;
+  vec4 color = vec4(1, 0, 0, 1);
 
-  vec4 activeColor = activeTop;
-
-  if(abs(vActiveStatus - 1.) < eps) { // fill
-    if(mod(vIndex, 2.) < eps) {
-      if(abs(vActiveDirection - 2.) < eps) { // left
-        if(vBarycentricCoord.x < activeAnimationElapsed) {
-          color = activeColor;
-        }                  
-      } else if(abs(vActiveDirection - 3.) < eps) { // up
-        if(vBarycentricCoord.z < activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else if(abs(vActiveDirection - 1.) < eps) { // down
-        if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else { // right
-        if(vBarycentricCoord.x > 1. - activeAnimationElapsed) {
-          color = activeColor;
-        } 
-      }
-    } else {
-      if(abs(vActiveDirection - 2.) < eps) { // left
-        if(vBarycentricCoord.z > 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }          
-      } else if(abs(vActiveDirection - 3.) < eps) { // up
-        if(vBarycentricCoord.x > 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else if(abs(vActiveDirection - 1.) < eps) { // down
-        if(vBarycentricCoord.x < activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else { // right
-        if(vBarycentricCoord.z < activeAnimationElapsed) {
-          color = activeColor;
-        } 
-      }
-    }
-  } else if(abs(vActiveStatus - 2.) < eps) { // recede
-    if(mod(vIndex, 2.) < eps) {
-      if(abs(vActiveDirection - 2.) < eps) { // left
-        if(vBarycentricCoord.x > activeAnimationElapsed) {
-          color = activeColor;
-        }          
-      } else if(abs(vActiveDirection - 3.) < eps) { // up
-        if(vBarycentricCoord.z > activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else if(abs(vActiveDirection - 1.) < eps) { // down
-        if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else { // right
-        if(vBarycentricCoord.x < 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }
-      }
-    } else {
-      if(abs(vActiveDirection - 2.) < eps) { // left
-        if(vBarycentricCoord.z < 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }          
-      } else if(abs(vActiveDirection - 3.) < eps) { // up
-        if(vBarycentricCoord.x < 1. - activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else if(abs(vActiveDirection - 1.) < eps) { // down
-        if(vBarycentricCoord.x > activeAnimationElapsed) {
-          color = activeColor;
-        }
-      } else { // right
-        if(vBarycentricCoord.z > activeAnimationElapsed) {
-          color = activeColor;
-        } 
-      }
-    }
-  } else if(vSelected > eps) {
-    color = vec4(1, 0, 0, 1);
+  if(vSelected > eps) {
+    color = vec4(0, 1, 0, 1);
   } else if(abs(vActiveStatus - 3.) < eps) { // flash acceptance
     float diff = (iterations - vTimer) / 20.;
     float alpha = diff;
@@ -117,8 +38,6 @@ void main() {
     }
     color = vec4(60./255., 231./255., 139./255., alpha);
   }
-
-  color = vec4(1, 0, 0, 1);
 
   gl_FragColor = color;
 }
