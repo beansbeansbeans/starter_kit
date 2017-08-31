@@ -3,7 +3,7 @@
 
 precision mediump float;
 
-uniform float iterations, extrusionRange, illuminateSupports;
+uniform float iterations, extrusionRange, illuminateSupports, extrusionFrame;
 
 varying float vRenderFlag;
 varying vec3 vBarycentricCoord;
@@ -15,6 +15,7 @@ varying float vActiveDirection;
 varying float vTimer;
 varying float vSelected;
 varying float vIlluminated;
+varying float vLastIlluminated;
 
 float eps = 0.0001;
 
@@ -27,11 +28,18 @@ void main() {
   if(vSelected > eps) {
     color = vec4(0, 1, 0, 1);
   } else {
+    vec4 nextColor;
+    vec4 lastColor;
+
     if(illuminateSupports > eps) {
-      color = vec4(activeBottom.xyz, vIlluminated);
+      nextColor = vec4(activeBottom.xyz, vIlluminated);
+      lastColor = vec4(activeTop.xyz, vLastIlluminated);
     } else {
-      color = vec4(activeTop.xyz, vIlluminated);
+      nextColor = vec4(activeTop.xyz, vIlluminated);
+      lastColor = vec4(activeBottom.xyz, vLastIlluminated);
     }
+
+    color = mix(lastColor, nextColor, min(extrusionFrame / 15., 1.));
   }
 
   gl_FragColor = color;

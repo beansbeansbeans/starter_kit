@@ -30,12 +30,13 @@ let width, height, rectWidth = 0, nextRectWidth = 0,
   currentIndex = 0, lastIndex = 1, 
   projectionMatrix = new Float32Array(16),
   mouseX = -1, mouseY = -1, toLocal,
-  frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, iterationSnapshot, 
+  frame = 0, extrusionFrame = 0, activeFrame = 0, iterations = 0, illuminationFrame = 0, iterationSnapshot, 
   lastNow = Date.now(), activeIndex = 0, previousActiveIndex = 0,
-  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1, illuminated: new Float32Array(maxArgumentCount), illuminateSupports: 1 }, animationLength = 0,
+  state = { rectWidth, nextRectWidth, activeDirection: 0, selectedIndex: -1, illuminated: new Float32Array(maxArgumentCount), lastIlluminated: new Float32Array(maxArgumentCount), illuminateSupports: 1 }, animationLength = 0,
   unusedIndices = [], positions = [{}, {}], idToIndex = {},
   supports = new Float32Array(maxArgumentCount),
   illuminated = new Float32Array(maxArgumentCount),
+  lastIlluminated = new Float32Array(maxArgumentCount),
   byUser = new Float32Array(maxArgumentCount),
   activeStatus = new Float32Array(maxArgumentCount),
   timers = new Float32Array(maxArgumentCount)
@@ -271,9 +272,15 @@ export default {
       frag: opts.shaders['drawShadow.fs'],
       vert: opts.shaders['drawShadow.vs'],
       uniforms: {
+        illuminationFrame: (ctx, props) => props.illuminationFrame,
         illuminateSupports: (ctx, props) => props.illuminateSupports
       },
       attributes: {
+        lastIlluminated: {
+          buffer: regl.prop('lastIlluminated'),
+          divisor: 2
+        },
+
         illuminated: {
           buffer: regl.prop('illuminated'),
           divisor: 2
@@ -289,7 +296,7 @@ export default {
       })
 
       Object.assign(state, {
-        frame, extrusionFrame, iterations, activeFrame, mouseX, mouseY,
+        frame, extrusionFrame, illuminationFrame, iterations, activeFrame, mouseX, mouseY,
         cameraView: camera.view()
       })
 
@@ -305,6 +312,7 @@ export default {
       iterations++
       frame++
       extrusionFrame++
+      illuminationFrame++
       activeFrame++
 
       if(frame === state.animationLength) mediator.publish("reconcileTree")
@@ -451,6 +459,8 @@ export default {
       if(n._id !== web._root._id) {
         let index = idToIndex[n._id]
 
+        lastIlluminated[index] = illuminated[index]
+
         if((n.supportsRoot && supports) || (!n.supportsRoot && !supports)) {
           illuminated[index] = random.nextDouble()
         } else {
@@ -461,6 +471,9 @@ export default {
       return false
     })
 
+    extrusionFrame = 0
+
+    state.lastIlluminated = lastIlluminated
     state.illuminated = illuminated
     state.illuminateSupports = supports ? 1 : 0
   },

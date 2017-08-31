@@ -19,6 +19,7 @@ attribute float byUser;
 attribute float activeStatus;
 attribute float timers;
 attribute float illuminated;
+attribute float lastIlluminated;
 
 varying vec4 vCoord;
 varying vec3 vBarycentricCoord;
@@ -31,6 +32,7 @@ varying float vActiveDirection;
 varying float vTimer;
 varying float vSelected;
 varying float vIlluminated;
+varying float vLastIlluminated;
 
 float eps = 0.0001;
 
@@ -120,6 +122,7 @@ void main() {
   vActiveDirection = activeDirection;
 
   vIlluminated = illuminated;
+  vLastIlluminated = lastIlluminated;
 
   vSelected = -1.;
 
