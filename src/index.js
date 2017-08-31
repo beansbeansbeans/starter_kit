@@ -117,13 +117,13 @@ class App extends Component {
     }
   }
 
-  addChild(id) {
+  addChild(id, supports) {
     let parentID = this.state.selectedArg || this.state.lastMove
     let parentNode = directory[parentID].node
 
     let child = store.find(id)
 
-    let node = new Node(child.description, false, { 
+    let node = new Node(child.description, supports, { 
       user: true,
       argument: child.id
     })

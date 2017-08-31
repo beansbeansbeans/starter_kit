@@ -11,7 +11,7 @@ export default class ArgumentControls extends Component {
         controls.push(<ChildSelector 
           attacking={false}
           options={defenders}
-          select={addChild} />)
+          select={arg => addChild(arg, true)} />)
       } else {
         controls.push(<div>No options available</div>)
       }
@@ -20,7 +20,7 @@ export default class ArgumentControls extends Component {
         controls.push(<ChildSelector 
           attacking={true}
           options={attackers}
-          select={addChild} />)
+          select={arg => addChild(arg, false)} />)
       }
 
       if(concede) {

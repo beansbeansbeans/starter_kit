@@ -18,7 +18,7 @@ export default class UserTurnInput extends Component {
         controls.push(<ChildSelector 
           attacking={true}
           options={attackers}
-          select={addChild} />)
+          select={arg => addChild(arg, false)} />)
       }
 
       if(concede) {
