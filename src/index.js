@@ -331,8 +331,10 @@ class App extends Component {
         <div id="webgl-wrapper"></div>
         {turnDOM}
         {argumentControlsDOM}
-        <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
-        <button style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>score game</button>
+        <div id="game-controls">
+          <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
+          <button style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>score game</button>
+        </div>
         {resultDOM}
       </app>
     )

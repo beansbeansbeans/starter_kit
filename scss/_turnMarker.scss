@@ -1,12 +1,21 @@
-#turn-marker {
+#game-controls {
   position: fixed;
-  top: 0;
-  right: 0;
-  padding: 2rem;
-  background: white;
+  top: 2rem;
+  right: 2rem;  
+  font-size: 1.5rem;
+}
+
+#turn-marker {
   .player {
+    border-radius: 2px;
+    text-align: center;
+    width: 10rem;
+    padding: 1rem 0;
+    margin-bottom: .5rem;
+    letter-spacing: 0.5px;
     &[data-active="true"] {
-      background: green;
+      background: white;
+      font-weight: bold;
     }
   }
 }

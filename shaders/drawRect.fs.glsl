@@ -167,10 +167,10 @@ void main() {
   if(color.a < eps && vByUser > eps && vRightsideUp > eps) {
     vec2 sizeRatio = vSize / 300.;
 
-    vec2 markerSize = vec2(0.125);
+    vec2 markerSize = vec2(0.12);
     markerSize /= sizeRatio;
 
-    vec2 markerBuffer = vec2(0.05);
+    vec2 markerBuffer = vec2(0.025);
     markerBuffer /= sizeRatio;
 
     if(vBarycentricCoord.x > markerBuffer.x && vBarycentricCoord.x < (markerBuffer.x + markerSize.x)
