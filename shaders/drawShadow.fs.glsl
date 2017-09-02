@@ -19,8 +19,8 @@ varying float vLastIlluminated;
 
 float eps = 0.0001;
 
-vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
-vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
+vec4 activeBottom = vec4(0./255., 123./255., 179./255., 1);
+vec4 activeTop = vec4(216./255., 122./255., 26./255., 1);
 
 void main() {
   vec4 color = vec4(0);

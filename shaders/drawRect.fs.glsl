@@ -22,7 +22,7 @@ float eps = 0.0001;
 float innerBuffer = 0.;
 float attackBarThickness = 0.05;
 
-vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
+vec3 edgeColor = vec3(40./255., 39./255., 37./255.);
 // vec3 lightEdgeColor = vec3(175./255.);
 vec3 lightEdgeColor = edgeColor;
 vec4 attackColor = vec4(edgeColor, 1.);
