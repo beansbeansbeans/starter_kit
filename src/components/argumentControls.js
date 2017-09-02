@@ -13,7 +13,7 @@ export default class ArgumentControls extends Component {
           options={defenders}
           select={arg => addChild(arg, true)} />)
       } else {
-        controls.push(<div>No options available</div>)
+        controls.push(<div id="no-options-available">No options available</div>)
       }
     } else {
       if(attackers.length) {
@@ -28,7 +28,7 @@ export default class ArgumentControls extends Component {
       }
 
       if(!controls.length) {
-        controls.push(<div>No options available</div>)
+        controls.push(<div id="no-options-available">No options available</div>)
       }
     }
 
