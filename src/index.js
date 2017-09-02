@@ -175,7 +175,6 @@ class App extends Component {
     renderer.solve()
 
     const solveIterator = wrapIterator(web.resolveAsync(), function(result) {
-
       if(typeof result.value !== 'undefined') {
         lastResult = result.value
       }

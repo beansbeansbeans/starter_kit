@@ -167,7 +167,7 @@ void main() {
   if(color.a < eps && vByUser > eps && vRightsideUp > eps) {
     vec2 sizeRatio = vSize / 300.;
 
-    vec2 markerSize = vec2(0.12);
+    vec2 markerSize = vec2(0.11);
     markerSize /= sizeRatio;
 
     vec2 markerBuffer = vec2(0.025);

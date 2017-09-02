@@ -341,7 +341,11 @@ export default {
     state.nextRectWidth = rectWidth
 
     web.traverseDF(n => {
-      if(typeof idToIndex[n._id] === 'undefined') idToIndex[n._id] = nextIndex()
+      let newNode = false
+      if(typeof idToIndex[n._id] === 'undefined') {
+        idToIndex[n._id] = nextIndex()
+        newNode = true
+      }
 
       let index = idToIndex[n._id]
 
@@ -349,6 +353,9 @@ export default {
       positions[lastIndex].left[index] = positions[currentIndex].left[index]
       positions[lastIndex].heights[index] = positions[currentIndex].heights[index]
       positions[lastIndex].extrusions[index] = positions[currentIndex].extrusions[index]
+      if(newNode) {
+        positions[lastIndex].extrusions[index] = n.approbation
+      }
       
       positions[currentIndex].tops[index] = n.top
       positions[currentIndex].left[index] = n.depth * rectWidth
