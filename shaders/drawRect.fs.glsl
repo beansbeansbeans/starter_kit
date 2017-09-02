@@ -165,21 +165,18 @@ void main() {
   }
 
   if(color.a < eps && vByUser > eps && vRightsideUp > eps) {
-    vec2 st = vBarycentricCoord.xz;
-
     vec2 sizeRatio = vSize / 300.;
 
-    st *= sizeRatio;
+    vec2 markerSize = vec2(0.125);
+    markerSize /= sizeRatio;
 
-    vec2 center = vec2(0.15) * sizeRatio * (vSize.x / vSize.y);
+    vec2 markerBuffer = vec2(0.05);
+    markerBuffer /= sizeRatio;
 
-    center.x *= (vSize.y / vSize.x);
-
-    float circleStatus = circle(st, 
-      0.00125, // how far from center
-      center);
-
-    color = vec4(edgeColor, circleStatus);
+    if(vBarycentricCoord.x > markerBuffer.x && vBarycentricCoord.x < (markerBuffer.x + markerSize.x)
+      && vBarycentricCoord.z > markerBuffer.y && vBarycentricCoord.z < (markerBuffer.y + markerSize.y)) {
+      color = vec4(edgeColor, 1);
+    }
   }
 
   if(color.a < 0.1) {
