@@ -14,7 +14,7 @@ const random = randomModule.random(42)
 
 const frames = [10],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
-  buffer = 5, cameraDist = 1000,
+  buffer = 10, cameraDist = 1000,
   onResize = () => {},
   measureFPS = () => {
     const now = Date.now()
@@ -323,8 +323,8 @@ export default {
     setInterval(measureFPS, 1000)
 
     camera.lookAt([0, 800, 700],
-      [-250, 0, 0],
-      [-0.5, 0.25, 0.1])
+      [-200, -100, 0],
+      [-0.5, 0.5, -0.5])
   },
 
   update(web) {

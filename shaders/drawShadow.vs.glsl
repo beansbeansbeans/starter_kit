@@ -102,7 +102,7 @@ void main() {
     vBarycentricCoord = vec3(0, 0, 1);
   }
 
-  gl_Position = projection * view * vec4(interpolatedPos, -10., 1);
+  gl_Position = projection * view * vec4(interpolatedPos, -1., 1);
 
   vSupports = supports;
 

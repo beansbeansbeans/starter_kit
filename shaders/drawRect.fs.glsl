@@ -19,18 +19,18 @@ varying float vRightsideUp;
 varying vec2 vSize;
 
 float eps = 0.0001;
-float f_thickness = 0.02;
 float innerBuffer = 0.;
-float attackBarThickness = 0.1;
+float attackBarThickness = 0.06;
 
 vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
-vec3 lightEdgeColor = vec3(175./255.);
+// vec3 lightEdgeColor = vec3(175./255.);
+vec3 lightEdgeColor = edgeColor;
 vec4 attackColor = vec4(edgeColor, 1.);
 
 vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
 vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
 
-float circle(in vec2 _st, in float _radius, in vec2 center){
+float circle(in vec2 _st, in float _radius, in vec2 center) {
   vec2 dist = _st - center;
   return 1. - smoothstep(_radius-(_radius*0.01),
                    _radius+(_radius*0.01), 
@@ -42,7 +42,7 @@ void main() {
 
   float f_width = fwidth(f_closest_edge);
 
-  float edgeIntensity = step(1.5 * f_width, f_closest_edge);
+  float edgeIntensity = smoothstep(f_width, 3. * f_width, f_closest_edge);
 
   if(abs(f_closest_edge - vBarycentricCoord.y) < eps) { // remove center lines
     edgeIntensity = 1.;
@@ -182,7 +182,7 @@ void main() {
     color = vec4(edgeColor, circleStatus);
   }
 
-  if(color.a < 0.05) {
+  if(color.a < 0.1) {
     discard;
   }
 
