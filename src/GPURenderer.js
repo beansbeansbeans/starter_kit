@@ -60,6 +60,30 @@ for(let i=0; i<2; i++) {
   positions[i].extrusions = new Float32Array(maxArgumentCount)
 }
 
+const illuminateHistory = (id, supports) => {
+  web.traverseDF(n => {
+    if(n._id !== web._root._id) {
+      let index = idToIndex[n._id]
+
+      lastIlluminated[index] = illuminated[index]
+
+      if((n.supportsRoot && supports) || (!n.supportsRoot && !supports)) {
+        illuminated[index] = random.nextDouble()
+      } else {
+        illuminated[index] = 0
+      }
+    }
+
+    return false
+  })
+
+  extrusionFrame = 0
+
+  state.lastIlluminated = lastIlluminated
+  state.illuminated = illuminated
+  state.illuminateSupports = supports ? 1 : 0
+}
+
 mediator.subscribe("mousedown", data => {
   const vp = mat4.multiply([], projectionMatrix, state.cameraView),
     invVp = mat4.invert([], vp),
@@ -70,7 +94,7 @@ mediator.subscribe("mousedown", data => {
     rayDir = vec3.normalize([], vec3.subtract([], rayPoint, rayOrigin)),
     currentPosition = positions[currentIndex]
 
-  let closestDistance = Infinity, closestIndex = -1, closestID = null
+  let closestDistance = Infinity, closestIndex = -1, closestID = null, closestSupport
 
   sharedState.get("web").traverseBF(n => {
     const index = idToIndex[n._id],
@@ -106,6 +130,7 @@ mediator.subscribe("mousedown", data => {
       closestDistance = t
       closestIndex = index
       closestID = n._id
+      closestSupport = n.supportsRoot
     }
 
     return false
@@ -117,6 +142,7 @@ mediator.subscribe("mousedown", data => {
   state.activeStatus = activeStatus
 
   config.selectedArgCB({ id: closestID })
+  illuminateHistory(closestID, closestSupport)
 })
 
 export default {
@@ -466,29 +492,7 @@ export default {
     state.solving = 1
   },
 
-  illuminateHistory(id, supports) {
-    web.traverseDF(n => {
-      if(n._id !== web._root._id) {
-        let index = idToIndex[n._id]
-
-        lastIlluminated[index] = illuminated[index]
-
-        if((n.supportsRoot && supports) || (!n.supportsRoot && !supports)) {
-          illuminated[index] = random.nextDouble()
-        } else {
-          illuminated[index] = 0
-        }
-      }
-
-      return false
-    })
-
-    extrusionFrame = 0
-
-    state.lastIlluminated = lastIlluminated
-    state.illuminated = illuminated
-    state.illuminateSupports = supports ? 1 : 0
-  },
+  illuminateHistory,
 
   resize() {
     onResize()
