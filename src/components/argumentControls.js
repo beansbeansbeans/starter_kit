@@ -33,8 +33,8 @@ export default class ArgumentControls extends Component {
     }
 
     return (
-      <div style={`left: ${left}px; top: ${top}px`} id="argument-controls">
-        <div class="text">{text}</div>
+      <div id="argument-controls">
+        <div class="arg-text">{text}</div>
         <div>{controls}</div>
       </div>
     )

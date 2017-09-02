@@ -32,7 +32,7 @@ export default class UserTurnInput extends Component {
 
     return (
       <div id="user-turn-input">
-        <div id="arg-text"><span>{argText}</span> {data}</div>
+        <div class="arg-text"><span>{argText}</span> {data}</div>
         {controls}
       </div>
     )

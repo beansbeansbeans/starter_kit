@@ -300,7 +300,7 @@ class App extends Component {
       if(computerTurn || !showUserDialogue) {
         if(lastMove !== sharedState.get("web")._root._id) {
           turnDOM = <div id="user-turn-input">
-            <div id="arg-text"><span>The user says:</span>{`${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
+            <div class="arg-text"><span>The user says:</span>{`${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
           </div>
         }
       } else {

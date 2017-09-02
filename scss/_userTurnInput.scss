@@ -1,20 +1,21 @@
-#user-turn-input {
+.arg-text {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+  span {
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-right: 0.25rem;
+  }
+}
+
+#argument-controls, #user-turn-input {
   position: fixed;
   left: 3rem;
   top: 3rem;
   max-width: 25vw;
   max-height: 20vh;
-  #arg-text {
-    font-size: 1.2rem;
-    line-height: 1.5;
-    margin-bottom: 2rem;
-    span {
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      margin-right: 0.25rem;
-    }
-  }
   button {
     background: white;
     line-height: 2.5;
