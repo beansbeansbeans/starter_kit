@@ -20,7 +20,7 @@ varying vec2 vSize;
 
 float eps = 0.0001;
 float innerBuffer = 0.;
-float attackBarThickness = 0.06;
+float attackBarThickness = 0.05;
 
 vec3 edgeColor = vec3(51./255., 51./255., 45./255.);
 // vec3 lightEdgeColor = vec3(175./255.);
@@ -42,7 +42,7 @@ void main() {
 
   float f_width = fwidth(f_closest_edge);
 
-  float edgeIntensity = smoothstep(f_width, 3. * f_width, f_closest_edge);
+  float edgeIntensity = smoothstep(f_width, 2. * f_width, f_closest_edge);
 
   if(abs(f_closest_edge - vBarycentricCoord.y) < eps) { // remove center lines
     edgeIntensity = 1.;
