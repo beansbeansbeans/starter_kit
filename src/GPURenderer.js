@@ -293,7 +293,7 @@ export default {
 
     regl.frame(ctx => {
       regl.clear({
-        color: [255/255, 248/255, 227/255, 1] 
+        color: [239/255, 238/255, 236/255, 1] 
       })
 
       Object.assign(state, {
