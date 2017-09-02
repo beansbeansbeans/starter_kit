@@ -333,6 +333,8 @@ class App extends Component {
         {argumentControlsDOM}
         <div id="game-controls">
           <TurnMarker 
+            showResult={showResult}
+            userWon={(rootWarranted && userPosition === true) || (!rootWarranted && userPosition === false)}
             userTurn={userTurn} 
             computerTurn={computerTurn} />
           <button id="score-game-button" style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>Score game</button>

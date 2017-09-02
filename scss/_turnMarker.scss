@@ -21,6 +21,10 @@
       background: white;
       font-weight: bold;
     }
+    &[data-won="true"] {
+      color: white !important;
+      background: $green;
+    }
   }
 }
 
