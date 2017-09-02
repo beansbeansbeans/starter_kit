@@ -144,7 +144,7 @@ class App extends Component {
 
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
-    }, 1000)
+    }, 500)
   }
 
   concede() {
@@ -156,7 +156,7 @@ class App extends Component {
 
     setTimeout(() => {
       this.setState({ selectedArg: null, userTurn: false, computerTurn: true })
-    }, 1000)
+    }, 500)
   }
 
   submitPosition(userPosition) {
@@ -166,7 +166,7 @@ class App extends Component {
 
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
-    }, 1000)
+    }, 500)
   }
 
   score() {
@@ -273,13 +273,13 @@ class App extends Component {
       renderer.activateNode(newNode._id)
       renderer.illuminateHistory(newNode._id, !this.state.userPosition)
 
-      defer(() => {
+      setTimeout(() => {
         this.setState({ 
           lastMove: newNode._id,
           showUserDialogue: true, 
           userTurn: true, 
           computerTurn: false })
-      })
+      }, 1000)
     }
   }
 
@@ -332,8 +332,10 @@ class App extends Component {
         {turnDOM}
         {argumentControlsDOM}
         <div id="game-controls">
-          <TurnMarker userTurn={userTurn} computerTurn={computerTurn} />
-          <button style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>score game</button>
+          <TurnMarker 
+            userTurn={userTurn} 
+            computerTurn={computerTurn} />
+          <button id="score-game-button" style="position:fixed;right:2rem;top:10rem;" onClick={this.score}>Score game</button>
         </div>
         {resultDOM}
       </app>
