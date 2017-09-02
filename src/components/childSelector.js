@@ -10,7 +10,7 @@ export default class ChildSelector extends Component {
 
   render({ options, select, attacking }, { selected }) {
     return (
-      <div>
+      <div class="child-selector">
         <select onChange={this.handleChange.bind(this)}>{options.map(o => {
             return <option 
               value={o.id}>{o.description}</option>

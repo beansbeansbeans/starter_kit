@@ -299,7 +299,9 @@ class App extends Component {
     } else if(lastMove) {
       if(computerTurn || !showUserDialogue) {
         if(lastMove !== sharedState.get("web")._root._id) {
-          turnDOM = <div style="position:fixed;top:2rem;left:2rem;">{`user says: ${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
+          turnDOM = <div id="user-turn-input">
+            <div id="arg-text"><span>The user says:</span>{`${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
+          </div>
         }
       } else {
         if(showUserDialogue) {

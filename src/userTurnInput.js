@@ -9,11 +9,11 @@ export default class UserTurnInput extends Component {
     let controls = [], argText
 
     if(lastMove === sharedState.get("web")._root._id) {
-      argText = data
+      argText = 'The claim:'
       controls.push(<button onClick={() => submitPosition(true)}>agree</button>)
       controls.push(<button onClick={() => submitPosition(false)}>disagree</button>)
     } else {
-      argText = `computer says: ${data}`
+      argText = 'The computer says:'
       if(attackers.length) {
         controls.push(<ChildSelector 
           attacking={true}
@@ -32,7 +32,7 @@ export default class UserTurnInput extends Component {
 
     return (
       <div id="user-turn-input">
-        <div>{argText}</div>
+        <div id="arg-text"><span>{argText}</span> {data}</div>
         {controls}
       </div>
     )
