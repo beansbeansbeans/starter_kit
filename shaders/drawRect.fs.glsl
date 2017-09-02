@@ -27,8 +27,8 @@ vec3 edgeColor = vec3(40./255., 39./255., 37./255.);
 vec3 lightEdgeColor = edgeColor;
 vec4 attackColor = vec4(edgeColor, 1.);
 
-vec4 activeBottom = vec4(172./255., 207./255., 204./255., 1);
-vec4 activeTop = vec4(138./255., 9./255., 23./255., 1);
+vec4 activeBottom = vec4(220./255., 182./255., 21./255., 1);
+vec4 activeTop = vec4(128./255., 176./255., 160./255., 1);
 
 float circle(in vec2 _st, in float _radius, in vec2 center) {
   vec2 dist = _st - center;
