@@ -26,7 +26,7 @@ void main() {
   vec4 color = vec4(0);
 
   if(vSelected > eps) {
-    color = vec4(0, 1, 0, 1);
+    color = vec4(255./255., 255./255., 255./255., 1);
   } else if(solving < eps) {
     vec4 nextColor;
     vec4 lastColor;
