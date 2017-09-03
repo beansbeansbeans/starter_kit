@@ -13,7 +13,7 @@ export default class UserTurnInput extends Component {
       controls.push(<button onClick={() => submitPosition(true)}>agree</button>)
       controls.push(<button onClick={() => submitPosition(false)}>disagree</button>)
     } else {
-      argText = 'The computer says:'
+      argText = 'The other side says:'
       if(attackers.length) {
         controls.push(<ChildSelector 
           attacking={true}
