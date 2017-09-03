@@ -349,7 +349,7 @@ class App extends Component {
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   let node = argument[0].tree
 
-  store = createStore(argument[0], 50)
+  store = createStore(argument[0], 25)
 
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   

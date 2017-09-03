@@ -5,7 +5,11 @@ export default class ChildSelector extends Component {
   state = { selected: this.props.options[0].id }
 
   handleChange(event) {
-    this.setState({ selected: event.target.value })
+    event.stopPropagation()
+    
+    if(event.target.value !== this.state.selected) {
+      this.setState({ selected: event.target.value })
+    }
   }
 
   render({ options, select, attacking }, { selected }) {

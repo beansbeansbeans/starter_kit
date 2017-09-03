@@ -85,6 +85,8 @@ const illuminateHistory = (id, supports) => {
 }
 
 mediator.subscribe("mousedown", data => {
+  if(data.target.nodeName === 'SELECT') return
+
   const vp = mat4.multiply([], projectionMatrix, state.cameraView),
     invVp = mat4.invert([], vp),
     rayPoint = vec3.transformMat4([], 
