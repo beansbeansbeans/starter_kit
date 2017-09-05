@@ -13,6 +13,8 @@ function randomScheme() {
 
 const find = id => directory[id]
 
+const names = ['Alex', 'John', 'Mary', 'Sue', 'Elizabeth', 'Jane']
+
 function walk() {
   let newToSearch = []
 
@@ -28,6 +30,13 @@ function walk() {
     // TODO: figure out wtf
     child.attackers = []
     child.defenders = []
+    child.supporters = []
+
+    for(let i=0; i < 3 + Math.round(random.nextDouble() * 10); i++) {
+      child.supporters.push({
+        name: names[Math.floor(random.nextDouble() * names.length)]
+      })
+    }
 
     if(typeof node.ref !== 'undefined') {
       let ref = catalogue[node.ref]

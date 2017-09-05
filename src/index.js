@@ -304,12 +304,15 @@ class App extends Component {
         }
       } else {
         if(showUserDialogue) {
-          let argText = ''
+          let argText = '', supporters = []
           if(lastMove) {
-            argText = store.find(directory[lastMove].node.extraData.argument).description
+            let arg = store.find(directory[lastMove].node.extraData.argument)
+            argText = arg.description
+            supporters = arg.supporters
           }
 
           turnDOM = <UserTurnInput
+            supporters={supporters}
             data={argText}
             lastMove={lastMove}
             attackers={getUnusedChildren(lastMove, 'attackers')}
