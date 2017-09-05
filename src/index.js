@@ -393,7 +393,7 @@ function* resolve() {
     
     if(!obj.inWeb || keys[i] === web._root._id) continue
 
-    if(random.nextDouble() < 0.35) {
+    if(random.nextDouble() < 0.5) {
       obj.inWeb = false
 
       removedKeys.push(node._id)
