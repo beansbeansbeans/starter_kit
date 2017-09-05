@@ -12,7 +12,7 @@ import randomModule from './helpers/random'
 import deepAssign from 'deep-assign'
 const random = randomModule.random(42)
 
-const frames = [10],
+const frames = [15],
   maxArgumentCount = 1000, nTriangles = 2 * maxArgumentCount,
   buffer = 10, cameraDist = 1000,
   onResize = () => {},

@@ -42,5 +42,9 @@ void main() {
     color = mix(lastColor, nextColor, min(extrusionFrame / 15., 1.));
   }
 
+  if(vRenderFlag < eps) {
+    discard;
+  }
+
   gl_FragColor = color;
 }

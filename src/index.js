@@ -388,11 +388,12 @@ function* resolve() {
   let keys = Object.keys(directory)
 
   for(let i=0; i<keys.length; i++) {
-    let obj = directory[keys[i]], node = obj.node
+    let key = keys[i],
+      obj = directory[key], node = obj.node
     
-    if(!obj.inWeb) continue
+    if(!obj.inWeb || keys[i] === web._root._id) continue
 
-    if(random.nextDouble() < 0.5) {
+    if(random.nextDouble() < 0.35) {
       obj.inWeb = false
 
       removedKeys.push(node._id)
