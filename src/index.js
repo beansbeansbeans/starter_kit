@@ -147,7 +147,7 @@ class App extends Component {
 
     setTimeout(() => {
       this.setState({ userTurn: false, computerTurn: true })
-    }, 500)
+    }, 1500)
   }
 
   concede() {
