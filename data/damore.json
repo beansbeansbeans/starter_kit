@@ -6,6 +6,14 @@
       "attackers": [
         {
           "data": "Nature and nurture are not alternatives - explanations for sex differences probably involve some of each. The only issue is whether the contribution of biology is 0, and there is lots of evidence that the contribution of biology is greater than 0.",
+          "attackers": [
+            {
+              "data": "More men than women will put themselves forward into the academic competition, because men will see that they've got a better chance for success"
+            },
+            {
+              "data": "There's likely to be a snowball effect. All of us have an easier time imagining ourselves in careers where there are other people like us. If the first three effects perpetuate a situation where there are few female scientists and mathematicians, young girls will be less likely to see math and science as a possible life."
+            }
+          ],
           "defenders": [
             {
               "data": "There are many biological mechanisms by which a sex difference could occur.",
@@ -59,13 +67,13 @@
         "data": "We must distinguish the moral claim (we should not discriminate against women) from the empirical claim (there is no difference between men and women)."
       },
       {
-        "data": "Sex differences are obvious.",
+        "data": "But sex differences are obvious.",
         "attackers": [
           {
-            "data": "Those are stereotypes.",
+            "data": "Those are just stereotypes.",
             "attackers": [
               {
-                "data": "Stereotypes could reflect reality.",
+                "data": "But stereotypes could reflect reality.",
                 "defenders": [
                   {
                     "data": "People can be good intuitive statisticians when forming categories and that their prototypes for conceptual categories track the statistics of the natural world pretty well."
@@ -83,13 +91,28 @@
         ]
       },
       {
-        "data": "A departure from a 50-50 sex ratio in any profession does not, by itself, imply that we are seeing discrimination. Interests and aptitudes also play a role."
+        "data": "A departure from a 50-50 sex ratio in any profession does not, by itself, imply that we are seeing discrimination. Interests and aptitudes also play a role.",
+        "attackers": [
+          {
+            "data": "There is not a shred of evidence that differences exist.",
+            "attackers": [
+              {
+              "data": "It's impossible that shreds of evidence do not exist.",
+              "attackers": [
+                {
+                  "data": "In cases where there are differences, there are as many instances in which women do better than men as ones in which men do better than women. Men are better at throwing, but women are more dexterous. Men are better at mentally rotating shapes; women are better at visual memory. Men are better at mathematical problem-solving; women are better at mathematical calculation."
+                }
+              ]
+              }
+            ]
+          }
+        ]
       },
       {
         "data": "Men are much more variable, which means there are more men on the upper end of the distribution. That means even if on average the sexes are indistinguishable, we would still expect more men in exceptionally demanding careers, e.g. scientific academia.",
         "attackers": [
           {
-            "data": "This result is based on the SAT-M, which is a flawed measure. When you look at college performance among the most talented group, the differences actually disappear."
+            "data": "This is based on the SAT-M, which is a flawed measure. Looking at college performance among the most talented group, the differences actually disappear."
           }
         ]
       }
@@ -103,6 +126,9 @@
               "attackers": [
                 {
                   "data": "In cases where there are differences, there are as many instances in which women do better than men as ones in which men do better than women. Men are better at throwing, but women are more dexterous. Men are better at mentally rotating shapes; women are better at visual memory. Men are better at mathematical problem-solving; women are better at mathematical calculation."
+                },
+                {
+                  "data": "My feeling is that where we stand now, we cannot evaluate this claim. It may be true, but as long as the forces of discrimination and biased perceptions affect people so pervasively, we'll never know. I think the only way we can find out is to do one more experiment. We should allow all of the evidence that men and women have equal cognitive capacity, to permeate through society. We should allow people to evaluate children in relation to their actual capacities, rather than one's sense of what their capacities ought to be, given their gender. Then we can see, as those boys and girls grow up, whether different inner voices pull them in different directions. I don't know what the findings of that experiment will be. But I do hope that some future generation of children gets to find out."
                 }
               ]
             },
@@ -142,7 +168,7 @@
               ]
             },
             {
-              "data": "There's evidence that men are more risk-taking, which also leads them to pursue different careers.",
+              "data": "There's also evidence that men are more risk-taking, which also leads them to pursue different careers.",
               "attackers": [
                 {
                   "ref": 0
@@ -163,10 +189,10 @@
               ]
             },
             {
-              "data": "People who are better at math are those who pursue mathematically intensive careers, where men are more highly represented",
+              "data": "The fact that men are more highly represented in mathematically intensive careers serves as evidence. People who are better at math are the ones who pursue those careers.",
               "attackers": [
                 {
-                  "data": "First, which mathematically intensive jobs should we choose? If we choose engineering, we will conclude that men are better at math because more men become engineers. If we choose accounting, we will think that women are better at math because more women become accountants: 57% of current accountants are women."
+                  "data": "Which mathematically intensive jobs are we evaluating? If we choose engineering, we will conclude that men are better at math because more men become engineers. If we choose accounting, we will think that women are better at math because more women become accountants: 57% of current accountants are women."
                 },
                 {
                   "data": "Surely you've got to be good at math to land a mathematically intensive job, but talent in mathematics is only one of the factors influencing career choice. It can't be our gold standard for mathematical ability."
@@ -174,7 +200,7 @@
               ]
             },
             {
-              "data": "There's evidence in SAT score differences that men are superior at mathematical reasoning.",
+              "data": "Actually, there's evidence in SAT score differences that men are superior at mathematical reasoning.",
               "attackers": [
                 {
                   "ref": 0

@@ -1,9 +1,10 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 import ChildSelector from './childSelector'
+import Support from './support'
 
 export default class ArgumentControls extends Component {
-  render({ supportive, left, top, attackers, defenders, addChild, concede, text }) {
+  render({ resolveSupporter, supporters, supportive, left, top, attackers, defenders, addChild, concede, text }) {
     let controls = []
 
     if(supportive) {
@@ -35,6 +36,9 @@ export default class ArgumentControls extends Component {
     return (
       <div id="argument-controls">
         <div class="arg-text">{text}</div>
+        <Support 
+          clickUser={resolveSupporter}
+          supporters={supporters} />
         <div>{controls}</div>
       </div>
     )

@@ -1,7 +1,7 @@
 .arg-text {
-  font-size: 1.2rem;
-  line-height: 1.5;
-  margin-bottom: 2rem;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
   span {
     font-weight: bold;
     letter-spacing: 0.5px;
@@ -10,7 +10,7 @@
   }
 }
 
-#argument-controls, #user-turn-input {
+#argument-controls, #user-turn-input, #user-profile {
   position: fixed;
   left: 3rem;
   top: 3rem;

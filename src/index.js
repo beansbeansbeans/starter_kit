@@ -14,12 +14,14 @@ import UserTurnInput from './userTurnInput'
 import TurnMarker from './components/turnMarker'
 import ArgumentControls from './components/argumentControls'
 import Result from './components/result'
+import Support from './components/support'
+import UserProfile from './components/userProfile'
 import { handleResize } from './listeners'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 import createStore from './argumentSchemes/store'
 
-let shaderFiles = ['drawRect.fs', 'drawRect.vs', 'drawShadow.fs', 'drawShadow.vs'], argument, directory = {}, web, store, mouseX, mouseY
+let shaderFiles = ['drawRect.fs', 'drawRect.vs', 'drawShadow.fs', 'drawShadow.vs'], argument, directory = {}, web, removedKeys = [], store, mouseX, mouseY, resolver, undoer
 
 const shaders = {},
   preload = {
@@ -89,11 +91,12 @@ class App extends Component {
     selectedArg: null,
     selectedArgLeft: 0,
     selectedArgTop: 0,
-    showResult: false
+    showResult: false,
+    showUserProfile: false
   }
 
   componentWillMount() {
-    bindAll(this, ['addChild', 'concede', 'submitPosition', 'selectedArg', 'score'])
+    bindAll(this, ['addChild', 'concede', 'submitPosition', 'selectedArg', 'score', 'resolveByUser'])
   }
 
   componentDidMount() {
@@ -220,7 +223,7 @@ class App extends Component {
 
         if(arg.byUser) {
           userArgs.push(key)
-        } else {
+        } else if(key !== web._root._id) {
           computerArgs.push(key)
         }
       }
@@ -231,7 +234,7 @@ class App extends Component {
         computerArgs.push(web._root._id)
       }
     
-      if(random.nextDouble() < 0.75 && userArgs.length) {
+      if(random.nextDouble() < 0.85 && userArgs.length) {
         let attacker = getRandomChild(true, userArgs)
         if(attacker) {
           newNode.extraData.argument = attacker.id
@@ -282,12 +285,24 @@ class App extends Component {
     }
   }
 
-  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop, showResult, rootWarranted, userPosition }) {
-    let turnDOM = null, argumentControlsDOM = null, resultDOM
+  resolveByUser(data) {
+    this.setState({
+      showUserProfile: true
+    })
+
+    resolver = resolve()
+    resolveIterate()
+  }
+
+  render({ }, { showUserDialogue, userTurn, lastMove, computerTurn, selectedArg, selectedArgLeft, selectedArgTop, showResult, rootWarranted, userPosition, showUserProfile }) {
+    let turnDOM = null, argumentControlsDOM = null, resultDOM, userProfileDOM = null
 
     if(selectedArg) {
+      let arg = store.find(directory[selectedArg].node.extraData.argument)
       argumentControlsDOM = <ArgumentControls
-        text={store.find(directory[selectedArg].node.extraData.argument).description}
+        text={arg.description}
+        supporters={arg.supporters}
+        resolveSupporter={this.resolveByUser}
         supportive={!!directory[selectedArg].byUser || (userPosition === true && web._root._id === selectedArg)}
         left={selectedArgLeft}
         top={selectedArgTop}
@@ -298,8 +313,12 @@ class App extends Component {
     } else if(lastMove) {
       if(computerTurn || !showUserDialogue) {
         if(lastMove !== sharedState.get("web")._root._id) {
+          let arg = store.find(directory[lastMove].node.extraData.argument)
           turnDOM = <div id="user-turn-input">
-            <div class="arg-text"><span>The user says:</span>{`${store.find(directory[lastMove].node.extraData.argument).description}`}</div>
+            <div class="arg-text"><span>The user says:</span>{`${arg.description}`}</div>
+            <Support 
+              supporters={arg.supporters}
+              clickUser={this.resolveByUser} />
           </div>
         }
       } else {
@@ -313,6 +332,7 @@ class App extends Component {
 
           turnDOM = <UserTurnInput
             supporters={supporters}
+            resolveSupporter={this.resolveByUser}
             data={argText}
             lastMove={lastMove}
             attackers={getUnusedChildren(lastMove, 'attackers')}
@@ -330,11 +350,26 @@ class App extends Component {
         rootText={web._root.data} />
     }
 
+    if(showUserProfile) {
+      turnDOM = null
+      argumentControlsDOM = null
+      userProfileDOM = <UserProfile
+        back={e => {
+          this.setState({
+            showUserProfile: false
+          })
+
+          undoer = undo()
+          undoIterate()
+        }} />
+    }
+
     return (
       <app>
         <div id="webgl-wrapper"></div>
         {turnDOM}
         {argumentControlsDOM}
+        {userProfileDOM}
         <div id="game-controls">
           <TurnMarker 
             showResult={showResult}
@@ -349,10 +384,90 @@ class App extends Component {
   }
 }
 
+function* resolve() {
+  let keys = Object.keys(directory)
+
+  for(let i=0; i<keys.length; i++) {
+    let obj = directory[keys[i]], node = obj.node
+    
+    if(!obj.inWeb) continue
+
+    if(random.nextDouble() < 0.5) {
+      obj.inWeb = false
+
+      removedKeys.push(node._id)
+      web.removeSingle(node)
+
+      yield node
+    }
+  }
+
+  return
+}
+
+function resolveIterate() {
+  let result = resolver.next()
+
+  renderer.update(web)
+
+  if(!result.done) {
+    mediator.subscribe("reconcileTree", resolveIterate, true)
+  }
+}
+
+function* undo() {
+  let keys = Object.keys(directory)
+
+  removedKeys = removeDuplicates(removedKeys)
+
+  for(let i=0; i<removedKeys.length; i++) {
+    let node = directory[removedKeys[i]].node
+
+    if(!directory[node._id].inWeb) {
+      let nearestActiveAncestor = web.traverseUp(n => {
+        return directory[n._id].inWeb
+      }, node)
+
+      directory[node._id].inWeb = true
+      node.parent = nearestActiveAncestor
+
+      // in case a child of this node had been reassigned to a different parent when this node was deleted, and is no longer in the tree
+      let toDelete = []
+      for(let i=0; i<node.children.length; i++) {
+        let child = node.children[i]
+
+        if(!directory[child._id].inWeb) {
+          toDelete.push(i)
+        }
+      }
+
+      for(let i=0; i<toDelete.length; i++) {
+        node.children.splice(toDelete[i] - i, 1)
+      }
+
+      web.addBack(node)
+
+      yield node
+    }
+  }
+
+  return
+}
+
+function undoIterate() {
+  let result = undoer.next()
+
+  renderer.update(web)
+
+  if(!result.done) {
+    mediator.subscribe("reconcileTree", undoIterate, true)
+  }
+}
+
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   let node = argument[0].tree
 
-  store = createStore(argument[0], 25)
+  store = createStore(argument[0], 0)
 
   web = new AsyncTree(node.data, { argument: store.root.id }, node._id)
   

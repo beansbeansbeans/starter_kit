@@ -5,7 +5,7 @@ import ChildSelector from './components/childSelector'
 import Support from './components/support'
 
 export default class UserTurnInput extends Component {
-  render({ supporters, attackers, addChild, concede, exit, submitPosition, lastMove, data }) {
+  render({ resolveSupporter, supporters, attackers, addChild, concede, exit, submitPosition, lastMove, data }) {
 
     let controls = [], argText
 
@@ -34,7 +34,9 @@ export default class UserTurnInput extends Component {
     return (
       <div id="user-turn-input">
         <div class="arg-text"><span>{argText}</span> {data}</div>
-        <Support supporters={supporters} />
+        <Support 
+          clickUser={resolveSupporter}
+          supporters={supporters} />
         {controls}
       </div>
     )
