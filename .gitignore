@@ -13,6 +13,8 @@ results
 
 npm-debug.log
 dist/
+temp/
+model/
 
 node_modules/*
 !node_modules/key-pressed/

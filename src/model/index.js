@@ -1,18 +1,33 @@
-// Define a model for linear regression.
-const model = tf.sequential();
-model.add(tf.layers.dense({units: 1, inputShape: [1]}));
+// data generated with function y = ax^3 + bx^2 + cx + d
+// learn coefficients
 
-// Prepare the model for training: Specify the loss and the optimizer.
-model.compile({loss: 'meanSquaredError', optimizer: 'sgd'});
+const a = tf.variable(tf.scalar(Math.random()))
+const b = tf.variable(tf.scalar(Math.random()))
+const c = tf.variable(tf.scalar(Math.random()))
+const d = tf.variable(tf.scalar(Math.random()))
 
-// Generate some synthetic data for training.
-const xs = tf.tensor2d([1, 2, 3, 4], [4, 1]);
-const ys = tf.tensor2d([1, 3, 5, 7], [4, 1]);
+function loss(predictions, labels) {
+  const meanSquareError = predictions.sub(labels).square().mean()
+  return meanSquareError
+}
 
-// Train the model using the data.
-model.fit(xs, ys).then(() => {
-  // Use the model to do inference on a data point the model hasn't seen before:
-  model.predict(tf.tensor2d([5], [1, 1])).print();
-});
+function predict(x) {
+  return tf.tidy(() => {
+    return a.mul(x.pow(tf.scalar(3)))
+      .add(b.mul(x.square()))
+      .add(c.mul(x))
+      .add(d)
+  })
+}
 
-export default model
+function train(xs, ys, numIterations = 75) {
+  const learningRate = 0.5
+  const optimizer = tf.train.sgd(learningRate)
+  
+  for(let iter=0; iter<numIterations; iter++) {
+    optimizer.minimize(() => {
+      const predsYs = predict(xs)
+      return loss(predsYs, ys)
+    })
+  }  
+}
