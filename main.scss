@@ -1,13 +1,5 @@
 @import "scss/variables";
 @import "scss/uiElements";
-@import "scss/controls";
-@import "scss/moralMatricesChart";
-@import "scss/userTurnInput";
-@import "scss/turnMarker";
-@import "scss/argumentControls";
-@import "scss/result";
-@import "scss/childSelector";
-@import "scss/userProfile";
 
 body {
   margin: 0;
@@ -55,16 +47,3 @@ $webgl-buffer: 0px;
 #debug canvas {
 
 }
-
-svg {
-  .value {
-    text-transform: uppercase;
-  }
-  .support {
-    fill: green;
-  }
-  .attack {
-    fill: red;
-  }
-}
-
