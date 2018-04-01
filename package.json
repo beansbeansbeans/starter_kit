@@ -72,7 +72,6 @@
   },
   "homepage": "https://github.com/GianlucaGuarini/es6-project-starter-kit",
   "dependencies": {
-    "@tensorflow/tfjs": "^0.6.1",
     "angle-normals": "^1.0.0",
     "canvas-orbit-camera": "^1.0.2",
     "d3-hierarchy": "^1.1.5",
