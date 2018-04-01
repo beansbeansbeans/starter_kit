@@ -28,7 +28,9 @@ module.exports = function(options) {
         }),
         nodeResolve({
           jsnext: true,
-          main: true
+          main: true,
+          preferBuiltins: false,
+          browser: true
         }),
         commonjs({ 
           include: './node_modules/**',
