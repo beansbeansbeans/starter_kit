@@ -123,7 +123,7 @@ export default {
 
   wrapIterator,
 
-  intersectTriangle,
+  // intersectTriangle,
 
   decodeFloat: function(x, y, z, w) {
     UINT8_VIEW[0] = Math.floor(w)
