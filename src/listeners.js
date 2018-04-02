@@ -1,7 +1,6 @@
 import sharedState from './sharedState'
 import { debounce } from 'underscore'
 import mediator from './mediator'
-import renderer from './GPURenderer'
 
 export const handleResize = () => {
   sharedState.set("windowWidth", window.innerWidth)

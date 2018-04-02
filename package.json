@@ -79,7 +79,6 @@
     "d3-selection": "^1.1.0",
     "deep-assign": "^2.0.0",
     "gl-mat4": "^1.1.4",
-    "gl-vec3": "^1.0.3",
     "mesh-reindex": "^1.0.0",
     "noisejs": "^2.1.0",
     "orthographic-camera": "^1.0.5",
