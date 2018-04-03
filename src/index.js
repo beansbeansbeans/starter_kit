@@ -29,15 +29,23 @@ const shaders = {},
 class App extends Component {
   state = { 
     startIndex: 0,
-    endIndex: 8000
+    endIndex: 8000,
+    intermediaries: []
   }
 
   componentWillMount() {
-    bindAll(this, [])
+    bindAll(this, ['updateIntermediaries'])
+  }
+
+  updateIntermediaries() {
+    
   }
 
   componentDidUpdate(prevProps, prevState) {
-
+    let { startIndex, endIndex } = this.state
+    if(startIndex !== prevState.startIndex || endIndex !== prevState.endIndex) {
+      this.updateIntermediaries()
+    }
   }
 
   render({ data }, { startIndex, endIndex }) {

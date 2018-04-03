@@ -53,17 +53,19 @@ $webgl-buffer: 0px;
 }
 
 #start {
-  top: calc(50vh - 20px);
+  top: calc(50vh - 15px);
   left: 20vw;
   .marker {
     left: 0;
+    top: calc(100% + 3px);
   }
 }
 
 #finish {
-  top: calc(50vh + 20px);
+  top: calc(50vh + 15px);
   right: 20vw;
   .marker {
+    bottom: calc(100% + 3px);
     right: 0;
   }
 }
@@ -71,7 +73,6 @@ $webgl-buffer: 0px;
 #start, #finish {
   .marker {
     position: absolute;
-    top: calc(100% + 3px);
     width: 8px;
     height: 8px;
     background: #222;
