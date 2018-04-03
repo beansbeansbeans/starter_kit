@@ -300,7 +300,9 @@ class App extends Component {
               <div class="marker"></div>
             </div>
           </div>
-          <canvas onClick={this.clickCanvas} id="canvas"></canvas>
+          <div style={`width:${canvasRenderWidth}px;height:${canvasRenderHeight}px`} class="canvas-wrapper">
+            <canvas onClick={this.clickCanvas} id="canvas"></canvas>
+          </div>
         </div>
       </app>
     )
