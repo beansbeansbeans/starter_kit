@@ -14,7 +14,7 @@ const random = randomModule.random(42)
 const size = 20
 
 let shaderFiles = [], web, mouseX, mouseY, directory = {}, embeddings
-let canvasRenderWidth, canvasRenderHeight, canvas, ctx, maxDensity, cellDim, canvasXOffset, canvasYOffset
+let canvasRenderWidth, canvasRenderHeight, canvas, ctx, maxDensity, cellDim, canvasXOffset, canvasYOffset, minDistance = 0, maxDistance = 0
 
 const shaders = {},
   preload = {
@@ -121,9 +121,10 @@ class App extends Component {
     }
 
     let min = Infinity, max = 0
-    let minDistance = Infinity, maxDistance = 0
     let distances = []
 
+    minDistance = Infinity
+    maxDistance = 0
     maxDensity = 0
 
     for(let i=0; i<data.length; i++) {
@@ -167,8 +168,6 @@ class App extends Component {
         }
       }
     }
-
-    console.log(minDistance, maxDistance)
 
     for(let i=0; i<distances.length; i++) {
       // bottom left: 0 distance from both
@@ -303,6 +302,7 @@ class App extends Component {
           <div style={`width:${canvasRenderWidth}px;height:${canvasRenderHeight}px`} class="canvas-wrapper">
             <canvas onClick={this.clickCanvas} id="canvas"></canvas>
           </div>
+          <div style={`width:${canvasRenderWidth}px;`} class="distances">{`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}</div>
         </div>
       </app>
     )
