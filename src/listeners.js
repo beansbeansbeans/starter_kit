@@ -9,8 +9,6 @@ export const handleResize = () => {
   const rect = document.querySelector("#webgl-wrapper").getBoundingClientRect()
   sharedState.set("containerWidth", rect.width)
   sharedState.set("containerHeight", rect.height)
-
-  renderer.resize()
 }
 
 window.addEventListener("resize", debounce(handleResize, 250))

@@ -47,3 +47,34 @@ $webgl-buffer: 0px;
 #debug canvas {
 
 }
+
+#start, #finish {
+  position: fixed;
+}
+
+#start {
+  top: calc(50vh - 20px);
+  left: 20vw;
+  .marker {
+    left: 0;
+  }
+}
+
+#finish {
+  top: calc(50vh + 20px);
+  right: 20vw;
+  .marker {
+    right: 0;
+  }
+}
+
+#start, #finish {
+  .marker {
+    position: absolute;
+    top: calc(100% + 3px);
+    width: 8px;
+    height: 8px;
+    background: #222;
+    border-radius: 50%;
+  }
+}

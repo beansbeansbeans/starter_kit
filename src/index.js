@@ -27,7 +27,10 @@ const shaders = {},
   }
 
 class App extends Component {
-  state = { }
+  state = { 
+    startIndex: 0,
+    endIndex: 8000
+  }
 
   componentWillMount() {
     bindAll(this, [])
@@ -37,10 +40,19 @@ class App extends Component {
 
   }
 
-  render({ }, { }) {
+  render({ data }, { startIndex, endIndex }) {
     return (
       <app>
-        <div id="webgl-wrapper"></div>
+        <div id="webgl-wrapper">
+          <div id="start">
+            <div class="sentence">{data[startIndex].sentence}</div>
+            <div class="marker"></div>
+          </div>
+          <div id="finish">
+            <div class="sentence">{data[endIndex].sentence}</div>
+            <div class="marker"></div>
+          </div>
+        </div>
       </app>
     )
   }
@@ -48,5 +60,5 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   console.log(embeddings)
-  render(<App />, document.body)
+  render(<App data={embeddings} />, document.body)
 })
