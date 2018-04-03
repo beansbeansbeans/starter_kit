@@ -89,7 +89,6 @@ class App extends Component {
     }
 
     console.log(min, max)
-    console.log(buckets)
 
     let top10 = []
     for(let i=0; i<buckets.length; i++) {
@@ -97,10 +96,27 @@ class App extends Component {
 
       let iterator = 0
       while(top10.length < 10 && iterator < buckets[i].length) {
-        top10.push(buckets[i][iterator])
+        let obj = buckets[i][iterator]
+        let objMinusStart = []
+        let endMinusObj = []
+
+        for(let j=0; j<obj.encoding.length; j++) {
+          objMinusStart.push(obj.encoding[j] - A[j])
+          endMinusObj.push(B[j] - obj.encoding[j])
+        }
+
+        top10.push(Object.assign({
+          startDistance: vectorLength(objMinusStart),
+          endDistance: vectorLength(endMinusObj),
+        }, obj))
+
         iterator++
       }
     }
+
+    this.setState({
+      intermediaries: top10
+    })
 
     console.log(top10)
   }
@@ -112,17 +128,25 @@ class App extends Component {
     }
   }
 
-  render({ data }, { startIndex, endIndex }) {
+  render({ data }, { startIndex, endIndex, intermediaries }) {
     return (
       <app>
         <div id="webgl-wrapper">
-          <div id="start">
-            <div class="sentence">{data[startIndex].sentence}</div>
-            <div class="marker"></div>
-          </div>
-          <div id="finish">
-            <div class="sentence">{data[endIndex].sentence}</div>
-            <div class="marker"></div>
+          <div id="line">
+            <div id="start">
+              <div class="sentence">{data[startIndex].sentence}</div>
+              <div class="marker"></div>
+            </div>
+            {intermediaries.map(d => {
+              return <div style={`left:${100 * d.startDistance / (d.startDistance + d.endDistance)}%`} class="intermediary">
+                <div class="sentence">{d.sentence}</div>
+                <div class="marker"></div>
+              </div>
+            })}
+            <div id="finish">
+              <div class="sentence">{data[endIndex].sentence}</div>
+              <div class="marker"></div>
+            </div>
           </div>
         </div>
       </app>

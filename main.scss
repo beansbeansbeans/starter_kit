@@ -48,34 +48,67 @@ $webgl-buffer: 0px;
 
 }
 
-#start, #finish {
+#line {
   position: fixed;
+  top: 10vh;
+  left: 10vw;
+  right: 10vw;
+}
+
+#start, #finish {
+  position: absolute;
 }
 
 #start {
-  top: calc(10vh - 15px);
-  left: 20vw;
+  left: 0;
   .marker {
     left: 0;
-    top: calc(100% + 3px);
+  }
+}
+
+.marker {
+  background: #222;
+  border-radius: 50%;
+}
+
+.intermediary {
+  position: absolute;
+  .sentence {
+    position: absolute;
+    display: none;
+    white-space: nowrap;
+  }
+  &:hover {
+    .sentence {
+      display: block;
+    }
+  }
+  .marker {
+    position: absolute;
+    top: 15px;
+    width: 5px;
+    height: 5px;
   }
 }
 
 #finish {
-  top: calc(10vh + 15px);
-  right: 20vw;
+  right: 0;
   .marker {
-    bottom: calc(100% + 3px);
     right: 0;
+  }
+  .sentence {
+    position: absolute;
+    top: 25px;
+    right: 0;
+    white-space: nowrap;
   }
 }
 
 #start, #finish {
   .marker {
-    position: absolute;
     width: 8px;
     height: 8px;
-    background: #222;
-    border-radius: 50%;
+    top: 15px;
+    position: absolute;
   }
 }
