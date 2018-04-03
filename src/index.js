@@ -11,7 +11,7 @@ import model from './model/index'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
-let shaderFiles = [], web, mouseX, mouseY, directory = {}
+let shaderFiles = [], web, mouseX, mouseY, directory = {}, embeddings
 
 const shaders = {},
   preload = {
@@ -22,8 +22,8 @@ const shaders = {},
       })
     ,
     getData: () => 
-      Promise.all([].map(getData))
-        .then(data => {})
+      Promise.all(['encodings_pca'].map(getData))
+        .then(data => embeddings = data[0])
   }
 
 class App extends Component {
@@ -47,5 +47,6 @@ class App extends Component {
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
+  console.log(embeddings)
   render(<App />, document.body)
 })
