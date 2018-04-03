@@ -5,6 +5,30 @@ const random = randomModule.random(42)
 const UINT8_VIEW = new Uint8Array(4),
   FLOAT_VIEW = new Float32Array(UINT8_VIEW.buffer)
 
+const subVectors = (a, b) => {
+  let res = []
+  for(let i=0; i<a.length; i++) {
+    res.push(a[i] - b[i])
+  }
+  return res
+}
+
+const dotProduct = (a, b) => {
+  let res = 0
+  for(let i=0; i<a.length; i++) {
+    res += (a[i] * b[i])
+  }
+  return res
+}
+
+const vectorLength = vec => {
+  let res = 0
+  for(let i=0; i<vec.length; i++) {
+    res += Math.pow(vec[i], 2)
+  }
+  return Math.sqrt(res)
+}
+
 const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x)
 
 const withConstructor = constructor => o => {
@@ -110,6 +134,12 @@ export default {
     }
     return clean
   },
+
+  vectorLength,
+
+  subVectors,
+
+  dotProduct,
 
   pipe,
 
