@@ -13,6 +13,7 @@ const random = randomModule.random(42)
 
 const size = 20
 
+let increment = 1/size
 let shaderFiles = [], web, mouseX, mouseY, directory = {}, embeddings
 let canvasRenderWidth, canvasRenderHeight, canvas, ctx, maxDensity, cellDim, canvasXOffset, canvasYOffset, minDistance = 0, maxDistance = 0
 
@@ -106,37 +107,35 @@ class App extends Component {
     let { data } = this.props
     let { startIndex, endIndex } = this.state
 
-    let A = data[startIndex].encoding
-    let B = data[endIndex].encoding
-
-    let buckets = []
-    for(let i=0; i<1; i+=0.05) buckets.push([])
-
-    let densities = []
-    for(let i=0; i<1; i+=0.05) {
-      densities.push([])
-      for(let j=0; j<1; j+=0.05) {
-        densities[densities.length - 1].push([])
-      }
-    }
-
     let min = Infinity, max = 0
     let distances = []
+    let buckets = []
+    let densities = []
 
     minDistance = Infinity
     maxDistance = 0
     maxDensity = 0
 
+    let A = data[startIndex].encoding
+    let B = data[endIndex].encoding
+
+    for(let i=0; i<1; i+=increment) {
+      buckets.push([])
+      densities.push([])
+      for(let j=0; j<1; j+=increment) densities[densities.length - 1].push([])
+    }
+
     for(let i=0; i<data.length; i++) {
       if(i === startIndex || i === endIndex) continue
-      let P = data[i].encoding
 
+      let P = data[i].encoding
       let pa = subVectors(P, A)
       let ba = subVectors(B, A)
       let bp = subVectors(B, P)
-
+      let t = dotProduct(pa, ba) / dotProduct(ba, ba)
       let startDistance = vectorLength(pa)
       let endDistance = vectorLength(bp)
+
       distances.push([startDistance, endDistance, data[i].sentence])
 
       if(startDistance < minDistance) minDistance = startDistance
@@ -144,16 +143,11 @@ class App extends Component {
       if(startDistance > maxDistance) maxDistance = startDistance
       if(endDistance > maxDistance) maxDistance = endDistance
 
-      let t = dotProduct(pa, ba) / dotProduct(ba, ba)
       let tba = []
-      for(let j=0; j<ba.length; j++) {
-        tba.push(t * ba[j])
-      }
+      for(let j=0; j<ba.length; j++) tba.push(t * ba[j])
 
       let paMinusTba = []
-      for(let j=0; j<pa.length; j++) {
-        paMinusTba.push(pa[j] - tba[j])
-      }
+      for(let j=0; j<pa.length; j++) paMinusTba.push(pa[j] - tba[j])
 
       let d = vectorLength(paMinusTba)
 
@@ -161,7 +155,7 @@ class App extends Component {
       if(d < min) min = d
 
       for(let j=0; j<buckets.length; j++) {
-        let val = j * 0.05
+        let val = j * increment
         if(d < val) {
           buckets[j].push(data[i])
           break
@@ -176,9 +170,9 @@ class App extends Component {
       let coord = distances[i]
       let row = (coord[0] - minDistance) / (maxDistance - minDistance)
 
-      for(let j=0; j<=1; j+=0.05) {
-        let iterator = Math.round(j * (1/0.05))
-        if(row < iterator * 0.05 || iterator == 19) {
+      for(let j=0; j<=1; j+=increment) {
+        let iterator = Math.round(j * size)
+        if(row < iterator * increment || iterator == size - 1) {
           row = iterator
           break
         }
@@ -186,21 +180,18 @@ class App extends Component {
 
       let col = (coord[1] - minDistance) / (maxDistance - minDistance)
 
-      for(let j=0; j<=1; j+=0.05) {
-        let iterator = Math.round(j * (1/0.05))
-        if(col < iterator * 0.05 || iterator == 19) {
+      for(let j=0; j<=1; j+=increment) {
+        let iterator = Math.round(j * size)
+        if(col < iterator * increment || iterator == size - 1) {
           col = iterator
           break
         }
       }
 
-      densities[20 - row][col].push(coord[2])
+      densities[size - row][col].push(coord[2])
 
       if(densities[row][col].length > maxDensity) maxDensity = densities[row][col].length
     }
-
-    console.log(maxDensity)
-    console.log(densities)
 
     let top10 = []
     for(let i=0; i<buckets.length; i++) {
