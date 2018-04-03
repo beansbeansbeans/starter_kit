@@ -3,7 +3,6 @@
 
 body {
   margin: 0;
-  background: $background;
 }
 
 body, html {
@@ -27,6 +26,11 @@ app {
 canvas {
   display: block;
   position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20vh;
+  border-left: solid 1px #222;
+  border-bottom: solid 1px #222;
 }
 
 button {
