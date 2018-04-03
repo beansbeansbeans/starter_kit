@@ -52,6 +52,7 @@ class App extends Component {
     startIndex: 0,
     endIndex: 0,
     targetOptions: [],
+    startOptions: [],
     intermediaries: [],
     densities: []
   }
@@ -61,24 +62,35 @@ class App extends Component {
   }
 
   componentDidMount() {
+    let starts = [
+      "there's nothing remotely topical or sexy here",
+      "simplistic , silly and tedious",
+      "grant carries the day with impeccable comic timing"
+    ]
+
     let targets = [
       'lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery',
       "all mixed up together like a term paper from a kid who can't quite distinguish one sci-fi work from another",
       'a tour de force of modern cinema'
     ]
 
+    let startIndices = starts.map(d => this.props.data.findIndex(obj => obj.sentence.indexOf(d) > -1))
     let targetIndices = targets.map(d => this.props.data.findIndex(obj => obj.sentence.indexOf(d) > -1))
 
+    let startIndex = startIndices[0]
     let targetIndex = targetIndices[0]
 
+    const getOption = (d, i) => ({
+      index: d,
+      sentence: this.props.data[d].sentence,
+      selected: i === 0
+    })
+
     this.setState({
-      startIndex: this.props.data.findIndex(d => d.sentence.indexOf('simplistic , silly and tedious') > -1),
+      startIndex,
       endIndex: targetIndex,
-      targetOptions: targetIndices.map((d, i) => ({
-        index: d,
-        sentence: this.props.data[d].sentence,
-        selected: i === 0
-      }))
+      startOptions: startIndices.map(getOption),
+      targetOptions: targetIndices.map(getOption)
     })
 
     canvas = document.getElementById('canvas')
@@ -246,10 +258,13 @@ class App extends Component {
     this.drawDensities()
   }
 
-  userSelectTarget(id) {
+  userSelectTarget(id, side) {
+    let options = 'targetOptions'
+    if(side === 'startIndex') options = 'startOptions'
+
     this.setState({
-      endIndex: id,
-      targetOptions: this.state.targetOptions.map(d => {
+      [side]: id,
+      [options]: this.state[options].map(d => {
         if(d.index === id) {
           d.selected = true
         } else {
@@ -270,11 +285,18 @@ class App extends Component {
     console.log(this.state.densities[coordY][coordX].slice(0, 10))
   }
 
-  render({ data }, { startIndex, endIndex, intermediaries, targetOptions }) {
+  render({ data }, { startIndex, endIndex, intermediaries, targetOptions, startOptions }) {
     return (
       <app>
         <div id="webgl-wrapper">
-          <Dropdown change={this.userSelectTarget} options={targetOptions} />
+          <div class="dropdown-wrapper">
+            <div>start:</div>
+            <Dropdown change={id => this.userSelectTarget(id, 'startIndex')} options={startOptions} />
+          </div>
+          <div class="dropdown-wrapper">
+            <div>end:</div>
+            <Dropdown change={id => this.userSelectTarget(id, 'endIndex')} options={targetOptions} />
+          </div>
           <div id="line">
             <div id="start">
               <div class="sentence">{data[startIndex].sentence}</div>
