@@ -253,7 +253,17 @@ class App extends Component {
   }
 
   userSelectTarget(id) {
-    console.log(id)
+    this.setState({
+      endIndex: id,
+      targetOptions: this.state.targetOptions.map(d => {
+        if(d.index === id) {
+          d.selected = true
+        } else {
+          d.selected = false
+        }
+        return d
+      })
+    })
   }
 
   render({ data }, { startIndex, endIndex, intermediaries, targetOptions }) {
