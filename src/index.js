@@ -211,6 +211,7 @@ class App extends Component {
         top10.push(Object.assign({
           startDistance: vectorLength(objMinusStart),
           endDistance: vectorLength(endMinusObj),
+          distanceFromLine: i * increment
         }, obj))
 
         iterator++
@@ -281,12 +282,12 @@ class App extends Component {
             </div>
             {intermediaries.map(d => {
               return <div style={`left:${100 * d.startDistance / (d.startDistance + d.endDistance)}%`} class="intermediary">
-                <div class="sentence">{d.sentence}</div>
+                <div class="sentence">{`${d.sentence} (${d.distanceFromLine.toFixed(2)})`}</div>
                 <div class="marker"></div>
               </div>
             })}
             <div id="finish">
-              <div class="sentence">{data[endIndex].sentence}</div>
+              <div class="sentence">{`${data[endIndex].sentence}`}</div>
               <div class="marker"></div>
             </div>
           </div>
