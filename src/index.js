@@ -27,22 +27,59 @@ const shaders = {},
         .then(data => embeddings = shuffle(data[0]))
   }
 
+class Dropdown extends Component {
+  render({ options, change }) {
+    return (
+      <select onChange={e => change(e.target.value)} class="options">
+        {options.map(d => {
+          return <option 
+            onClick={() => {
+              change(d.id)
+            }}
+            value={d.index}
+            selected={d.selected} class="option">{d.sentence}</option>
+        })}
+      </select>
+    )
+  }
+}
+
 class App extends Component {
   state = { 
     startIndex: 0,
     endIndex: 0,
+    targetOptions: [],
     intermediaries: [],
     densities: []
   }
 
   componentWillMount() {
-    bindAll(this, ['updateIntermediaries', 'drawDensities'])
+    bindAll(this, ['updateIntermediaries', 'drawDensities', 'userSelectTarget'])
   }
 
   componentDidMount() {
+    let targetIndex = this.props.data.findIndex(d => d.sentence.indexOf("lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery") > -1)
+
     this.setState({
       startIndex: this.props.data.findIndex(d => d.sentence.indexOf('simplistic , silly and tedious') > -1),
-      endIndex: this.props.data.findIndex(d => d.sentence.indexOf("lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery") > -1)
+      endIndex: targetIndex,
+      targetOptions: [
+        {
+          index: targetIndex,
+          sentence: this.props.data[targetIndex].sentence,
+          selected: true
+        },
+        {
+          index: 5,
+          sentence: 'foo',
+          selected: false
+        },
+        {
+          index: 7,
+          sentence: 'bar',
+          selected: false
+        },
+      ]
     })
 
     canvas = document.getElementById('canvas')
@@ -219,10 +256,15 @@ class App extends Component {
     this.drawDensities()
   }
 
-  render({ data }, { startIndex, endIndex, intermediaries }) {
+  userSelectTarget(id) {
+    console.log(id)
+  }
+
+  render({ data }, { startIndex, endIndex, intermediaries, targetOptions }) {
     return (
       <app>
         <div id="webgl-wrapper">
+          <Dropdown change={this.userSelectTarget} options={targetOptions} />
           <div id="line">
             <div id="start">
               <div class="sentence">{data[startIndex].sentence}</div>
