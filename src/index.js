@@ -262,8 +262,8 @@ class App extends Component {
 
   clickCanvas(e) {
     let x = e.clientX, y = e.clientY
-    let coordX = Math.round(size * (x - canvasXOffset) / canvasRenderWidth)
-    let coordY = Math.round(size * (y - canvasYOffset) / canvasRenderHeight)
+    let coordX = Math.floor(size * (x - canvasXOffset) / canvasRenderWidth)
+    let coordY = Math.floor(size * (y - canvasYOffset) / canvasRenderHeight)
 
     if(coordX < 0 || coordY < 0 || coordX > size || coordY > size) return
 
