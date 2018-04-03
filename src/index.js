@@ -116,7 +116,7 @@ class App extends Component {
     for(let i=0; i<1; i+=0.05) {
       densities.push([])
       for(let j=0; j<1; j+=0.05) {
-        densities[densities.length - 1].push(0)
+        densities[densities.length - 1].push([])
       }
     }
 
@@ -136,7 +136,7 @@ class App extends Component {
 
       let startDistance = vectorLength(pa)
       let endDistance = vectorLength(bp)
-      distances.push([startDistance, endDistance])
+      distances.push([startDistance, endDistance, data[i].sentence])
 
       if(startDistance < minDistance) minDistance = startDistance
       if(endDistance < minDistance) minDistance = endDistance
@@ -195,9 +195,9 @@ class App extends Component {
         }
       }
 
-      densities[20 - row][col]++
+      densities[20 - row][col].push(coord[2])
 
-      if(densities[row][col] > maxDensity) maxDensity = densities[row][col]
+      if(densities[row][col].length > maxDensity) maxDensity = densities[row][col].length
     }
 
     console.log(maxDensity)
@@ -231,8 +231,6 @@ class App extends Component {
       intermediaries: top10,
       densities
     })
-
-    console.log(top10)
   }
 
   drawDensities() {
@@ -242,7 +240,7 @@ class App extends Component {
 
     for(let row=0; row<densities.length; row++) {
       for(let col = 0; col<densities[row].length; col++) {
-        ctx.fillStyle = `rgba(0, 0, 0, ${densities[row][col] / maxDensity})`
+        ctx.fillStyle = `rgba(0, 0, 0, ${densities[row][col].length / maxDensity})`
         ctx.fillRect(col * cellDim, row * cellDim, cellDim, cellDim)
       }
     }
@@ -278,7 +276,7 @@ class App extends Component {
 
     if(coordX < 0 || coordY < 0 || coordX > size || coordY > size) return
 
-    console.log(this.state.densities[coordY][coordX])
+    console.log(this.state.densities[coordY][coordX].slice(0, 10))
   }
 
   render({ data }, { startIndex, endIndex, intermediaries, targetOptions }) {
