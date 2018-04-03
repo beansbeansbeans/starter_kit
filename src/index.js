@@ -11,8 +11,10 @@ import model from './model/index'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 
+const size = 20
+
 let shaderFiles = [], web, mouseX, mouseY, directory = {}, embeddings
-let canvasRenderWidth, canvasRenderHeight, canvas, ctx, maxDensity, cellDim
+let canvasRenderWidth, canvasRenderHeight, canvas, ctx, maxDensity, cellDim, canvasXOffset, canvasYOffset
 
 const shaders = {},
   preload = {
@@ -54,7 +56,7 @@ class App extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['updateIntermediaries', 'drawDensities', 'userSelectTarget'])
+    bindAll(this, ['updateIntermediaries', 'drawDensities', 'userSelectTarget', 'clickCanvas'])
   }
 
   componentDidMount() {
@@ -83,11 +85,14 @@ class App extends Component {
 
     let windowDim = Math.min(window.innerWidth, window.innerHeight)
     let canvasDim = 0.5 * windowDim
-    let width = 1/0.05
+    let width = size
     let height = width
     cellDim = canvasDim / Math.max(height, width)
     canvasRenderWidth = cellDim * width
     canvasRenderHeight = cellDim * height
+
+    canvasXOffset = (window.innerWidth / 2) - (canvasRenderWidth / 2)
+    canvasYOffset = (window.innerHeight / 2) - (canvasRenderHeight / 2)
 
     canvas.width = 2 * canvasRenderWidth
     canvas.height = 2 * canvasRenderHeight
@@ -266,6 +271,16 @@ class App extends Component {
     })
   }
 
+  clickCanvas(e) {
+    let x = e.clientX, y = e.clientY
+    let coordX = Math.round(size * (x - canvasXOffset) / canvasRenderWidth)
+    let coordY = Math.round(size * (y - canvasYOffset) / canvasRenderHeight)
+
+    if(coordX < 0 || coordY < 0 || coordX > size || coordY > size) return
+
+    console.log(this.state.densities[coordY][coordX])
+  }
+
   render({ data }, { startIndex, endIndex, intermediaries, targetOptions }) {
     return (
       <app>
@@ -287,7 +302,7 @@ class App extends Component {
               <div class="marker"></div>
             </div>
           </div>
-          <canvas id="canvas"></canvas>
+          <canvas onClick={this.clickCanvas} id="canvas"></canvas>
         </div>
       </app>
     )
