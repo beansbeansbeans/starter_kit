@@ -42,7 +42,7 @@ class App extends Component {
   componentDidMount() {
     this.setState({
       startIndex: this.props.data.findIndex(d => d.sentence.indexOf('simplistic , silly and tedious') > -1),
-      endIndex: this.props.data.findIndex(d => d.sentence.indexOf('a fascinating and fun film') > -1)
+      endIndex: this.props.data.findIndex(d => d.sentence.indexOf("lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery") > -1)
     })
 
     canvas = document.getElementById('canvas')
