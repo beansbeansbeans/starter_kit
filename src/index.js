@@ -58,28 +58,24 @@ class App extends Component {
   }
 
   componentDidMount() {
-    let targetIndex = this.props.data.findIndex(d => d.sentence.indexOf("lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery") > -1)
+    let targets = [
+      'lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery',
+      "all mixed up together like a term paper from a kid who can't quite distinguish one sci-fi work from another",
+      'a tour de force of modern cinema'
+    ]
+
+    let targetIndices = targets.map(d => this.props.data.findIndex(obj => obj.sentence.indexOf(d) > -1))
+
+    let targetIndex = targetIndices[0]
 
     this.setState({
       startIndex: this.props.data.findIndex(d => d.sentence.indexOf('simplistic , silly and tedious') > -1),
       endIndex: targetIndex,
-      targetOptions: [
-        {
-          index: targetIndex,
-          sentence: this.props.data[targetIndex].sentence,
-          selected: true
-        },
-        {
-          index: 5,
-          sentence: 'foo',
-          selected: false
-        },
-        {
-          index: 7,
-          sentence: 'bar',
-          selected: false
-        },
-      ]
+      targetOptions: targetIndices.map((d, i) => ({
+        index: d,
+        sentence: this.props.data[d].sentence,
+        selected: i === 0
+      }))
     })
 
     canvas = document.getElementById('canvas')
