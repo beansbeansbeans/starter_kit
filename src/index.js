@@ -291,7 +291,11 @@ class App extends Component {
 
     for(let row=0; row<densities.length; row++) {
       for(let col = 0; col<densities[row].length; col++) {
-        ctx.fillStyle = `rgba(0, 0, 0, ${densities[row][col].length / maxDensity})`
+        if(densities[row][col].length) {
+          ctx.fillStyle = `rgba(0, 0, 0, ${0.05 + 0.95 * (densities[row][col].length / maxDensity)})`
+        } else {
+          ctx.fillStyle = `rgba(0, 0, 0, 0)`
+        }
         ctx.fillRect(col * cellDim, row * cellDim, cellDim, cellDim)
       }
     }
