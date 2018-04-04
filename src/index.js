@@ -28,9 +28,11 @@ const shaders = {},
     getData: () => 
       Promise.all(['encodings_pca', 'encodings_pca_10'].map(getData))
         .then(data => {
+          let shuffled = shuffle(data[0], data[1])
+
           embeddings = {
-            50: shuffle(data[0]),
-            10: shuffle(data[1])
+            50: shuffled[0],
+            10: shuffled[1]
           }
         })
   }

@@ -102,21 +102,31 @@ const viewportToLocal = (width, height) => arr =>
 //   return t
 // }
 
-function shuffle(array) {
+function shuffle(array, array2) {
   let counter = array.length;
 
   // While there are elements in the array
   while (counter > 0) {
-      // Pick a random index
-      let index = Math.floor(random.nextDouble() * counter);
+    // Pick a random index
+    let index = Math.floor(random.nextDouble() * counter);
 
-      // Decrease counter by 1
-      counter--;
+    // Decrease counter by 1
+    counter--;
 
-      // And swap the last element with it
-      let temp = array[counter];
-      array[counter] = array[index];
-      array[index] = temp;
+    // And swap the last element with it
+    let temp = array[counter];
+    array[counter] = array[index];
+    array[index] = temp;
+
+    if(array2) {
+      temp = array2[counter]
+      array2[counter] = array2[index]
+      array2[index] = temp
+    }
+  }
+
+  if(array2) {
+    return [array, array2]
   }
 
   return array;
