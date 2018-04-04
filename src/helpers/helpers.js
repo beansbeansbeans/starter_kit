@@ -102,7 +102,7 @@ const viewportToLocal = (width, height) => arr =>
 //   return t
 // }
 
-function shuffle(array, array2, array3) {
+function shuffle(array) {
   let counter = array.length;
 
   // While there are elements in the array
@@ -117,29 +117,19 @@ function shuffle(array, array2, array3) {
     let temp = array[counter];
     array[counter] = array[index];
     array[index] = temp;
-
-    if(array2) {
-      temp = array2[counter]
-      array2[counter] = array2[index]
-      array2[index] = temp
-    }
-
-    if(array3) {
-      temp = array3[counter]
-      array3[counter] = array3[index]
-      array3[index] = temp
-    }
-  }
-
-  if(array3) {
-    return [array, array2, array3]
-  }
-
-  if(array2) {
-    return [array, array2]
   }
 
   return array;
+}
+
+function permute(a, p) {
+  var r = [];
+  for (var i = 0; i < a.length; ++i)
+    r.push(a[p[i]]);
+  for (i = 0; i < a.length; ++i)
+    a[i] = r[i];
+
+  return a
 }
 
 export default {
@@ -176,6 +166,8 @@ export default {
   withConstructor,
 
   shuffle,
+
+  permute,
 
   viewportToLocal,
 

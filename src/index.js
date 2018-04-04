@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute } = helpers
 import "../main.scss"
 import { getData, getShader } from './api'
 import { debounce, defer } from 'underscore'
@@ -28,12 +28,14 @@ const shaders = {},
     getData: () => 
       Promise.all(['encodings_pca_100', 'encodings_pca', 'encodings_pca_10'].map(getData))
         .then(data => {
-          let shuffled = shuffle(data[0], data[1], data[2])
+          let indices = []
+          for(let i=0; i<data[0].length; i++) indices.push(i)
+          indices = shuffle(indices)
 
           embeddings = {
-            100: shuffled[0],
-            50: shuffled[1],
-            10: shuffled[2]
+            100: permute(data[0], indices),
+            50: permute(data[1], indices),
+            10: permute(data[2], indices)
           }
         })
   }
