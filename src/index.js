@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from './helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength } = helpers
 import "../main.scss"
 import { getData, getShader } from './api'
 import { debounce, defer } from 'underscore'
@@ -30,6 +30,11 @@ const shaders = {},
         .then(data => embeddings = shuffle(data[0]))
   }
 
+const getDistance = {
+  'euclidean': vectorLength,
+  'manhattan': manhattanLength
+}
+
 class Dropdown extends Component {
   render({ options, change }) {
     return (
@@ -40,7 +45,7 @@ class Dropdown extends Component {
               change(d.id)
             }}
             value={d.index}
-            selected={d.selected} class="option">{d.sentence}</option>
+            selected={d.selected} class="option">{d.sentence ? d.sentence : d.index}</option>
         })}
       </select>
     )
@@ -54,7 +59,17 @@ class App extends Component {
     targetOptions: [],
     startOptions: [],
     intermediaries: [],
-    densities: []
+    densities: [],
+    distanceTypes: [
+      {
+        index: 'euclidean',
+        selected: true
+      },
+      {
+        index: 'manhattan',
+        selected: false
+      }
+    ]
   }
 
   componentWillMount() {
@@ -117,7 +132,8 @@ class App extends Component {
 
   updateIntermediaries() {
     let { data } = this.props
-    let { startIndex, endIndex } = this.state
+    let { startIndex, endIndex, distanceTypes } = this.state
+    let distance = distanceTypes.find(d => d.selected).index
 
     let min = Infinity, max = 0
     let distances = []
@@ -145,8 +161,8 @@ class App extends Component {
       let ba = subVectors(B, A)
       let bp = subVectors(B, P)
       let t = dotProduct(pa, ba) / dotProduct(ba, ba)
-      let startDistance = vectorLength(pa)
-      let endDistance = vectorLength(bp)
+      let startDistance = getDistance[distance](pa)
+      let endDistance = getDistance[distance](bp)
 
       distances.push([startDistance, endDistance, data[i].sentence])
 
@@ -233,7 +249,7 @@ class App extends Component {
     this.setState({
       intermediaries: top10,
       densities
-    })
+    }, this.drawDensities)
   }
 
   drawDensities() {
@@ -250,12 +266,11 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    let { startIndex, endIndex } = this.state
+    let { startIndex, endIndex, distanceTypes } = this.state
+
     if(startIndex !== prevState.startIndex || endIndex !== prevState.endIndex) {
       this.updateIntermediaries()
     }
-
-    this.drawDensities()
   }
 
   userSelectTarget(id, side) {
@@ -285,7 +300,7 @@ class App extends Component {
     console.log(this.state.densities[coordY][coordX].slice(0, 10))
   }
 
-  render({ data }, { startIndex, endIndex, intermediaries, targetOptions, startOptions }) {
+  render({ data }, { startIndex, endIndex, intermediaries, targetOptions, startOptions, distanceTypes }) {
     return (
       <app>
         <div id="webgl-wrapper">
@@ -316,7 +331,18 @@ class App extends Component {
           <div style={`width:${canvasRenderWidth}px;height:${canvasRenderHeight}px`} class="canvas-wrapper">
             <canvas onClick={this.clickCanvas} id="canvas"></canvas>
           </div>
-          <div style={`width:${canvasRenderWidth}px;`} class="distances">{`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}</div>
+          <div style={`width:${canvasRenderWidth}px;`} class="distances">{`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}<Dropdown change={d => {
+            this.setState({
+              distanceTypes: distanceTypes.map(type => {
+                if(type.index === d) {
+                  type.selected = true
+                } else {
+                  type.selected = false
+                }
+                return type
+              })
+            }, this.updateIntermediaries)
+          }} options={distanceTypes} /></div>
         </div>
       </app>
     )

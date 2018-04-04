@@ -29,6 +29,14 @@ const vectorLength = vec => {
   return Math.sqrt(res)
 }
 
+const manhattanLength = vec => {
+  let res = 0
+  for(let i=0; i<vec.length; i++) {
+    res += Math.abs(vec[i])
+  }
+  return res
+}
+
 const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x)
 
 const withConstructor = constructor => o => {
@@ -136,6 +144,8 @@ export default {
   },
 
   vectorLength,
+
+  manhattanLength,
 
   subVectors,
 
