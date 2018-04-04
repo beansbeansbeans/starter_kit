@@ -102,7 +102,7 @@ const viewportToLocal = (width, height) => arr =>
 //   return t
 // }
 
-function shuffle(array, array2) {
+function shuffle(array, array2, array3) {
   let counter = array.length;
 
   // While there are elements in the array
@@ -123,6 +123,16 @@ function shuffle(array, array2) {
       array2[counter] = array2[index]
       array2[index] = temp
     }
+
+    if(array3) {
+      temp = array3[counter]
+      array3[counter] = array3[index]
+      array3[index] = temp
+    }
+  }
+
+  if(array3) {
+    return [array, array2, array3]
   }
 
   if(array2) {

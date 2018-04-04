@@ -26,13 +26,14 @@ const shaders = {},
       })
     ,
     getData: () => 
-      Promise.all(['encodings_pca', 'encodings_pca_10'].map(getData))
+      Promise.all(['encodings_pca_100', 'encodings_pca', 'encodings_pca_10'].map(getData))
         .then(data => {
-          let shuffled = shuffle(data[0], data[1])
+          let shuffled = shuffle(data[0], data[1], data[2])
 
           embeddings = {
-            50: shuffled[0],
-            10: shuffled[1]
+            100: shuffled[0],
+            50: shuffled[1],
+            10: shuffled[2]
           }
         })
   }
@@ -79,8 +80,12 @@ class App extends Component {
     ],
     dimensions: [
       {
-        index: 50,
+        index: 100,
         selected: true
+      },
+      {
+        index: 50,
+        selected: false
       },
       {
         index: 10,
