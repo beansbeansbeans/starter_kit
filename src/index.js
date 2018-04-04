@@ -26,8 +26,13 @@ const shaders = {},
       })
     ,
     getData: () => 
-      Promise.all(['encodings_pca'].map(getData))
-        .then(data => embeddings = shuffle(data[0]))
+      Promise.all(['encodings_pca', 'encodings_pca_10'].map(getData))
+        .then(data => {
+          embeddings = {
+            50: shuffle(data[0]),
+            10: shuffle(data[1])
+          }
+        })
   }
 
 const getDistance = {
@@ -69,6 +74,16 @@ class App extends Component {
         index: 'manhattan',
         selected: false
       }
+    ],
+    dimensions: [
+      {
+        index: 50,
+        selected: true
+      },
+      {
+        index: 10,
+        selected: false
+      }
     ]
   }
 
@@ -89,15 +104,17 @@ class App extends Component {
       'a tour de force of modern cinema'
     ]
 
-    let startIndices = starts.map(d => this.props.data.findIndex(obj => obj.sentence.indexOf(d) > -1))
-    let targetIndices = targets.map(d => this.props.data.findIndex(obj => obj.sentence.indexOf(d) > -1))
+    let data = this.props.data[this.state.dimensions.find(d => d.selected).index]
+
+    let startIndices = starts.map(d => data.findIndex(obj => obj.sentence.indexOf(d) > -1))
+    let targetIndices = targets.map(d => data.findIndex(obj => obj.sentence.indexOf(d) > -1))
 
     let startIndex = startIndices[0]
     let targetIndex = targetIndices[0]
 
     const getOption = (d, i) => ({
       index: d,
-      sentence: this.props.data[d].sentence,
+      sentence: data[d].sentence,
       selected: i === 0
     })
 
@@ -132,8 +149,9 @@ class App extends Component {
 
   updateIntermediaries() {
     let { data } = this.props
-    let { startIndex, endIndex, distanceTypes } = this.state
+    let { startIndex, endIndex, distanceTypes, dimensions } = this.state
     let distance = distanceTypes.find(d => d.selected).index
+    let numDimensions = dimensions.find(d => d.selected).index
 
     let min = Infinity, max = 0
     let distances = []
@@ -143,6 +161,8 @@ class App extends Component {
     minDistance = Infinity
     maxDistance = 0
     maxDensity = 0
+
+    data = data[numDimensions]
 
     let A = data[startIndex].encoding
     let B = data[endIndex].encoding
@@ -300,7 +320,10 @@ class App extends Component {
     console.log(this.state.densities[coordY][coordX].slice(0, 10))
   }
 
-  render({ data }, { startIndex, endIndex, intermediaries, targetOptions, startOptions, distanceTypes }) {
+  render({ data }, { startIndex, endIndex, intermediaries, targetOptions, startOptions, distanceTypes, dimensions }) {
+    let numDimensions = dimensions.find(d => d.selected).index
+    data = data[numDimensions]
+
     return (
       <app>
         <div id="webgl-wrapper">
@@ -331,18 +354,33 @@ class App extends Component {
           <div style={`width:${canvasRenderWidth}px;height:${canvasRenderHeight}px`} class="canvas-wrapper">
             <canvas onClick={this.clickCanvas} id="canvas"></canvas>
           </div>
-          <div style={`width:${canvasRenderWidth}px;`} class="distances">{`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}<Dropdown change={d => {
-            this.setState({
-              distanceTypes: distanceTypes.map(type => {
-                if(type.index === d) {
-                  type.selected = true
-                } else {
-                  type.selected = false
-                }
-                return type
-              })
-            }, this.updateIntermediaries)
-          }} options={distanceTypes} /></div>
+          <div style={`width:${canvasRenderWidth}px;`} class="distances">
+            {`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}
+            <Dropdown change={d => {
+              this.setState({
+                distanceTypes: distanceTypes.map(type => {
+                  if(type.index === d) {
+                    type.selected = true
+                  } else {
+                    type.selected = false
+                  }
+                  return type
+                })
+              }, this.updateIntermediaries)
+            }} options={distanceTypes} />
+            <Dropdown change={d => {
+              this.setState({
+                dimensions: dimensions.map(type => {
+                  if(type.index == d) {
+                    type.selected = true
+                  } else {
+                    type.selected = false
+                  }
+                  return type
+                })
+              }, this.updateIntermediaries)
+            }} options={dimensions} />
+          </div>
         </div>
       </app>
     )
