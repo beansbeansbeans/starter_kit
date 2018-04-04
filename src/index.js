@@ -104,13 +104,16 @@ class App extends Component {
     let starts = [
       "there's nothing remotely topical or sexy here",
       "simplistic , silly and tedious",
-      "grant carries the day with impeccable comic timing"
+      "grant carries the day with impeccable comic timing",
+      'an engrossing iranian film'
     ]
 
     let targets = [
       'lan yu is a genuine love story , full of traditional layers of awakening and ripening and separation and recovery',
       "all mixed up together like a term paper from a kid who can't quite distinguish one sci-fi work from another",
-      'a tour de force of modern cinema'
+      'a tour de force of modern cinema',
+      'banal and predictable',
+      'i liked it just enough'
     ]
 
     let data = this.props.data[this.state.dimensions.find(d => d.selected).index]
@@ -183,7 +186,7 @@ class App extends Component {
     }
 
     for(let i=0; i<data.length; i++) {
-      if(i === startIndex || i === endIndex) continue
+      if(i == startIndex || i == endIndex) continue
 
       let P = data[i].encoding
       let pa = subVectors(P, A)
