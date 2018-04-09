@@ -24,8 +24,9 @@ const shaders = {},
       })
     ,
     getData: () => 
-      Promise.all(['encodings_pca_100', 'encodings_pca', 'encodings_pca_10'].map(getData))
+      Promise.all(['encodings_pca_100', 'encodings_pca_50', 'encodings_pca_10'].map(getData))
         .then(data => {
+          console.log(data)
           let indices = []
           for(let i=0; i<data[0].length; i++) indices.push(i)
           indices = shuffle(indices)
