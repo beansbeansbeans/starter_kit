@@ -311,64 +311,62 @@ class PairWise extends Component {
     data = data[numDimensions]
 
     return (
-      <app>
-        <div id="webgl-wrapper">
-          <div class="dropdown-wrapper">
-            <div>start:</div>
-            <Dropdown change={id => this.userSelectTarget(id, 'startIndex')} options={startOptions} />
+      <div id="webgl-wrapper">
+        <div class="dropdown-wrapper">
+          <div>start:</div>
+          <Dropdown change={id => this.userSelectTarget(id, 'startIndex')} options={startOptions} />
+        </div>
+        <div class="dropdown-wrapper">
+          <div>end:</div>
+          <Dropdown change={id => this.userSelectTarget(id, 'endIndex')} options={targetOptions} />
+        </div>
+        <div id="line">
+          <div id="start">
+            <div class="sentence">{data[startIndex].sentence}</div>
+            <div class="marker"></div>
           </div>
-          <div class="dropdown-wrapper">
-            <div>end:</div>
-            <Dropdown change={id => this.userSelectTarget(id, 'endIndex')} options={targetOptions} />
-          </div>
-          <div id="line">
-            <div id="start">
-              <div class="sentence">{data[startIndex].sentence}</div>
+          {intermediaries.map(d => {
+            return <div style={`left:${100 * d.startDistance / (d.startDistance + d.endDistance)}%`} class="intermediary">
+              <div class="sentence">{`${d.sentence} (${d.distanceFromLine.toFixed(2)})`}</div>
               <div class="marker"></div>
             </div>
-            {intermediaries.map(d => {
-              return <div style={`left:${100 * d.startDistance / (d.startDistance + d.endDistance)}%`} class="intermediary">
-                <div class="sentence">{`${d.sentence} (${d.distanceFromLine.toFixed(2)})`}</div>
-                <div class="marker"></div>
-              </div>
-            })}
-            <div id="finish">
-              <div class="sentence">{`${data[endIndex].sentence}`}</div>
-              <div class="marker"></div>
-            </div>
-          </div>
-          <div style={`width:${canvasRenderWidth}px;height:${canvasRenderHeight}px`} class="canvas-wrapper">
-            <canvas onClick={this.clickCanvas} id="canvas"></canvas>
-          </div>
-          <div style={`width:${canvasRenderWidth}px;`} class="distances">
-            {`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}
-            <Dropdown change={d => {
-              this.setState({
-                distanceTypes: distanceTypes.map(type => {
-                  if(type.index === d) {
-                    type.selected = true
-                  } else {
-                    type.selected = false
-                  }
-                  return type
-                })
-              }, this.updateIntermediaries)
-            }} options={distanceTypes} />
-            <Dropdown change={d => {
-              this.setState({
-                dimensions: dimensions.map(type => {
-                  if(type.index == d) {
-                    type.selected = true
-                  } else {
-                    type.selected = false
-                  }
-                  return type
-                })
-              }, this.updateIntermediaries)
-            }} options={dimensions} />
+          })}
+          <div id="finish">
+            <div class="sentence">{`${data[endIndex].sentence}`}</div>
+            <div class="marker"></div>
           </div>
         </div>
-      </app>
+        <div style={`width:${canvasRenderWidth}px;height:${canvasRenderHeight}px`} class="canvas-wrapper">
+          <canvas onClick={this.clickCanvas} id="canvas"></canvas>
+        </div>
+        <div style={`width:${canvasRenderWidth}px;`} class="distances">
+          {`min distance: ${minDistance.toFixed(3)} | max distance: ${maxDistance.toFixed(3)}`}
+          <Dropdown change={d => {
+            this.setState({
+              distanceTypes: distanceTypes.map(type => {
+                if(type.index === d) {
+                  type.selected = true
+                } else {
+                  type.selected = false
+                }
+                return type
+              })
+            }, this.updateIntermediaries)
+          }} options={distanceTypes} />
+          <Dropdown change={d => {
+            this.setState({
+              dimensions: dimensions.map(type => {
+                if(type.index == d) {
+                  type.selected = true
+                } else {
+                  type.selected = false
+                }
+                return type
+              })
+            }, this.updateIntermediaries)
+          }} options={dimensions} />
+        </div>
+      </div>
     )
   }
 }
