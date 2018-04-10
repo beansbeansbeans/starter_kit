@@ -23,25 +23,24 @@ class Aggregation extends Component {
   }
 
   aggregate() {
-    console.log("aggregate", this.state.scale)
-
     let { scaledData, scale } = this.state
     let newScaledData = []
 
     console.time("aggregate")
     for(let i=0; i<scaledData.length; i++) {
-      let vec = scaledData[i].encoding
-      scaledData[i].used = true
+      let source = scaledData[i]
+      if(source.used) continue
+
+      let vec = source.encoding
+      source.used = true
 
       let closest = []
       
       for(let j=0; j<scaledData.length; j++) {
-        let obj = scaledData[j]
-        if(obj.used) continue
+        let target = scaledData[j]
+        if(target.used) continue
 
-        let target = obj.encoding
-
-        let diff = subVectors(vec, target)
+        let diff = subVectors(vec, target.encoding)
         let distance = getDistance['euclidean'](diff)
 
         // if it's closer than any of the elements in closer
@@ -58,7 +57,7 @@ class Aggregation extends Component {
         }
 
         if(closest.length < closestCount) {
-          closest.push(Object.assign({ distance, index: j }, obj))
+          closest.push(Object.assign({ distance, index: j }, target))
         }
       }
 
@@ -69,7 +68,7 @@ class Aggregation extends Component {
       let closestLength = closest.length
       let average = {
         encoding: vec,
-        polarity: scaledData[i].polarity
+        polarity: source.polarity
       } 
 
       if(closestLength > 0) {
@@ -77,13 +76,14 @@ class Aggregation extends Component {
           encoding: vec.map((d, i) => {
             return (d + closest.reduce((acc, curr) => acc + curr.encoding[i])) / (closestLength + 1)
           }),
-          polarity: (scaledData[i].polarity + closest.reduce((acc, curr) => acc + curr.polarity, 0)) / (closestLength + 1)
+          polarity: (source.polarity + closest.reduce((acc, curr) => acc + curr.polarity, 0)) / (closestLength + 1)
         }        
       }
 
       newScaledData.push(average)
     }
     console.timeEnd("aggregate")
+    console.log(newScaledData.length)
 
     this.setState({ scaledData: newScaledData, scale: scale + 1 }, this.computeBins)
   }
@@ -103,7 +103,6 @@ class Aggregation extends Component {
       }
     }
 
-    console.log(scaledData)
     console.log(bins)
 
     this.setState({ bins })
