@@ -12,7 +12,11 @@ class Aggregation extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['computeBins'])
+    bindAll(this, ['computeBins', 'aggregate'])
+  }
+
+  aggregate() {
+    console.log("aggregate", this.state.scale)
   }
 
   computeBins() {
@@ -49,7 +53,7 @@ class Aggregation extends Component {
     this.setState({ scaledData }, this.computeBins)
   }
 
-  render({}, { bins }) {
+  render({}, { bins, scale }) {
     let total = bins.reduce((acc, curr) => acc + curr, 0)
 
     return (
@@ -62,6 +66,12 @@ class Aggregation extends Component {
         <div id="labels">{bins.map((bin, i) => {
           return <div class="label">{(i / bins.length).toFixed(1)}</div>
         })}</div>
+        <div class="input-wrapper">
+          <input onInput={e => {
+            this.setState({ scale: e.target.value })
+          }} value={scale} />
+          <button onClick={this.aggregate}>aggregate</button>
+        </div>
       </div>
     )
   }

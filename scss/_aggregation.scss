@@ -20,5 +20,17 @@
     margin-right: 5px;    
   }
   .label {
+    padding-top: 5px;
+  }
+  .input-wrapper {
+    margin-top: 20px;
+    button {
+      margin-left: 5px;
+      border-radius: 2px;
+      border: solid 1px #222;
+    }
+    input, button {
+      display: inline-block;
+    }
   }
 }
