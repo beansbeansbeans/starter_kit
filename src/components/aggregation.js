@@ -4,6 +4,13 @@ const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors,
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 
+const getDistance = {
+  'euclidean': vectorLength,
+  'manhattan': manhattanLength
+}
+
+const closestCount = 4
+
 class Aggregation extends Component {
   state = {
     scale: 1,
@@ -17,6 +24,68 @@ class Aggregation extends Component {
 
   aggregate() {
     console.log("aggregate", this.state.scale)
+
+    let { scaledData, scale } = this.state
+    let newScaledData = []
+
+    console.time("aggregate")
+    for(let i=0; i<scaledData.length; i++) {
+      let vec = scaledData[i].encoding
+      scaledData[i].used = true
+
+      let closest = []
+      
+      for(let j=0; j<scaledData.length; j++) {
+        let obj = scaledData[j]
+        if(obj.used) continue
+
+        let target = obj.encoding
+
+        let diff = subVectors(vec, target)
+        let distance = getDistance['euclidean'](diff)
+
+        // if it's closer than any of the elements in closer
+        if(closest.length === closestCount) {
+          let toDelete = -1
+          for(let k=0; k<closest.length; k++) {
+            if(distance < closest[k].distance) {
+              toDelete = k
+              break
+            }
+          }
+
+          closest.splice(toDelete, 1)
+        }
+
+        if(closest.length < closestCount) {
+          closest.push(Object.assign({ distance, index: j }, obj))
+        }
+      }
+
+      for(let j=0; j<closest.length; j++) {
+        scaledData[closest[j].index].used = true
+      }
+
+      let closestLength = closest.length
+      let average = {
+        encoding: vec,
+        polarity: scaledData[i].polarity
+      } 
+
+      if(closestLength > 0) {
+        average = {
+          encoding: vec.map((d, i) => {
+            return (d + closest.reduce((acc, curr) => acc + curr.encoding[i])) / (closestLength + 1)
+          }),
+          polarity: (scaledData[i].polarity + closest.reduce((acc, curr) => acc + curr.polarity, 0)) / (closestLength + 1)
+        }        
+      }
+
+      newScaledData.push(average)
+    }
+    console.timeEnd("aggregate")
+
+    this.setState({ scaledData: newScaledData, scale: scale + 1 }, this.computeBins)
   }
 
   computeBins() {
@@ -67,9 +136,7 @@ class Aggregation extends Component {
           return <div class="label">{(i / bins.length).toFixed(1)}</div>
         })}</div>
         <div class="input-wrapper">
-          <input onInput={e => {
-            this.setState({ scale: e.target.value })
-          }} value={scale} />
+          <div class="scale">{scale}</div>
           <button onClick={this.aggregate}>aggregate</button>
         </div>
       </div>
