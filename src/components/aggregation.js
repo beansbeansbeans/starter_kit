@@ -6,60 +6,62 @@ const random = randomModule.random(42)
 
 class Aggregation extends Component {
   state = {
-
+    scale: 1,
+    scaledData: [],
+    bins: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   }
 
   componentWillMount() {
-    bindAll(this, [])
+    bindAll(this, ['computeBins'])
+  }
+
+  computeBins() {
+    let { scaledData } = this.state
+    let bins = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    for(let i=0; i<scaledData.length; i++) {
+      let obj = scaledData[i]
+
+      for(let j=0; j<bins.length; j++) {
+        if(obj.polarity <= j / bins.length || j === bins.length - 1) {
+          bins[j]++
+          break
+        }
+      }
+    }
+
+    console.log(scaledData)
+    console.log(bins)
+
+    this.setState({ bins })
   }
 
   componentDidMount() {
     let sample = this.props.data['10']
-    console.log("data length", this.props.data['10'].length)
-    console.log(sample)
+    let scaledData = []
 
-    function Node(obj, dimension, parent) {
-      this.obj = obj
-      this.left = null
-      this.right = null
-      this.parent = parent
-      this.dimension = dimension
+    for(let i=0; i<sample.length; i++) {
+      scaledData.push(Object.assign(sample[i], {
+        polarity: sample[i].polarity === 'pos' ? 1 : 0
+      }))
     }
-
-    let dimensions = sample[0].encoding.length
-
-    function buildTree(points, depth, parent) {
-      let dim = depth % dimensions, median, node
-
-      if(!points.length) return null
-
-      if(points.length === 1) {
-        return new Node(points[0], dim, parent)
-      }
-
-      points.sort(function(a, b) {
-        return a[dim] - b[dim]
-      })
-
-      median = Math.floor(points.length / 2)
-      node = new Node(points[median], dim, parent)
-      node.left = buildTree(points.slice(0, median), depth + 1, node)
-      node.right = buildTree(points.slice(median + 1), depth + 1, node)
-
-      return node
-    }
-
-    console.time("kdTree")
-    let kdTree = buildTree(sample, 0, null)
-    console.timeEnd("kdTree")
-
-    console.log(kdTree)
+    
+    this.setState({ scaledData }, this.computeBins)
   }
 
-  render() {
+  render({}, { bins }) {
+    let total = bins.reduce((acc, curr) => acc + curr, 0)
+
     return (
       <div id="aggregation-wrapper">
-        lol
+        <div id="histogram">{bins.map(bin => {
+          return <div class="bin">
+            <div style={`height: ${100 * bin/total}%`} class="contents"></div>
+          </div>
+        })}</div>
+        <div id="labels">{bins.map((bin, i) => {
+          return <div class="label">{(i / bins.length).toFixed(1)}</div>
+        })}</div>
       </div>
     )
   }

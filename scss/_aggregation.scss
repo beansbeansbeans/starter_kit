@@ -1,0 +1,24 @@
+#aggregation-wrapper {
+  padding: 20px;
+  #histogram {
+    height: 200px;
+  }
+  .bin {
+    height: 100%;
+    position: relative;
+    .contents {
+      background: steelblue;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+  }
+  .label, .bin {
+    display: inline-block;
+    width: 25px;
+    margin-right: 5px;    
+  }
+  .label {
+  }
+}
