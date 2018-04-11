@@ -5,6 +5,8 @@ import { encodings } from '../config'
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 
+const progressions = ['forwards', 'backwards', 'scrambled']
+
 class Dropdown extends Component {
   render({ options, change }) {
     return (
@@ -30,10 +32,28 @@ class Permutations extends Component {
 
     this.setState({
       sets: sentences.map((d, i) => {
+        let words = d.split(" ")
+        let permutationIndices = [[]]
+        
+        for(let i=0; i<words.length; i++) permutationIndices[0].push(i)
+
+        for(let i=0; i<words.length; i++) {
+          let order = permutationIndices[0].slice(0)
+          let randomIndex = Math.floor(random.nextDouble() * words.length)
+          if(random.nextDouble() < 0.5) {
+            order[randomIndex - 1] = order.splice(randomIndex, 1, order[randomIndex - 1])[0]
+          } else {
+            order[randomIndex + 1] = order.splice(randomIndex, 1, order[randomIndex + 1])[0]
+          }
+
+          permutationIndices.unshift(order)
+        }
+
         return {
           sentence: d,
           active: i === 0,
-          id: i
+          id: i,
+          permutationIndices
         }
       })
     })
@@ -59,6 +79,29 @@ class Permutations extends Component {
     })
   }
 
+  getProgression(activeSentence, progression) {
+    let items = []
+    let words = activeSentence.sentence.split(" ")
+
+    if(progression === 'forwards') {
+      for(let i=1; i<=words.length; i++) {
+        items.push(words.slice(0, i).join(" "))
+      }      
+    } else if(progression === 'backwards') {
+      for(let i=1; i<=words.length; i++) {
+        items.push(words.slice(words.length - i).join(" "))
+      }
+    } else {
+      for(let i=0; i<activeSentence.permutationIndices.length; i++) {
+        items.push(permute(words.slice(0), activeSentence.permutationIndices[i]).join(" "))
+      }
+    }
+
+    return <div>{items.map(d => {
+      return <div>{d}</div>
+    })}</div>
+  }
+
   render({}, { sets }) {
     let activeSentence = sets.find(d => d.active)
 
@@ -67,6 +110,12 @@ class Permutations extends Component {
     return (
       <div id="permutations">
         <Dropdown change={id => this.changeSentence(id)} options={sets} />
+        <div class="vector"></div>
+        <div class="progressions">{progressions.map(p => {
+          let label = <div class="label">{p}</div>
+          let items = this.getProgression(activeSentence, p)
+          return <div class="progression">{[label, items]}</div>
+        })}</div>
       </div>
     )
   }
