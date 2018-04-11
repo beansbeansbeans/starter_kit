@@ -37,6 +37,16 @@ const manhattanLength = vec => {
   return res
 }
 
+const fractional = norm => vec => {
+  let res = 0
+
+  for(let i=0; i<vec.length; i++) {
+    res += Math.pow(Math.abs(vec[i]), norm)
+  }
+
+  return Math.pow(res, 1/norm)
+}
+
 const pipe = (...fns) => x => fns.reduce((y, f) => f(y), x)
 
 const withConstructor = constructor => o => {
@@ -154,6 +164,8 @@ export default {
   },
 
   vectorLength,
+
+  fractional,
 
   manhattanLength,
 

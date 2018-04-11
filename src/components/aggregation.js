@@ -1,12 +1,13 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional } = helpers
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 
 const getDistance = {
   'euclidean': vectorLength,
-  'manhattan': manhattanLength
+  'manhattan': manhattanLength,
+  'fractional': fractional(0.5)
 }
 
 const closestCount = 3
@@ -53,7 +54,7 @@ class Aggregation extends Component {
         if(target.used) continue
 
         let diff = subVectors(vec, target.encoding)
-        let distance = getDistance['manhattan'](diff)
+        let distance = getDistance['euclidean'](diff)
 
         // if it's closer than any of the elements in closer (comment out this if block for random aggregation)
         if(closest.length === closestCount) {
