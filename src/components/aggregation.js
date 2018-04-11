@@ -10,7 +10,7 @@ const getDistance = {
   'fractional': fractional(0.5)
 }
 
-const closestCount = 3
+let closestCount = 3
 const resolution = 20
 
 class Aggregation extends Component {
@@ -48,6 +48,7 @@ class Aggregation extends Component {
       source.used = true
 
       let closest = []
+      closestCount = 2 + Math.floor(random.nextDouble() * 4)
       
       for(let j=0; j<scaledData.length; j++) {
         let target = scaledData[j]
