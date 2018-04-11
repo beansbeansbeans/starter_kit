@@ -97,7 +97,7 @@ class Permutations extends Component {
         items.push(words.slice(0, i).join(" "))
       }      
     } else if(progression === 'backwards') {
-      for(let i=1; i<=words.length; i++) {
+      for(let i=2; i<=words.length; i++) {
         items.push(words.slice(words.length - i).join(" "))
       }
     } else {
@@ -120,9 +120,12 @@ class Permutations extends Component {
       <div id="permutations">
         <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
         <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
-        <div class="vector"></div>
+        <br/>
+        <div class="vector-wrapper">
+          <div class="circle"></div>
+        </div>
         <div class="progressions">{progressions.map(p => {
-          let label = <div class="label">{p}</div>
+          let label = <div class="label">{p.toUpperCase()}</div>
           let items = this.getProgression(activeSentence, p)
           return <div class="progression">{[label, items]}</div>
         })}</div>

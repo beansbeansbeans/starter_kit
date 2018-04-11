@@ -30,6 +30,5 @@ then undo these transformations
 
 assume for now that i have all the embeddings
 
-- dropdown: choose dimensionality
 - render a circle for the base sentence
 

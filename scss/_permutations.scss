@@ -1,3 +1,14 @@
 #permutations {
   padding: 20px;
+  .vector-wrapper, .progressions {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .circle {
+    margin: 50px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: solid 1px #222;
+  }
 }
