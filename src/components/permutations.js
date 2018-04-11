@@ -14,7 +14,7 @@ class Dropdown extends Component {
         {options.map(d => {
           return <option 
             value={d.id}
-            selected={d.active} class="option">{d.sentence}</option>
+            selected={d.active} class="option">{d.label}</option>
         })}
       </select>
     )
@@ -51,9 +51,18 @@ class Permutations extends Component {
 
         return {
           sentence: d,
+          label: d,
           active: i === 0,
           id: i,
           permutationIndices
+        }
+      }),
+      dimensions: Object.keys(this.props.data).map((d, i) => {
+        return {
+          number: d,
+          label: d,
+          id: d,
+          active: i === 0          
         }
       })
     })
@@ -65,9 +74,9 @@ class Permutations extends Component {
     bindAll(this, ['changeSentence'])
   }
 
-  changeSentence(id) {
+  changeSentence(id, key) {
     this.setState({
-      sets: this.state.sets.map(d => {
+      [key]: this.state[key].map(d => {
         if(d.id == id) {
           d.active = true
         } else {
@@ -102,14 +111,15 @@ class Permutations extends Component {
     })}</div>
   }
 
-  render({}, { sets }) {
+  render({}, { sets, dimensions }) {
     let activeSentence = sets.find(d => d.active)
 
     console.log(activeSentence)
 
     return (
       <div id="permutations">
-        <Dropdown change={id => this.changeSentence(id)} options={sets} />
+        <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
+        <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
         <div class="vector"></div>
         <div class="progressions">{progressions.map(p => {
           let label = <div class="label">{p}</div>

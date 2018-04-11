@@ -30,6 +30,6 @@ then undo these transformations
 
 assume for now that i have all the embeddings
 
-- list all the progressions of each of the three sets of permutations
 - dropdown: choose dimensionality
 - render a circle for the base sentence
+
