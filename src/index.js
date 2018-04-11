@@ -12,6 +12,7 @@ import randomModule from './helpers/random'
 const random = randomModule.random(42)
 import PairWise from './components/pairwise'
 import Aggregation from './components/aggregation'
+import Permutations from './components/permutations'
 
 let shaderFiles = [], mouseX, mouseY, embeddings
 
@@ -41,12 +42,11 @@ const shaders = {},
 
 class App extends Component {
   render({ data }) {
-    // return <app>
-    //   <PairWise data={data} />
-    // </app>
-    return <app>
-      <Aggregation data={data} />
-    </app>
+    let main = <Permutations data={data} />
+    // let main = <Aggregation data={data} />
+    // let main = <PairWise data={data} />
+
+    return <app>{main}</app>
   }
 }
 
