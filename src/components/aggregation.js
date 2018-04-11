@@ -9,13 +9,25 @@ const getDistance = {
   'manhattan': manhattanLength
 }
 
-const closestCount = 4
+const closestCount = 3
+const resolution = 20
 
 class Aggregation extends Component {
   state = {
     scale: 1,
     scaledData: [],
-    bins: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    bins: []
+  }
+
+  constructor(props) {
+    super(props)
+
+    let bins = []
+    for(let i=0; i<resolution; i++) bins.push(0)
+
+    this.setState({
+      bins: bins
+    })
   }
 
   componentWillMount() {
@@ -41,9 +53,9 @@ class Aggregation extends Component {
         if(target.used) continue
 
         let diff = subVectors(vec, target.encoding)
-        let distance = getDistance['euclidean'](diff)
+        let distance = getDistance['manhattan'](diff)
 
-        // if it's closer than any of the elements in closer
+        // if it's closer than any of the elements in closer (comment out this if block for random aggregation)
         if(closest.length === closestCount) {
           let toDelete = -1
           for(let k=0; k<closest.length; k++) {
@@ -90,7 +102,8 @@ class Aggregation extends Component {
 
   computeBins() {
     let { scaledData } = this.state
-    let bins = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    let bins = []
+    for(let i=0; i<resolution; i++) bins.push(0)
 
     for(let i=0; i<scaledData.length; i++) {
       let obj = scaledData[i]
@@ -109,7 +122,7 @@ class Aggregation extends Component {
   }
 
   componentDidMount() {
-    let sample = this.props.data['10']
+    let sample = this.props.data['50']
     let scaledData = []
 
     for(let i=0; i<sample.length; i++) {
@@ -132,7 +145,7 @@ class Aggregation extends Component {
           </div>
         })}</div>
         <div id="labels">{bins.map((bin, i) => {
-          return <div class="label">{(i / bins.length).toFixed(1)}</div>
+          return <div class="label">{(i / bins.length).toFixed(2)}</div>
         })}</div>
         <div class="input-wrapper">
           <div class="scale">{scale}</div>
