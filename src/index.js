@@ -13,6 +13,7 @@ const random = randomModule.random(42)
 import PairWise from './components/pairwise'
 import Aggregation from './components/aggregation'
 import Permutations from './components/permutations'
+import DistanceMatrix from './components/distance_matrix'
 
 let shaderFiles = [], mouseX, mouseY, embeddings
 
@@ -42,7 +43,8 @@ const shaders = {},
 
 class App extends Component {
   render({ data }) {
-    let main = <Permutations data={data} />
+    let main = <DistanceMatrix data={data} />
+    // let main = <Permutations data={data} />
     // let main = <Aggregation data={data} />
     // let main = <PairWise data={data} />
 
