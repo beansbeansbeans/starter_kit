@@ -10,7 +10,7 @@ const progressions = ['forwards', 'backwards', 'scrambled']
 const radius = 100
 const spokeLength = 50
 
-let radiusScale = scaleLinear().domain([-0.2, 0.2]).range([0, spokeLength])
+let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 
 class Dropdown extends Component {
   render({ options, change }) {
