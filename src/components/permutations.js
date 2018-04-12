@@ -131,17 +131,16 @@ class Permutations extends Component {
   componentDidUpdate() {
     let activeSentence = this.state.sets.find(d => d.active)
     let activeDimensionality = this.state.dimensions.find(d => d.active)
-    let encoding = this.state.hoverEncoding
 
-    select(document.querySelector(".hover-encoding path")).attr("d", radialLine(encoding.map((d, i) => {
-      let angle = degreesToRadians(i * 360/activeDimensionality.number)
-      return [angle, radius + radiusScale(d)]
-    })) + 'z')
+    let points = [ this.state.hoverEncoding, encodings[activeSentence.sentence][activeDimensionality.number] ]
+    let selectors = ['.hover-encoding path', '.base-encoding path']
 
-    select(document.querySelector(".base-encoding path")).attr("d", radialLine(encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
-      let angle = degreesToRadians(i * 360/activeDimensionality.number)
-      return [angle, radius + radiusScale(d)]
-    })) + 'z')
+    points.forEach((vec, vIdx) => {
+      select(document.querySelector(selectors[vIdx])).attr("d", radialLine(vec.map((d, i) => {
+        let angle = degreesToRadians(i * 360/activeDimensionality.number)
+        return [angle, radius + radiusScale(d)]
+      })) + 'z')      
+    })
   }
 
   render({}, { sets, dimensions, hoverEncoding }) {
