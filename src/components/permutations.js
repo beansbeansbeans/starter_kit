@@ -1,6 +1,6 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional, degreesToRadians } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional, degreesToRadians, trim } = helpers
 import { encodings } from '../config'
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
@@ -132,7 +132,7 @@ class Permutations extends Component {
       return <div class="item" onMouseEnter={() => {
         let dimensionality = this.state.dimensions.find(d => d.active).number
 
-        this.setState({ hoverEncoding: encodingsDict[d][dimensionality] })
+        this.setState({ hoverEncoding: encodingsDict[trim(d)][dimensionality] })
       }}>{d}</div>
     })}</div>
   }
