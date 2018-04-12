@@ -1,4 +1,5 @@
 var fs = require('fs')
+var reorder = require('reorder.js')
 
 let distanceType = 'euclidean'
 let dimensions = 100
