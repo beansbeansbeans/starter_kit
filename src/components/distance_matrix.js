@@ -123,6 +123,10 @@ class DistanceMatrix extends Component {
             val = data[target][key]
           }
 
+          if(key === target) {
+            val = 0
+          }
+
           this.ctx.fillStyle = `rgba(0, 0, 0, ${1 - (val / max)})`
           this.ctx.fillRect(col, row, 1, 1)
         }
