@@ -14,6 +14,7 @@ const spokeLength = 50
 
 let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 let radialLine = lineRadial()
+let encodingsDict = {}
 
 class Dropdown extends Component {
   render({ options, change }) {
@@ -80,6 +81,18 @@ class Permutations extends Component {
   componentWillMount() {
     console.log(encodings)
 
+    let dimensions = Object.keys(this.props.data)
+
+    encodings.forEach(sen => {
+      encodingsDict[sen] = {}
+
+      dimensions.forEach(d => {
+        encodingsDict[sen][d] = this.props.data[d].find(obj => obj.sentence == sen).encoding
+      })
+    })
+
+    console.log(encodingsDict)
+
     bindAll(this, ['changeSentence'])
   }
 
@@ -118,12 +131,8 @@ class Permutations extends Component {
     return <div>{items.map(d => {
       return <div class="item" onMouseEnter={() => {
         let dimensionality = this.state.dimensions.find(d => d.active).number
-        let hoverEncoding = []
-        for(let i=0; i<dimensionality; i++) {
-          hoverEncoding.push(-0.5 + random.nextDouble())
-        }
 
-        this.setState({ hoverEncoding })
+        this.setState({ hoverEncoding: encodingsDict[d][dimensionality] })
       }}>{d}</div>
     })}</div>
   }
@@ -132,7 +141,7 @@ class Permutations extends Component {
     let activeSentence = this.state.sets.find(d => d.active)
     let activeDimensionality = this.state.dimensions.find(d => d.active)
 
-    let points = [ this.state.hoverEncoding, encodings[activeSentence.sentence][activeDimensionality.number] ]
+    let points = [ this.state.hoverEncoding, encodingsDict[activeSentence.sentence][activeDimensionality.number] ]
     let selectors = ['.hover-encoding path', '.base-encoding path']
 
     points.forEach((vec, vIdx) => {
@@ -168,7 +177,7 @@ class Permutations extends Component {
         <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
           {hoverCircle}
-          <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="base-encoding circle">{[encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
+          <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="base-encoding circle">{[encodingsDict[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
             return <div style={`transform: rotate(${-90 + i * 360/activeDimensionality.number}deg)`} class="spoke">
               <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
             </div>

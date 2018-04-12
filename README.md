@@ -24,11 +24,5 @@ state = {
   ]
 }
 
-permutations can be derived from the sentence alone
-permutations: take an array of indices representing each word, at each step perform a random transformation (choose an index randomly, then move it randomly to the left or to the right)
-then undo these transformations
-
-assume for now that i have all the embeddings
-
-- render a circle for the base sentence
+- encode all the sentences and dump them into a json file that we fetch
 
