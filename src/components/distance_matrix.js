@@ -114,8 +114,15 @@ class DistanceMatrix extends Component {
       this.ctx.clearRect(0, 0, size, size)
 
       for(let row=0; row<size; row++) {
+        let key = keys[row]
         for(let col=0; col<size; col++) {
-          let val = 0.5
+          let target = keys[col]
+
+          let val = data[key][target]
+          if(typeof val === 'undefined') {
+            val = data[target][key]
+          }
+
           this.ctx.fillStyle = `rgba(0, 0, 0, ${1 - (val / max)})`
           this.ctx.fillRect(col, row, 1, 1)
         }
