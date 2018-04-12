@@ -129,15 +129,19 @@ class Permutations extends Component {
   }
 
   componentDidUpdate() {
+    let activeSentence = this.state.sets.find(d => d.active)
     let activeDimensionality = this.state.dimensions.find(d => d.active)
     let encoding = this.state.hoverEncoding
 
-    let points = encoding.map((d, i) => {
+    select(document.querySelector(".hover-encoding path")).attr("d", radialLine(encoding.map((d, i) => {
       let angle = degreesToRadians(i * 360/activeDimensionality.number)
       return [angle, radius + radiusScale(d)]
-    })
+    })) + 'z')
 
-    select(document.querySelector(".hover-encoding path")).attr("d", radialLine(points) + 'z')
+    select(document.querySelector(".base-encoding path")).attr("d", radialLine(encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
+      let angle = degreesToRadians(i * 360/activeDimensionality.number)
+      return [angle, radius + radiusScale(d)]
+    })) + 'z')
   }
 
   render({}, { sets, dimensions, hoverEncoding }) {
@@ -165,11 +169,13 @@ class Permutations extends Component {
         <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
           {hoverCircle}
-          <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="circle">{encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
-            return <div style={`transform: rotate(${i * 360/activeDimensionality.number}deg)`} class="spoke">
+          <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="base-encoding circle">{[encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
+            return <div style={`transform: rotate(${-90 + i * 360/activeDimensionality.number}deg)`} class="spoke">
               <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
             </div>
-          })}</div>
+          }), <svg width={radius * 2} height={radius * 2}>
+                <g transform={`translate(${radius}, ${radius})`}><path></path></g>
+              </svg>]}</div>
         </div>
         <div class="progressions">{progressions.map(p => {
           let label = <div class="label">{p.toUpperCase()}</div>
