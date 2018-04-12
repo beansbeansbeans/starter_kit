@@ -4,11 +4,29 @@
     display: inline-block;
     vertical-align: top;
   }
-  .circle {
-    margin: 50px;
-    width: 200px;
-    height: 200px;
+  .vector-wrapper {
+    position: relative;
+  }
+  .outline {
+    position: absolute;
     border-radius: 50%;
     border: solid 1px #222;
+  }
+  .circle {
+    position: relative;
+  }
+  .spoke {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: 0 0;
+    .node {
+      width: 5px;
+      height: 5px;
+      transform: translate3d(-50%, -50%, 0);
+      background: #222;
+      position: absolute;
+      border-radius: 50%;
+    }
   }
 }

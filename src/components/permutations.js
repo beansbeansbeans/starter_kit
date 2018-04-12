@@ -4,8 +4,13 @@ const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors,
 import { encodings } from '../config'
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
+import { scaleLinear } from 'd3-scale'
 
 const progressions = ['forwards', 'backwards', 'scrambled']
+const radius = 100
+const spokeLength = 50
+
+let radiusScale = scaleLinear().domain([-0.2, 0.2]).range([0, spokeLength])
 
 class Dropdown extends Component {
   render({ options, change }) {
@@ -26,7 +31,7 @@ class Permutations extends Component {
     super(props)
 
     let sentences = [
-      "i'm going to give it a marginal thumbs up. i liked it just enough .",
+      "i'm going to give it a marginal thumbs up . i liked it just enough .",
       "a deliciously nonsensical comedy about a city coming apart at its seams ."
     ]
 
@@ -113,8 +118,7 @@ class Permutations extends Component {
 
   render({}, { sets, dimensions }) {
     let activeSentence = sets.find(d => d.active)
-
-    console.log(activeSentence)
+    let activeDimensionality = dimensions.find(d => d.active)
 
     return (
       <div id="permutations">
@@ -122,7 +126,13 @@ class Permutations extends Component {
         <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
         <br/>
         <div class="vector-wrapper">
-          <div class="circle"></div>
+          <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
+          <div style={`width:${radius * 2}px;height:${radius * 2}px; margin:${spokeLength}px`} class="circle">{encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
+            console.log(d)
+            return <div style={`transform: rotate(${i * 360/activeDimensionality.number}deg)`} class="spoke">
+              <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
+            </div>
+          })}</div>
         </div>
         <div class="progressions">{progressions.map(p => {
           let label = <div class="label">{p.toUpperCase()}</div>
