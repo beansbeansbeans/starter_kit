@@ -16,6 +16,12 @@ let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 let radialLine = lineRadial()
 let encodingsDict = {}
 
+const getDistance = {
+  'euclidean': vectorLength,
+  'manhattan': manhattanLength,
+  'fractional': fractional(0.5)
+}
+
 class Dropdown extends Component {
   render({ options, change }) {
     return (
@@ -38,6 +44,8 @@ class Permutations extends Component {
       "i'm going to give it a marginal thumbs up . i liked it just enough .",
       "a deliciously nonsensical comedy about a city coming apart at its seams ."
     ]
+
+    let distances = ['euclidean', 'manhattan', 'fractional']
 
     this.setState({
       hoverEncoding: null,
@@ -73,6 +81,14 @@ class Permutations extends Component {
           label: d,
           id: d,
           active: i === 0          
+        }
+      }),
+      distance: 0,
+      distances: distances.map((d, i) => {
+        return {
+          label: d,
+          id: d,
+          active: i === 0
         }
       })
     })
@@ -130,9 +146,17 @@ class Permutations extends Component {
 
     return <div>{items.map(d => {
       return <div class="item" onMouseEnter={() => {
+        let activeSentence = this.state.sets.find(d => d.active)
         let dimensionality = this.state.dimensions.find(d => d.active).number
+        let sourceEncoding = encodingsDict[activeSentence.sentence][dimensionality]
+        let hoverEncoding = encodingsDict[trim(d)][dimensionality]
+        let activeDistance = this.state.distances.find(d => d.active)
+        let distance = getDistance[activeDistance.id](subVectors(hoverEncoding, sourceEncoding))
 
-        this.setState({ hoverEncoding: encodingsDict[trim(d)][dimensionality] })
+        this.setState({ 
+          hoverEncoding,
+          distance 
+        })
       }}>{d}</div>
     })}</div>
   }
@@ -152,7 +176,7 @@ class Permutations extends Component {
     })
   }
 
-  render({}, { sets, dimensions, hoverEncoding }) {
+  render({}, { sets, dimensions, hoverEncoding, distances, distance }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
 
@@ -173,6 +197,7 @@ class Permutations extends Component {
       <div id="permutations">
         <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
         <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
+        <Dropdown change={id => this.changeSentence(id, 'distances')} options={distances} />
         <br/>
         <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
@@ -184,6 +209,7 @@ class Permutations extends Component {
           }), <svg width={radius * 2} height={radius * 2}>
                 <g transform={`translate(${radius}, ${radius})`}><path></path></g>
               </svg>]}</div>
+          <div id="distance-label">{`DISTANCE: ${distance.toFixed(3)}`}</div>
         </div>
         <div class="progressions">{progressions.map(p => {
           let label = <div class="label">{p.toUpperCase()}</div>
