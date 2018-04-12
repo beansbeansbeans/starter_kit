@@ -1,28 +1,13 @@
     $ npm install
     $ npm run start
 
+distance matrix implementation steps
 
-permutations implementation steps:
+- create node process that samples 1000 points from 100-d embedding and stores pairwise distances
+- render matrix of points
+- reorder matrix (in node)
+- render again
 
-(in config file)
+- repeat for 50d, and 10d
 
-embeddings = {
-  'sentence': [vec],
-  ...
-}
-
-state = {
-  sets: [
-    {
-      label: '1',
-      sentence: 'I finally ate lunch'
-    },
-    {
-      label: '2',
-      sentence: 'this movie sucked'
-    }
-  ]
-}
-
-- encode all the sentences and dump them into a json file that we fetch
-
+- add dropdown for distance metrics
