@@ -13,7 +13,12 @@
     border: solid 1px #222;
   }
   .circle {
-    position: relative;
+    position: absolute;
+    &.hover-encoding {
+      .node {
+        background: orange;
+      }
+    }
   }
   .spoke {
     position: absolute;

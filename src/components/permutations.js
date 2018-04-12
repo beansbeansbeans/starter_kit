@@ -36,6 +36,7 @@ class Permutations extends Component {
     ]
 
     this.setState({
+      hoverEncoding: null,
       sets: sentences.map((d, i) => {
         let words = d.split(" ")
         let permutationIndices = [[]]
@@ -112,23 +113,41 @@ class Permutations extends Component {
     }
 
     return <div>{items.map(d => {
-      return <div>{d}</div>
+      return <div onMouseEnter={() => {
+        let dimensionality = this.state.dimensions.find(d => d.active).number
+        let hoverEncoding = []
+        for(let i=0; i<dimensionality; i++) {
+          hoverEncoding.push(-0.5 + random.nextDouble())
+        }
+
+        this.setState({ hoverEncoding })
+      }}>{d}</div>
     })}</div>
   }
 
-  render({}, { sets, dimensions }) {
+  render({}, { sets, dimensions, hoverEncoding }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
+
+    let hoverCircle
+
+    if(hoverEncoding) {
+      hoverCircle = <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="circle hover-encoding">{hoverEncoding.map((d, i) => {
+        return <div style={`transform: rotate(${i * 360/activeDimensionality.number}deg)`} class="spoke">
+          <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
+        </div>
+      })}</div>
+    }
 
     return (
       <div id="permutations">
         <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
         <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
         <br/>
-        <div class="vector-wrapper">
+        <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
-          <div style={`width:${radius * 2}px;height:${radius * 2}px; margin:${spokeLength}px`} class="circle">{encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
-            console.log(d)
+          {hoverCircle}
+          <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="circle">{encodings[activeSentence.sentence][activeDimensionality.number].map((d, i) => {
             return <div style={`transform: rotate(${i * 360/activeDimensionality.number}deg)`} class="spoke">
               <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
             </div>
