@@ -116,7 +116,7 @@ class Permutations extends Component {
     }
 
     return <div>{items.map(d => {
-      return <div onMouseEnter={() => {
+      return <div class="item" onMouseEnter={() => {
         let dimensionality = this.state.dimensions.find(d => d.active).number
         let hoverEncoding = []
         for(let i=0; i<dimensionality; i++) {

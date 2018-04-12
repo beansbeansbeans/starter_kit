@@ -44,4 +44,9 @@
       border-radius: 50%;
     }
   }
+  .item {
+    &:hover {
+      background: yellow;
+    }
+  }
 }
