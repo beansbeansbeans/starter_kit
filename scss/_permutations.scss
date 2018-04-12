@@ -12,11 +12,21 @@
     border-radius: 50%;
     border: solid 1px #222;
   }
+  svg {
+    overflow: visible;
+    path {
+      fill: none;
+      stroke: #222;
+    }
+  }
   .circle {
     position: absolute;
     &.hover-encoding {
       .node {
         background: orange;
+      }
+      path {
+        stroke: orange;
       }
     }
   }

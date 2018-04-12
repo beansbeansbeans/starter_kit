@@ -1,16 +1,19 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional, degreesToRadians } = helpers
 import { encodings } from '../config'
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 import { scaleLinear } from 'd3-scale'
+import { lineRadial } from 'd3-shape'
+import { select } from 'd3-selection'
 
 const progressions = ['forwards', 'backwards', 'scrambled']
 const radius = 100
 const spokeLength = 50
 
 let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
+let radialLine = lineRadial()
 
 class Dropdown extends Component {
   render({ options, change }) {
@@ -125,6 +128,18 @@ class Permutations extends Component {
     })}</div>
   }
 
+  componentDidUpdate() {
+    let activeDimensionality = this.state.dimensions.find(d => d.active)
+    let encoding = this.state.hoverEncoding
+
+    let points = encoding.map((d, i) => {
+      let angle = degreesToRadians(i * 360/activeDimensionality.number)
+      return [angle, radius + radiusScale(d)]
+    })
+
+    select(document.querySelector(".hover-encoding path")).attr("d", radialLine(points) + 'z')
+  }
+
   render({}, { sets, dimensions, hoverEncoding }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
@@ -132,11 +147,14 @@ class Permutations extends Component {
     let hoverCircle
 
     if(hoverEncoding) {
-      hoverCircle = <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="circle hover-encoding">{hoverEncoding.map((d, i) => {
-        return <div style={`transform: rotate(${i * 360/activeDimensionality.number}deg)`} class="spoke">
+      hoverCircle = <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="circle hover-encoding">{[hoverEncoding.map((d, i) => {
+        return <div style={`transform: rotate(${-90 + i * 360/activeDimensionality.number}deg)`} class="spoke">
           <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
         </div>
-      })}</div>
+      }), <svg width={radius * 2} height={radius * 2}>
+          <g transform={`translate(${radius}, ${radius})`}><path></path></g>
+        </svg>]}
+      </div>
     }
 
     return (

@@ -155,6 +155,10 @@ export default {
     return rad * (180 / Math.PI)
   },
 
+  degreesToRadians: function(deg) {
+    return deg * Math.PI / 180
+  },
+
   removeDuplicates: function(arr) {
     let clean = []
     for(let i=0; i<arr.length; i++) {
