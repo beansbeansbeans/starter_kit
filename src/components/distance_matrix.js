@@ -68,12 +68,12 @@ class DistanceMatrix extends Component {
       }
     }
 
-    Promise.all(files.map(getData)).then(data => {
-      console.log(data)
+    Promise.all(files.map(getData)).then(resp => {
+      console.log(resp)
       let data = this.state.data
       let canvas = document.querySelector("#distance_matrix #canvas")
       this.ctx = canvas.getContext('2d')
-      let keys = Object.keys(data[0])
+      let keys = Object.keys(resp[0])
       let canvasSize = keys.length
       let max = 0
 
@@ -86,15 +86,15 @@ class DistanceMatrix extends Component {
 
       distances.forEach((d, i) => {
         dimensions.forEach((dim, dimi) => {
-          data[d][dim] = data[i * dimensions.length + dimi]
+          data[d][dim] = resp[i * dimensions.length + dimi]
         })
       })
 
       for(let i=0; i<keys.length; i++) {
         let key = keys[i]
-        let targetKeys = Object.keys(data[0][key])
+        let targetKeys = Object.keys(resp[0][key])
         for(let j=0; j<targetKeys.length; j++) {
-          let val = data[0][key][targetKeys[j]]
+          let val = resp[0][key][targetKeys[j]]
 
           if(val > max) max = val
         }
