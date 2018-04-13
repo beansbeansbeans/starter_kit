@@ -1,7 +1,7 @@
 var fs = require('fs')
 
-// let dimensionalities = [10, 50, 100]
-let dimensionalities = [100]
+let dimensionalities = [10, 50, 100]
+// let dimensionalities = [100]
 let distanceTypes = ['euclidean', 'manhattan']
 let closestCount = 3, resolution = 20
 

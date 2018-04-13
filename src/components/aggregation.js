@@ -5,14 +5,24 @@ import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 import { getData, getShader } from '../api'
 
-const getDistance = {
-  'euclidean': vectorLength,
-  'manhattan': manhattanLength,
-  'fractional': fractional(0.5)
-}
-
-let closestCount = 3
 const resolution = 20
+
+let distances = ['euclidean', 'manhattan']
+let dimensions = ['100', '50', '10']
+
+class Dropdown extends Component {
+  render({ options, change }) {
+    return (
+      <select onChange={e => change(e.target.value)} class="options">
+        {options.map(d => {
+          return <option 
+            value={d.id}
+            selected={d.active} class="option">{d.label}</option>
+        })}
+      </select>
+    )
+  }
+}
 
 class Aggregation extends Component {
   constructor(props) {
@@ -20,15 +30,43 @@ class Aggregation extends Component {
 
     this.setState({
       scale: 0,
-      data: null
+      data: null,
+      dimensions: dimensions.map((d, i) => {
+        return {
+          active: i === 0,
+          label: d,
+          id: d
+        }
+      }),
+      distances: distances.map((d, i) => {
+        return {
+          active: i === 0,
+          label: d,
+          id: d
+        }
+      })
+    })
+  }
+
+  changeDropdown(id, key) {
+    this.setState({
+      [key]: this.state[key].map(d => {
+        if(d.id == id) {
+          d.active = true
+        } else {
+          d.active = false
+        }
+
+        return d
+      })
     })
   }
 
   componentWillMount() {
-    bindAll(this, ['aggregate'])
+    bindAll(this, ['aggregate', 'changeDropdown'])
 
     Promise.all(['aggregations'].map(getData)).then(resp => {
-      console.log(resp[0]['euclidean']['100'].length)
+      console.log(resp[0])
       this.setState({ 
         data: resp[0],
         maxScale: resp[0]['euclidean']['100'].length
@@ -40,15 +78,20 @@ class Aggregation extends Component {
     this.setState({ scale: this.state.scale + 1 })
   }
 
-  render({}, { data, scale, maxScale }) {
+  render({}, { data, scale, maxScale, dimensions, distances }) {
+    let activeDim = dimensions.find(d => d.active).label
+    let activeDistance = distances.find(d => d.active).label
+
     let bins = []
     if(data) {
-      bins = data.euclidean['100'][scale]
+      bins = data[activeDistance][activeDim][scale]
     }
     let total = bins.reduce((acc, curr) => acc + curr, 0)
 
     return (
       <div id="aggregation-wrapper">
+        <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
+        <Dropdown change={id => this.changeDropdown(id, 'distances')} options={distances} />
         <div id="histogram">{bins.map(bin => {
           return <div class="bin">
             <div style={`height: ${100 * bin/total}%`} class="contents"></div>
@@ -57,10 +100,13 @@ class Aggregation extends Component {
         <div id="labels">{bins.map((bin, i) => {
           return <div class="label">{(i / bins.length).toFixed(2)}</div>
         })}</div>
+        <div id="labels">{bins.map((bin, i) => {
+          return <div class="label">{`${bin} ${Math.round(100 * bin / total)}%`}</div>
+        })}</div>
         <div class="input-wrapper">
           <div class="scale">{scale}</div>
-          <button style={`display: ${scale < maxScale - 1? 'block' : 'none'}`} onClick={this.aggregate}>zoom out</button>
-          <button style={`display: ${scale > 0 ? 'block' : 'none'}`} onClick={() => {
+          <button style={`display: ${scale < maxScale - 1? 'inline-block' : 'none'}`} onClick={this.aggregate}>zoom out</button>
+          <button style={`display: ${scale > 0 ? 'inline-block' : 'none'}`} onClick={() => {
             this.setState({
               scale: scale - 1
             })
