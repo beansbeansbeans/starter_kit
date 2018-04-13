@@ -18,11 +18,7 @@ class Aggregation extends Component {
   constructor(props) {
     super(props)
 
-    let bins = []
-    for(let i=0; i<resolution; i++) bins.push(0)
-
     this.setState({
-      bins: bins,
       scale: 0,
       data: null
     })
@@ -32,7 +28,11 @@ class Aggregation extends Component {
     bindAll(this, ['aggregate'])
 
     Promise.all(['aggregations'].map(getData)).then(resp => {
-      this.setState({ data: resp[0] })
+      console.log(resp[0]['euclidean']['100'].length)
+      this.setState({ 
+        data: resp[0],
+        maxScale: resp[0]['euclidean']['100'].length
+      })
     })
   }
 
@@ -40,26 +40,31 @@ class Aggregation extends Component {
     this.setState({ scale: this.state.scale + 1 })
   }
 
-  render({}, { bins, data, scale }) {
-    let theBins = []
+  render({}, { data, scale, maxScale }) {
+    let bins = []
     if(data) {
-      theBins = data.euclidean['100'][scale]
+      bins = data.euclidean['100'][scale]
     }
-    let total = theBins.reduce((acc, curr) => acc + curr, 0)
+    let total = bins.reduce((acc, curr) => acc + curr, 0)
 
     return (
       <div id="aggregation-wrapper">
-        <div id="histogram">{theBins.map(bin => {
+        <div id="histogram">{bins.map(bin => {
           return <div class="bin">
             <div style={`height: ${100 * bin/total}%`} class="contents"></div>
           </div>
         })}</div>
-        <div id="labels">{theBins.map((bin, i) => {
-          return <div class="label">{(i / theBins.length).toFixed(2)}</div>
+        <div id="labels">{bins.map((bin, i) => {
+          return <div class="label">{(i / bins.length).toFixed(2)}</div>
         })}</div>
         <div class="input-wrapper">
           <div class="scale">{scale}</div>
-          <button onClick={this.aggregate}>aggregate</button>
+          <button style={`display: ${scale < maxScale - 1? 'block' : 'none'}`} onClick={this.aggregate}>zoom out</button>
+          <button style={`display: ${scale > 0 ? 'block' : 'none'}`} onClick={() => {
+            this.setState({
+              scale: scale - 1
+            })
+          }}>zoom in</button>
         </div>
       </div>
     )
