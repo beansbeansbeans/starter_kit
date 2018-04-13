@@ -60,7 +60,7 @@ fs.readFile(`./data/encodings_pca_100.json`, function(err, rawPCA100) {
       for(let i=0; i<pca.length; i++) indices.push(i)
       indices = shuffle(indices)
 
-      pca = permute(pca, indices).slice(0, 1000)
+      pca = permute(pca, indices).slice(0, 500)
 
       let distanceMat = []
       let distances = {}
@@ -72,19 +72,17 @@ fs.readFile(`./data/encodings_pca_100.json`, function(err, rawPCA100) {
 
       for(let i=0; i<pca.length; i++) {
         let obj = pca[i]
-        distances[obj.id] = {}
+        distances[i] = {}
         distanceMat[i][i] = 0
 
         for(let j=i+1; j<pca.length; j++) {
           let target = pca[j]
           let dist = getDistance[distanceType](subVectors(target.encoding, obj.encoding))
 
-          distances[obj.id][target.id] = dist
+          distances[i][j] = dist
           distanceMat[i].push(dist)
           distanceMat[j][i] = dist
         }
-
-        if(Math.random() < 0.01) console.log(i)
       }
 
       fs.writeFile('./data/distance_matrix_arr.json', JSON.stringify(distanceMat), function(err) {
