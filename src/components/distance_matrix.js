@@ -28,17 +28,19 @@ class DistanceMatrix extends Component {
   constructor(props) {
     super(props)
 
-    let data = {}
+    let data = {}, max = {}
 
     distances.forEach(d => {
       data[d] = {}
+      max[d] = {}
       dimensions.forEach(dim => {
         data[d][dim] = null
+        max[d][dim] = 0
       })
     })
 
     this.setState({
-      max: 0,
+      max,
       dimensions: dimensions.map((d, i) => {
         return {
           active: i === 0,
@@ -75,7 +77,7 @@ class DistanceMatrix extends Component {
       this.ctx = canvas.getContext('2d')
       let keys = Object.keys(resp[0])
       let canvasSize = keys.length
-      let max = 0
+      let max = this.state.max
 
       canvas.width = 2 * canvasSize
       canvas.height = 2 * canvasSize
@@ -94,9 +96,13 @@ class DistanceMatrix extends Component {
         let key = keys[i]
         let targetKeys = Object.keys(resp[0][key])
         for(let j=0; j<targetKeys.length; j++) {
-          let val = resp[0][key][targetKeys[j]]
+          distances.forEach((d, i) => {
+            dimensions.forEach((dim, dimi) => {
+              let val = resp[i * dimensions.length + dimi][key][targetKeys[j]]
 
-          if(val > max) max = val
+              if(val > max[d][dim]) max[d][dim] = val
+            })
+          })
         }
       }
 
@@ -127,6 +133,7 @@ class DistanceMatrix extends Component {
     let activeDim = dimensions.find(d => d.active).label
     let activeDistance = distances.find(d => d.active).label
     let activeData = data[activeDistance][activeDim]
+    let activeMax = max[activeDistance][activeDim]
 
     if(activeData) {
       let keys = Object.keys(activeData)
@@ -148,7 +155,7 @@ class DistanceMatrix extends Component {
             val = 0
           }
 
-          this.ctx.fillStyle = `rgba(0, 0, 0, ${1 - (val / max)})`
+          this.ctx.fillStyle = `rgba(0, 0, 0, ${1 - (val / activeMax)})`
           this.ctx.fillRect(perm.indexOf(col), perm.indexOf(row), 1, 1)
           // this.ctx.fillRect(col, row, 1, 1)
         }
