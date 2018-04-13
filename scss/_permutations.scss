@@ -1,9 +1,12 @@
 #permutations {
-  padding: 20px;
+  padding: 40px;
   .vector-wrapper, .progressions {
     display: inline-block;
     vertical-align: top;
-    margin-top: 20px;
+    margin-top: 50px;
+  }
+  .progressions {
+    padding-left: 60px;
   }
   .vector-wrapper {
     position: relative;
