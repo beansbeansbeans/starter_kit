@@ -2,7 +2,7 @@ var fs = require('fs')
 
 let dimensionalities = [10, 50, 100]
 // let dimensionalities = [100]
-let distanceTypes = ['euclidean', 'manhattan']
+let distanceTypes = ['manhattan']
 let closestCount = 3, resolution = 20
 
 let getDistance = {
@@ -108,7 +108,7 @@ fs.readFile(`./data/encodings_pca_100.json`, function(err, rawPCA100) {
                 if(target.used) continue
 
                 let diff = subVectors(vec, target.encoding)
-                let distance = getDistance['euclidean'](diff)
+                let distance = getDistance[d](diff)
                 
                 // if it's closer than any of the elements in closer (comment out this if block for random aggregation)
                 if(closest.length === closestCount) {

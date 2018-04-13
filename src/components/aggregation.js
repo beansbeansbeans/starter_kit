@@ -97,11 +97,11 @@ class Aggregation extends Component {
             <div style={`height: ${100 * bin/total}%`} class="contents"></div>
           </div>
         })}</div>
-        <div id="labels">{bins.map((bin, i) => {
+        <div class="labels x-markers">{bins.map((bin, i) => {
           return <div class="label">{(i / bins.length).toFixed(2)}</div>
         })}</div>
-        <div id="labels">{bins.map((bin, i) => {
-          return <div class="label">{`${bin} ${Math.round(100 * bin / total)}%`}</div>
+        <div class="labels breakdowns">{bins.map((bin, i) => {
+          return <div class="label">{`${bin > 0 ? bin : ''} ${bin > 0 ? Math.round(100 * bin / total) + '%' : ''}`}</div>
         })}</div>
         <div class="input-wrapper">
           <div class="scale">{scale}</div>
