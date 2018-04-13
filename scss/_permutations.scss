@@ -7,6 +7,12 @@
   }
   .progressions {
     padding-left: 60px;
+    .progression {
+      margin-bottom: 15px;
+      .label {
+        font-weight: bold;
+      }
+    }
   }
   .vector-wrapper {
     position: relative;
