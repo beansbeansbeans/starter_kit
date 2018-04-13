@@ -3,6 +3,7 @@
   .vector-wrapper, .progressions {
     display: inline-block;
     vertical-align: top;
+    margin-top: 20px;
   }
   .vector-wrapper {
     position: relative;
@@ -50,7 +51,8 @@
     }
   }
   #distance-label {
-    margin-top: 10px;
     font-size: 12px;
+    transform: translate3d(-50%, -50%, 0);
+    position: absolute;
   }
 }

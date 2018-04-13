@@ -209,7 +209,7 @@ class Permutations extends Component {
           }), <svg width={radius * 2} height={radius * 2}>
                 <g transform={`translate(${radius}, ${radius})`}><path></path></g>
               </svg>]}</div>
-          <div id="distance-label">{`DISTANCE: ${distance.toFixed(3)}`}</div>
+          <div style={`left:${radius + spokeLength}px;top:${radius + spokeLength}px;`} id="distance-label">{`DISTANCE: ${distance.toFixed(3)}`}</div>
         </div>
         <div class="progressions">{progressions.map(p => {
           let label = <div class="label">{p.toUpperCase()}</div>

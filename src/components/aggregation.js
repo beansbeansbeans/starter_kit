@@ -104,9 +104,10 @@ class Aggregation extends Component {
           return <div class="label">{`${bin > 0 ? bin : ''} ${bin > 0 ? Math.round(100 * bin / total) + '%' : ''}`}</div>
         })}</div>
         <div class="input-wrapper">
-          <div class="scale">{scale}</div>
-          <button style={`display: ${scale < maxScale - 1? 'inline-block' : 'none'}`} onClick={this.aggregate}>zoom out</button>
-          <button style={`display: ${scale > 0 ? 'inline-block' : 'none'}`} onClick={() => {
+          <div class="scale">{`scale: ${scale}`}</div>
+          <br/>
+          <button style={`visibility: ${scale < maxScale - 1? 'visible' : 'hidden'}`} onClick={this.aggregate}>zoom out</button>
+          <button style={`visibility: ${scale > 0 ? 'visible' : 'hidden'}`} onClick={() => {
             this.setState({
               scale: scale - 1
             })
