@@ -3,10 +3,8 @@
 
 distance matrix implementation steps
 
-- create node process that samples 1000 points from 100-d embedding and stores pairwise distances
-- render matrix of points
-- reorder matrix (in node)
-- render again
+- in createDistanceMatrix, create 10, 50, 100 d versions for each distance metric all at once (maybe create the permuted array of indices outside the main loop)
+
 
 - repeat for 50d, and 10d
 
