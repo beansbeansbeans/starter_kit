@@ -46,8 +46,7 @@ class EmbeddingSpiral extends Component {
       console.log(resp[0])
       let canvas = document.querySelector("#embedding_spiral #canvas")
       this.ctx = canvas.getContext('2d')
-      let keys = Object.keys(resp[0])
-      let canvasSize = keys.length
+      let canvasSize = Math.ceil(Math.sqrt(resp[0][0].encoding.length))
       let max = this.state.max
 
       canvas.width = 2 * canvasSize
