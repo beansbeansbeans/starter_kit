@@ -2,6 +2,8 @@
   .progressions {
     max-width: calc(100vw - 400px);
     float: right;
+    max-height: 600px;
+    overflow: scroll;
   }
   .item {
     margin-bottom: 10px;

@@ -27,7 +27,15 @@ const encodings = [
   "the invincible werner herzog is alive and well and living in la",
   "haneke challenges us to confront the reality of sexual aberration .",
   "absorbing and disturbing -- perhaps more disturbing than originally intended -- but a little clarity would have gone a long way .",
-  "it's the best film of the year so far , the benchmark against which all other best picture contenders should be measured ."
+  "it's the best film of the year so far , the benchmark against which all other best picture contenders should be measured .",
+  "with the film's striking ending , one realizes that we have a long way to go before we fully understand all the sexual permutations involved .",
+  "dark and disturbing , but also surprisingly funny .",
+  "it sounds sick and twisted , but the miracle of shainberg's film is that it truly is romance",
+  "disturbing and brilliant documentary .",
+  "a frisky and fresh romantic comedy exporing sexual politics and the challenges of friendships between women .",
+  "though the film's scenario is certainly not earthshaking , this depiction of fluctuating female sexuality has two winning lead performances and charm to spare .",
+  "dazzling and sugar-sweet , a blast of shallow magnificence that only sex , scandal , and a chorus line of dangerous damsels can deliver .",
+  "japan's premier stylist of sex and blood hits audiences with what may be his most demented film to date ."
 ]
 
 const progressions = ['forwards', 'backwards', 'scrambled']
