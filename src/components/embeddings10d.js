@@ -71,6 +71,16 @@ class Embeddings10D extends Component {
     super(props)
 
     let distances = ['euclidean', 'manhattan', 'fractional']
+    let dimensionsArr = []
+    let maxDimensionality = Math.max(...Object.keys(this.props.data))
+
+    for(let i=0; i<maxDimensionality; i++) {
+      dimensionsArr.push({
+        label: i,
+        active: i === 0,
+        id: i
+      })
+    }
 
     this.setState({
       hoverEncoding: null,
@@ -82,6 +92,7 @@ class Embeddings10D extends Component {
           id: i
         }
       }),
+      dimensionsArr,
       dimensions: Object.keys(this.props.data).map((d, i) => {
         return {
           number: d,
@@ -153,25 +164,35 @@ class Embeddings10D extends Component {
     this.draw()
   }
 
-  render({}, { sets, dimensions, hoverEncoding, distances }) {
+  render({}, { sets, dimensions, hoverEncoding, distances, dimensionsArr }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
+    let activeSortBy = dimensionsArr.find(d => d.active).id
 
     return (
       <div id="embeddings_10d">
         <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
+        <span>sort by:</span>
+        <Dropdown change={id => this.changeSentence(id, 'dimensionsArr')} options={dimensionsArr.slice(0, activeDimensionality.id)} />
         <br/>
         <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
           <div style={`width:${radius * 2}px;height:${radius * 2}px; left:${spokeLength}px; top:${spokeLength}px`} class="base-encoding circle">{[encodingsDict[trim(activeSentence.sentence)][activeDimensionality.number].map((d, i) => {
             return <div style={`transform: rotate(${-90 + i * 360/activeDimensionality.number}deg)`} class="spoke">
-              <div style={`left:${radius + radiusScale(d)}px`} class="node"></div>
+              <div style={`left:${radius + radiusScale(d)}px; background: ${i === activeSortBy ? 'orange' : '#222'}; width: ${i === activeSortBy ? 6 : 4}px; height: ${i === activeSortBy ? 6 : 4}px`} class="node"></div>
             </div>
           }), <svg width={radius * 2} height={radius * 2}>
                 <g transform={`translate(${radius}, ${radius})`}><path></path></g>
               </svg>]}</div>
         </div>
-        <div class="progressions">{sets.map(d => {
+        <div class="progressions">{sets.sort((a, b) => {
+          let aEnc = encodingsDict[trim(a.sentence)][activeDimensionality.number]
+          let bEnc = encodingsDict[trim(b.sentence)][activeDimensionality.number]
+          if(aEnc[activeSortBy] > bEnc[activeSortBy]) {
+            return -1
+          }
+          return 1
+        }).map(d => {
           return <div data-active={d.active} onMouseEnter={() => {
             this.changeSentence(d.id, 'sets')
           }} class="item">{d.label}</div>
