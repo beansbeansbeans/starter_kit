@@ -10,7 +10,24 @@ import { select } from 'd3-selection'
 const encodings = [
   "i'm going to give it a marginal thumbs up . i liked it just enough .",
   "a deliciously nonsensical comedy about a city coming apart at its seams .",
- "the story is also as unoriginal as they come , already having been recycled more times than i'd care to count ."
+  "the story is also as unoriginal as they come , already having been recycled more times than i'd care to count .",
+  "it's so laddish and juvenile , only teenage boys could possibly find it funny .",
+  "exploitative and largely devoid of the depth or sophistication that would make watching such a graphic treatment of the crimes bearable .",
+  "an inconsequential , barely there bit of piffle .",
+  "the abiding impression , despite the mild hallucinogenic buzz , is of overwhelming waste -- the acres of haute couture can't quite conceal that there's nothing resembling a spine here .",
+  "as saccharine as it is disposable .",
+  "you come away thinking not only that kate isn't very bright , but that she hasn't been worth caring about and that maybe she , janine and molly -- an all-woman dysfunctional family -- deserve one another .",
+  "the metaphors are provocative , but too often , the viewer is left puzzled by the mechanics of the delivery .",
+  "very much a home video , and so devoid of artifice and purpose that it appears not to have been edited at all .",
+  "everytime you think undercover brother has run out of steam , it finds a new way to surprise and amuse .",
+  "a pleasant enough movie , held together by skilled ensemble actors .",
+  "this is the best american movie about troubled teens since 1998's whatever .",
+  "just the labour involved in creating the layered richness of the imagery in this chiaroscuro of madness and light is astonishing .",
+  "the animated subplot keenly depicts the inner struggles of our adolescent heroes - insecure , uncontrolled , and intense .",
+  "the invincible werner herzog is alive and well and living in la",
+  "haneke challenges us to confront the reality of sexual aberration .",
+  "absorbing and disturbing -- perhaps more disturbing than originally intended -- but a little clarity would have gone a long way .",
+  "it's the best film of the year so far , the benchmark against which all other best picture contenders should be measured ."
 ]
 
 const progressions = ['forwards', 'backwards', 'scrambled']

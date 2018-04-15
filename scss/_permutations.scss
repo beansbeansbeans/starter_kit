@@ -1,3 +1,13 @@
+#embeddings_10d {
+  .progressions {
+    max-width: calc(100vw - 400px);
+    float: right;
+  }
+  .item {
+    margin-bottom: 10px;
+  }
+}
+
 #permutations, #embeddings_10d {
   padding: 40px;
   .vector-wrapper, .progressions {
