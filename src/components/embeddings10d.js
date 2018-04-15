@@ -135,7 +135,6 @@ class Embeddings10D extends Component {
     return (
       <div id="embeddings_10d">
         <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
-        <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
         <br/>
         <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
@@ -147,6 +146,11 @@ class Embeddings10D extends Component {
                 <g transform={`translate(${radius}, ${radius})`}><path></path></g>
               </svg>]}</div>
         </div>
+        <div class="progressions">{sets.map(d => {
+          return <div data-active={d.active} onMouseEnter={() => {
+            this.changeSentence(d.id, 'sets')
+          }} class="item">{d.label}</div>
+        })}</div>
       </div>
     )
   }

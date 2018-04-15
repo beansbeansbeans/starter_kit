@@ -55,7 +55,7 @@
     }
   }
   .item {
-    &:hover {
+    &:hover, &[data-active="true"] {
       background: yellow;
     }
   }
