@@ -50,29 +50,11 @@ class Embeddings10D extends Component {
     this.setState({
       hoverEncoding: null,
       sets: encodings.map((d, i) => {
-        let words = d.split(" ")
-        let permutationIndices = [[]]
-        
-        for(let i=0; i<words.length; i++) permutationIndices[0].push(i)
-
-        for(let i=0; i<words.length; i++) {
-          let order = permutationIndices[0].slice(0)
-          let randomIndex = Math.floor(random.nextDouble() * words.length)
-          if(random.nextDouble() < 0.5) {
-            order[randomIndex - 1] = order.splice(randomIndex, 1, order[randomIndex - 1])[0]
-          } else {
-            order[randomIndex + 1] = order.splice(randomIndex, 1, order[randomIndex + 1])[0]
-          }
-
-          permutationIndices.unshift(order)
-        }
-
         return {
           sentence: d,
           label: d,
           active: i === 0,
-          id: i,
-          permutationIndices
+          id: i
         }
       }),
       dimensions: Object.keys(this.props.data).map((d, i) => {
