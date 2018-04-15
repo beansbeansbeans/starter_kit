@@ -83,7 +83,6 @@ class Embeddings10D extends Component {
           active: i === 0          
         }
       }),
-      distance: 0,
       distances: distances.map((d, i) => {
         return {
           label: d,
@@ -105,13 +104,7 @@ class Embeddings10D extends Component {
       dimensions.forEach(d => {
         encodingsDict[sen][d] = this.props.data[d].find(obj => obj.sentence == sen).encoding
       })
-
-      console.log("----")
-      console.log(sen)
-      console.log(encodingsDict[sen])
     })
-
-    console.log(encodingsDict)
 
     bindAll(this, ['changeSentence', 'draw'])
   }
@@ -128,41 +121,6 @@ class Embeddings10D extends Component {
         return d
       })
     })
-  }
-
-  getProgression(activeSentence, progression) {
-    let items = []
-    let words = activeSentence.sentence.split(" ")
-
-    if(progression === 'forwards') {
-      for(let i=1; i<=words.length; i++) {
-        items.push(words.slice(0, i).join(" "))
-      }      
-    } else if(progression === 'backwards') {
-      for(let i=2; i<=words.length; i++) {
-        items.push(words.slice(words.length - i).join(" "))
-      }
-    } else {
-      for(let i=0; i<activeSentence.permutationIndices.length; i++) {
-        items.push(permute(words.slice(0), activeSentence.permutationIndices[i]).join(" "))
-      }
-    }
-
-    return <div>{items.map(d => {
-      return <div class="item" onMouseEnter={() => {
-        let activeSentence = this.state.sets.find(d => d.active)
-        let dimensionality = this.state.dimensions.find(d => d.active).number
-        let sourceEncoding = encodingsDict[activeSentence.sentence][dimensionality]
-        let hoverEncoding = encodingsDict[trim(d)][dimensionality]
-        let activeDistance = this.state.distances.find(d => d.active)
-        let distance = getDistance[activeDistance.id](subVectors(hoverEncoding, sourceEncoding))
-
-        this.setState({ 
-          hoverEncoding,
-          distance 
-        })
-      }}>{d}</div>
-    })}</div>
   }
 
   draw() {
@@ -188,7 +146,7 @@ class Embeddings10D extends Component {
     this.draw()
   }
 
-  render({}, { sets, dimensions, hoverEncoding, distances, distance }) {
+  render({}, { sets, dimensions, hoverEncoding, distances }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
 
@@ -196,7 +154,6 @@ class Embeddings10D extends Component {
       <div id="embeddings_10d">
         <Dropdown change={id => this.changeSentence(id, 'dimensions')} options={dimensions} />
         <Dropdown change={id => this.changeSentence(id, 'sets')} options={sets} />
-        <Dropdown change={id => this.changeSentence(id, 'distances')} options={distances} />
         <br/>
         <div style={`width:${radius * 2 + spokeLength * 2}px`} class="vector-wrapper">
           <div style={`left:${spokeLength/2}px;top:${spokeLength/2}px;width:${(radius + spokeLength/2) * 2}px;height:${(radius + spokeLength/2) * 2}px`} class="outline"></div>
@@ -207,7 +164,6 @@ class Embeddings10D extends Component {
           }), <svg width={radius * 2} height={radius * 2}>
                 <g transform={`translate(${radius}, ${radius})`}><path></path></g>
               </svg>]}</div>
-          <div style={`left:${radius + spokeLength}px;top:${radius + spokeLength}px;`} id="distance-label">{`DISTANCE: ${distance.toFixed(3)}`}</div>
         </div>
       </div>
     )
