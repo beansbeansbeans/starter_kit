@@ -120,6 +120,10 @@ fs.readFile(`./data/encodings_pca_100.json`, function(err, rawPCA100) {
         }
       }
 
+      fs.writeFile("./data/distance_matrix_sentences.json", JSON.stringify(pca['10'].map(d => d.sentence)), function(err) {
+        console.log("done printing sentences")
+      })
+
       distanceTypes.forEach(t => {
         dimensionalities.forEach(d => {
           fs.writeFile(`./data/distance_matrix_arr_${t}_${d}.json`, JSON.stringify(distanceMatrices[t][d]), function(err) {
