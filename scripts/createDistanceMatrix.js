@@ -120,7 +120,12 @@ fs.readFile(`./data/encodings_pca_100.json`, function(err, rawPCA100) {
         }
       }
 
-      fs.writeFile("./data/distance_matrix_sentences.json", JSON.stringify(pca['10'].map(d => d.sentence)), function(err) {
+      fs.writeFile("./data/distance_matrix_sentences.json", JSON.stringify(pca['100'].map(d => {
+        return {
+          sentence: d.sentence,
+          encoding: d.encoding          
+        }
+      })), function(err) {
         console.log("done printing sentences")
       })
 
