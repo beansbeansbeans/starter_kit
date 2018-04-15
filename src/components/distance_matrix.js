@@ -106,6 +106,8 @@ class DistanceMatrix extends Component {
         }
       }
 
+      max.wasserstein['100'] = 0.025
+
       this.setState({ data, max })
     })
   }
