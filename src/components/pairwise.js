@@ -3,6 +3,7 @@ import helpers from '../helpers/helpers'
 const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute } = helpers
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
+import { getData, getShader } from '../api'
 
 const size = 20
 
@@ -12,7 +13,15 @@ let canvasRenderWidth, canvasRenderHeight, canvas, ctx, maxDensity, cellDim, can
 
 const getDistance = {
   'euclidean': vectorLength,
-  'manhattan': manhattanLength
+  'manhattan': manhattanLength,
+  'wasserstein': function(vec, startIndex, endIndex, dim) {
+    return wassersteinPairwise[dim][startIndex][endIndex]
+  }
+}
+
+let sentenceDict = {}
+let wassersteinPairwise = {
+  10: {}, 50: {}, 100: {}
 }
 
 class Dropdown extends Component {
@@ -48,6 +57,10 @@ class PairWise extends Component {
       {
         index: 'manhattan',
         selected: false
+      },
+      {
+        index: 'wasserstein',
+        selected: false
       }
     ],
     dimensions: [
@@ -68,6 +81,13 @@ class PairWise extends Component {
 
   componentWillMount() {
     bindAll(this, ['updateIntermediaries', 'drawDensities', 'userSelectTarget', 'clickCanvas'])
+
+    Promise.all(['sentence_to_index', 'pairwise_wasserstein_10', 'pairwise_wasserstein_50', 'pairwise_wasserstein_100'].map(getData)).then(resp => {
+      sentenceDict = resp[0]
+      wassersteinPairwise['10'] = resp[1]
+      wassersteinPairwise['50'] = resp[2]
+      wassersteinPairwise['100'] = resp[3]
+    })
   }
 
   componentDidMount() {
@@ -148,6 +168,8 @@ class PairWise extends Component {
 
     let A = data[startIndex].encoding
     let B = data[endIndex].encoding
+    let Aindex = sentenceDict[data[startIndex].sentence]
+    let Bindex = sentenceDict[data[endIndex].sentence]
 
     for(let i=0; i<1; i+=increment) {
       buckets.push([])
@@ -159,12 +181,13 @@ class PairWise extends Component {
       if(i == startIndex || i == endIndex) continue
 
       let P = data[i].encoding
+      let Pindex = sentenceDict[data[i].sentence]
       let pa = subVectors(P, A)
       let ba = subVectors(B, A)
       let bp = subVectors(B, P)
       let t = dotProduct(pa, ba) / dotProduct(ba, ba)
-      let startDistance = getDistance[distance](pa)
-      let endDistance = getDistance[distance](bp)
+      let startDistance = getDistance[distance](pa, Aindex, Pindex, numDimensions)
+      let endDistance = getDistance[distance](bp, Bindex, Pindex, numDimensions)
 
       distances.push([startDistance, endDistance, data[i].sentence])
 
