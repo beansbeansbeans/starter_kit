@@ -7,6 +7,7 @@ const random = randomModule.random(42)
 import { scaleLinear } from 'd3-scale'
 import { lineRadial } from 'd3-shape'
 import { select } from 'd3-selection'
+import { getData, getShader } from '../api'
 
 const progressions = ['forwards', 'backwards', 'scrambled']
 const radius = 100
@@ -15,11 +16,16 @@ const spokeLength = 50
 let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 let radialLine = lineRadial()
 let encodingsDict = {}
+let wassersteinPairwise
+let sentenceDict = {}
 
 const getDistance = {
   'euclidean': vectorLength,
   'manhattan': manhattanLength,
-  'fractional': fractional(0.5)
+  'fractional': fractional(0.5),
+  'wasserstein': function(vec, startIndex, endIndex, dim) {
+    return wassersteinPairwise[dim][startIndex][endIndex]
+  }
 }
 
 class Dropdown extends Component {
@@ -45,7 +51,7 @@ class Permutations extends Component {
       "a deliciously nonsensical comedy about a city coming apart at its seams ."
     ]
 
-    let distances = ['euclidean', 'manhattan', 'fractional']
+    let distances = ['euclidean', 'manhattan', 'fractional', 'wasserstein']
 
     this.setState({
       hoverEncoding: null,
@@ -96,6 +102,11 @@ class Permutations extends Component {
 
   componentWillMount() {
     console.log(encodings)
+
+    Promise.all(['pairwise_wasserstein_permutations', 'sentence_to_index'].map(getData)).then(resp => {
+      wassersteinPairwise = resp[0]
+      sentenceDict = resp[1]
+    })
 
     let dimensions = Object.keys(this.props.data)
 
@@ -149,9 +160,11 @@ class Permutations extends Component {
         let activeSentence = this.state.sets.find(d => d.active)
         let dimensionality = this.state.dimensions.find(d => d.active).number
         let sourceEncoding = encodingsDict[activeSentence.sentence][dimensionality]
+        let sourceIndex = sentenceDict[activeSentence.sentence]
         let hoverEncoding = encodingsDict[trim(d)][dimensionality]
+        let targetIndex = sentenceDict[trim(d)]
         let activeDistance = this.state.distances.find(d => d.active)
-        let distance = getDistance[activeDistance.id](subVectors(hoverEncoding, sourceEncoding))
+        let distance = getDistance[activeDistance.id](subVectors(hoverEncoding, sourceEncoding), sourceIndex, targetIndex, dimensionality)
 
         this.setState({ 
           hoverEncoding,
