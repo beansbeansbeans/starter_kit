@@ -17,6 +17,10 @@ for(let i=0; i<1/res; i++) {
 let binSearch = (range, lower, upper, val) => {
   let mid = lower + Math.floor((upper - lower) / 2)
 
+  if(val < range[lower] || val > range[upper]) {
+    return false
+  }
+
   if((val > range[mid] && val < range[mid + 1]) || mid === lower) {
     return mid
   }
@@ -89,13 +93,13 @@ class ParallelCoordinates extends Component {
 
         let bin = this.getBin(val, j, ranges[j][0], ranges[j][1])
 
-        cleanBins[j][bin]++
+        if(bin != false) {
+          cleanBins[j][bin]++
+        }
 
         if(shouldRecomputeMax && cleanBins[j][bin] > overallMax) overallMax = cleanBins[j][bin]
       }
     }
-
-    console.log(cleanBins)
 
     this.setState({ bins: cleanBins, overallMax })
   }
