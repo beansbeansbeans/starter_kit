@@ -121,7 +121,11 @@ class ParallelCoordinates extends Component {
       this.setState({
         knobPositions: this.state.knobPositions.map((d, dim) => {
           if(dim === this.state.dragTarget) {
-            d[this.state.dragIndex] = e.clientY - this.state.topY
+            if(this.state.dragIndex === 0) {
+              d[this.state.dragIndex] = Math.max(0, Math.min(e.clientY - this.state.topY, d[1]))
+            } else {
+              d[this.state.dragIndex] = Math.max(d[0], Math.min(e.clientY - this.state.topY, cellSize * (1/res)))
+            }
           }
           return d
         })
