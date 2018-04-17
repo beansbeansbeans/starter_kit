@@ -35,7 +35,8 @@ class ParallelCoordinates extends Component {
     this.state = {
       bins: this.getCleanBins(),
       max, min,
-      ranges
+      ranges,
+      overallMax: 0
     }
   }
 
@@ -60,6 +61,8 @@ class ParallelCoordinates extends Component {
   count() {
     let data = this.props.data[dim]
     let cleanBins = this.getCleanBins()
+    let overallMax = this.state.overallMax
+    let shouldRecomputeMax = overallMax === 0
 
     console.log("data")
     console.log(data)
@@ -72,10 +75,12 @@ class ParallelCoordinates extends Component {
         let bin = this.getBin(val, j)
 
         cleanBins[j][bin]++
+
+        if(shouldRecomputeMax && cleanBins[j][bin] > overallMax) overallMax = cleanBins[j][bin]
       }
     }
 
-    this.setState({ bins: cleanBins })
+    this.setState({ bins: cleanBins, overallMax })
   }
 
   componentWillMount() {
@@ -109,8 +114,16 @@ class ParallelCoordinates extends Component {
     this.count()
   }
 
-  render() {
-    return (<div id="parallel_coordinates">parallel coordinates</div>)
+  render({}, { bins, max, min, overallMax }) {
+    return (<div id="parallel_coordinates">{bins.map((bin, dim) => {
+      return <div class="column-wrapper">
+        <div class="label max">{max[dim].toFixed(2)}</div>
+        <div class="column">{bin.map(d => {
+          return <div style={`background-color: rgba(255, 0, 0, ${d > 0 ? 0.05 + 0.95 * (d / overallMax) : 0})`} class="cell"></div>
+        })}</div>
+        <div class="label min">{min[dim].toFixed(2)}</div>
+      </div>
+    })}</div>)
   }
 }
 
