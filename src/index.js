@@ -52,7 +52,7 @@ class App extends Component {
     // let main = <Aggregation data={data} />
     // let main = <PairWise data={data} />
     // let main = <Spiral />
-    let main = <ParallelCoordinates />
+    let main = <ParallelCoordinates data={data} />
 
     return <app>{main}</app>
   }

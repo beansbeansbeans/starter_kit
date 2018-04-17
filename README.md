@@ -9,10 +9,11 @@ embedding spiral implementation steps
 
 ---
 
-permutations implementation steps
+parallel coordinates implementation steps
 
-- load all the encodings files
-- create array of the two base sentences
-- create array of permutations for each of the base sentences
-- load in sentence_to_index file
-- create pairwise wasserstein file
+rendering: 0.05 bins, opacity of rect at each bin denotes density of nodes falling within that bin
+
+lookup:
+simplest way: function that filters based on user-imposed constraints, function that renders bins based on filtered nodelist
+
+manipulation: just render a top / bottom bar for each dimension that users can drag around
