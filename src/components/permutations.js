@@ -13,6 +13,7 @@ const progressions = ['forwards', 'backwards', 'scrambled']
 const radius = 100
 const spokeLength = 50
 const graphHeight = 100
+const graphXIncrement = 5
 
 let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 let radialLine = lineRadial()
@@ -164,7 +165,7 @@ class Permutations extends Component {
     let dimensionality = this.state.dimensions.find(d => d.active).number
     let activeDistance = this.state.distances.find(d => d.active)
 
-    return <div>{items.map(d => {
+    return <div>{items.map((d, i) => {
       return <div class="item" onMouseEnter={() => {
         let activeSentence = this.state.sets.find(d => d.active)
         let sourceEncoding = encodingsDict[activeSentence.sentence][dimensionality]
@@ -175,7 +176,8 @@ class Permutations extends Component {
 
         this.setState({ 
           hoverEncoding,
-          distance 
+          distance,
+          hoverIndex: i
         })
       }}>{d}</div>
     })}</div>
@@ -215,14 +217,12 @@ class Permutations extends Component {
         return acc
       }, 0)
 
-      select(document.querySelector(`#g_${p}`)).node().innerHTML = ''
-
-      select(document.querySelector(`#g_${p}`)).append("path")
-        .attr("d", line().x((d, i) => i * 5).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[pi]))
+      select(document.querySelector(`#g_${p}`)).select("path")
+        .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[pi]))
     })
   }
 
-  render({}, { sets, dimensions, hoverEncoding, distances, distance }) {
+  render({}, { sets, dimensions, hoverEncoding, distances, distance, hoverIndex }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
 
@@ -264,7 +264,10 @@ class Permutations extends Component {
         })}</div>
         <div class="sparklines">
           <svg>
-            {progressions.map((d, di) => <g transform={`translate(0, ${di * graphHeight + 20})`} id={`g_${d}`}></g>)}
+            {progressions.map((d, di) => <g transform={`translate(0, ${di * graphHeight + 20 * di})`} id={`g_${d}`}>
+              <line y1="0" y2={graphHeight} x1={graphXIncrement * hoverIndex} x2={graphXIncrement * hoverIndex} stroke="orange"></line>
+              <path></path>
+            </g>)}
           </svg>
         </div>
       </div>
