@@ -210,13 +210,15 @@ class Permutations extends Component {
       })
     })
 
-    progressions.forEach((p, pi) => {
-      let max = sparklinePoints[pi].reduce((acc, curr) => {
+    let max = sparklinePoints.reduce((acc, curr) => acc.concat(curr))
+      .reduce((acc, curr) => {
         if(curr > acc) {
           return curr
         }
         return acc
       }, 0)
+
+    progressions.forEach((p, pi) => {
 
       select(document.querySelector(`#g_${p}`)).select("path")
         .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[pi]))
