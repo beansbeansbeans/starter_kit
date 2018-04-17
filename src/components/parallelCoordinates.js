@@ -11,7 +11,8 @@ let cellSize = 5
 
 let binSearch = (range, lower, upper, val) => {
   let mid = lower + Math.floor((upper - lower) / 2)
-  if(val > range[mid] && val < range[mid + 1] || mid === lower) {
+
+  if((val > range[mid] && val < range[mid + 1]) || mid === lower) {
     return mid
   }
 
@@ -59,7 +60,7 @@ class ParallelCoordinates extends Component {
   getBin(val, dim) {
     let min = this.state.min[dim], max = this.state.max[dim]
 
-    return binSearch(this.state.ranges[dim], 0, this.state.ranges[dim].length, val)
+    return binSearch(this.state.ranges[dim], 0, this.state.ranges[dim].length - 1, val)
   }
 
   count() {

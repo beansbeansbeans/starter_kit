@@ -8,6 +8,18 @@
     width: 20px;
     cursor: pointer;
     background: black;
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      right: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      top: 0;
+      background: black;
+      transform: translate3d(0, -50%, 0);
+    }
   }
   .column_plus_constraints {
     position: relative;
