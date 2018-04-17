@@ -18,4 +18,4 @@ simplest way: function that filters based on user-imposed constraints, function 
 
 manipulation: just render a top / bottom bar for each dimension that users can drag around
 
-- render 20 rectangles vertically aligned for each dimension, with min max values templated
+- render knobs above and below each coordinate that can be tuned

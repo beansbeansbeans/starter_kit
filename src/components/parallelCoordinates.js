@@ -7,6 +7,7 @@ import { getData, getShader } from '../api'
 
 let res = 0.05
 let dim = 10
+let cellSize = 5
 
 let binSearch = (range, lower, upper, val) => {
   let mid = lower + Math.floor((upper - lower) / 2)
@@ -26,17 +27,20 @@ class ParallelCoordinates extends Component {
     let max = []
     let min = []
     let ranges = []
+    let constraints = []
     for(let i=0; i<dim; i++) {
       max.push(0)
       min.push(Infinity)
       ranges.push([])
+      constraints.push([0, 1/res])
     }
 
     this.state = {
       bins: this.getCleanBins(),
       max, min,
       ranges,
-      overallMax: 0
+      overallMax: 0,
+      constraints
     }
   }
 
@@ -64,9 +68,6 @@ class ParallelCoordinates extends Component {
     let overallMax = this.state.overallMax
     let shouldRecomputeMax = overallMax === 0
 
-    console.log("data")
-    console.log(data)
-
     for(let i=0; i<data.length; i++) {
       let encoding = data[i].encoding
       for(let j=0; j<encoding.length; j++) {
@@ -79,6 +80,8 @@ class ParallelCoordinates extends Component {
         if(shouldRecomputeMax && cleanBins[j][bin] > overallMax) overallMax = cleanBins[j][bin]
       }
     }
+
+    console.log(cleanBins)
 
     this.setState({ bins: cleanBins, overallMax })
   }
@@ -114,13 +117,17 @@ class ParallelCoordinates extends Component {
     this.count()
   }
 
-  render({}, { bins, max, min, overallMax }) {
+  render({}, { bins, max, min, overallMax, constraints }) {
     return (<div id="parallel_coordinates">{bins.map((bin, dim) => {
       return <div class="column-wrapper">
         <div class="label max">{max[dim].toFixed(2)}</div>
-        <div class="column">{bin.map(d => {
-          return <div style={`background-color: rgba(255, 0, 0, ${d > 0 ? 0.05 + 0.95 * (d / overallMax) : 0})`} class="cell"></div>
-        })}</div>
+        <div class="column_plus_constraints">
+          <div class="column">{bin.map(d => {
+            return <div style={`width:${cellSize}px; height:${cellSize}px; background-color: rgba(255, 0, 0, ${d > 0 ? 0.05 + 0.95 * (d / overallMax) : 0})`} class="cell"></div>
+          })}</div>
+          <div style={`top:${constraints[dim][0] * cellSize}px`} class="constraint top"></div>
+          <div style={`top:${constraints[dim][1] * cellSize}px`} class="constraint bottom"></div>
+        </div>
         <div class="label min">{min[dim].toFixed(2)}</div>
       </div>
     })}</div>)
