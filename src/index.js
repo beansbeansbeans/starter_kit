@@ -47,9 +47,9 @@ class App extends Component {
   render({ data }) {
     // let main = <DistanceMatrix data={data} />
     // let main = <Permutations data={data} />
-    // let main = <Embeddings10D data={data} />
+    let main = <Embeddings10D data={data} />
     // let main = <Aggregation data={data} />
-    let main = <PairWise data={data} />
+    // let main = <PairWise data={data} />
     // let main = <Spiral />
 
     return <app>{main}</app>
