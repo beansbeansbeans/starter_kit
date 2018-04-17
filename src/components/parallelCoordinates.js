@@ -69,7 +69,21 @@ class ParallelCoordinates extends Component {
   }
 
   getBin(val, dim, min, max) {
-    return binSearch(this.state.ranges[dim], min, max, val)
+    let match
+
+    if(val < this.state.ranges[dim][min] || val > this.state.ranges[dim][max]) {
+      return false
+    }
+
+    for(let i=min; i<max; i++) {
+      if(val < this.state.ranges[dim][i]) {
+        match = i
+        break
+      }
+    }
+
+    return match
+    // return binSearch(this.state.ranges[dim], min, max, val)
   }
 
   count() {
@@ -88,16 +102,25 @@ class ParallelCoordinates extends Component {
 
     for(let i=0; i<data.length; i++) {
       let encoding = data[i].encoding
+      let bins = [], shouldAdd = true
       for(let j=0; j<encoding.length; j++) {
         let val = encoding[j]
-
         let bin = this.getBin(val, j, ranges[j][0], ranges[j][1])
 
         if(bin != false) {
-          cleanBins[j][bin]++
+          bins.push(bin)
+        } else {
+          shouldAdd = false
+          break
         }
+      }
 
-        if(shouldRecomputeMax && cleanBins[j][bin] > overallMax) overallMax = cleanBins[j][bin]
+      if(shouldAdd) {
+        for(let j=0; j<bins.length; j++) {
+          cleanBins[j][bins[j]]++
+
+          if(shouldRecomputeMax && cleanBins[j][bins[j]] > overallMax) overallMax = cleanBins[j][bins[j]]
+        }        
       }
     }
 
