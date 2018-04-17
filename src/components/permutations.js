@@ -13,7 +13,7 @@ const progressions = ['forwards', 'backwards', 'scrambled']
 const radius = 100
 const spokeLength = 50
 const graphHeight = 100
-const graphXIncrement = 5
+const graphXIncrement = 10
 
 let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 let radialLine = lineRadial()
@@ -177,7 +177,8 @@ class Permutations extends Component {
         this.setState({ 
           hoverEncoding,
           distance,
-          hoverIndex: i
+          hoverIndex: i,
+          activeProgression: progression
         })
       }}>{d}</div>
     })}</div>
@@ -222,7 +223,7 @@ class Permutations extends Component {
     })
   }
 
-  render({}, { sets, dimensions, hoverEncoding, distances, distance, hoverIndex }) {
+  render({}, { sets, dimensions, hoverEncoding, distances, distance, hoverIndex, activeProgression }) {
     let activeSentence = sets.find(d => d.active)
     let activeDimensionality = dimensions.find(d => d.active)
 
@@ -265,7 +266,7 @@ class Permutations extends Component {
         <div class="sparklines">
           <svg>
             {progressions.map((d, di) => <g transform={`translate(0, ${di * graphHeight + 20 * di})`} id={`g_${d}`}>
-              <line y1="0" y2={graphHeight} x1={graphXIncrement * hoverIndex} x2={graphXIncrement * hoverIndex} stroke="orange"></line>
+              <line y1="0" y2={graphHeight} x1={graphXIncrement * hoverIndex} x2={graphXIncrement * hoverIndex} stroke={d === activeProgression ? "orange" : "transparent"}></line>
               <path></path>
             </g>)}
           </svg>
