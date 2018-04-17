@@ -9,6 +9,11 @@ let res = 0.05
 let dim = 10
 let cellSize = 5
 
+let range = []
+for(let i=0; i<1/res; i++) {
+  range.push(i)
+}
+
 let binSearch = (range, lower, upper, val) => {
   let mid = lower + Math.floor((upper - lower) / 2)
 
@@ -59,24 +64,30 @@ class ParallelCoordinates extends Component {
     return bins
   }
 
-  getBin(val, dim) {
-    let min = this.state.min[dim], max = this.state.max[dim]
-
-    return binSearch(this.state.ranges[dim], 0, this.state.ranges[dim].length - 1, val)
+  getBin(val, dim, min, max) {
+    return binSearch(this.state.ranges[dim], min, max, val)
   }
 
   count() {
+    let knobPositions = this.state.knobPositions
     let data = this.props.data[dim]
     let cleanBins = this.getCleanBins()
     let overallMax = this.state.overallMax
     let shouldRecomputeMax = overallMax === 0
+
+    let ranges = knobPositions.map(d => {
+      let min = binSearch(range, 0, range.length, d[0] / cellSize), 
+        max = binSearch(range, 0, range.length, d[1] / cellSize)
+
+      return [min, max]
+    })
 
     for(let i=0; i<data.length; i++) {
       let encoding = data[i].encoding
       for(let j=0; j<encoding.length; j++) {
         let val = encoding[j]
 
-        let bin = this.getBin(val, j)
+        let bin = this.getBin(val, j, ranges[j][0], ranges[j][1])
 
         cleanBins[j][bin]++
 
@@ -129,7 +140,7 @@ class ParallelCoordinates extends Component {
           }
           return d
         })
-      })
+      }, this.count)
     })
 
     window.addEventListener("mouseup", e => {
