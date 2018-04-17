@@ -81,4 +81,12 @@
     transform: translate3d(-50%, -50%, 0);
     position: absolute;
   }
+  .sparklines {
+    position: fixed;
+    top: 0;
+    right: 0;
+    svg {
+      overflow: visible;
+    }
+  }
 }

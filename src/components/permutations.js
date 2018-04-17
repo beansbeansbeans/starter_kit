@@ -5,13 +5,14 @@ import { encodings } from '../config'
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 import { scaleLinear } from 'd3-scale'
-import { lineRadial } from 'd3-shape'
+import { lineRadial, line } from 'd3-shape'
 import { select } from 'd3-selection'
 import { getData, getShader } from '../api'
 
 const progressions = ['forwards', 'backwards', 'scrambled']
 const radius = 100
 const spokeLength = 50
+const graphHeight = 100
 
 let radiusScale = scaleLinear().domain([-0.1, 0.1]).range([0, spokeLength])
 let radialLine = lineRadial()
@@ -120,7 +121,7 @@ class Permutations extends Component {
 
     console.log(encodingsDict)
 
-    bindAll(this, ['changeSentence'])
+    bindAll(this, ['changeSentence', 'getProgression', 'getProgressionItems'])
   }
 
   changeSentence(id, key) {
@@ -137,9 +138,8 @@ class Permutations extends Component {
     })
   }
 
-  getProgression(activeSentence, progression) {
+  getProgressionItems(activeSentence, words, progression) {
     let items = []
-    let words = activeSentence.sentence.split(" ")
 
     if(progression === 'forwards') {
       for(let i=1; i<=words.length; i++) {
@@ -155,15 +155,22 @@ class Permutations extends Component {
       }
     }
 
+    return items
+  }
+
+  getProgression(activeSentence, progression) {
+    let words = activeSentence.sentence.split(" ")
+    let items = this.getProgressionItems(activeSentence, words, progression)
+    let dimensionality = this.state.dimensions.find(d => d.active).number
+    let activeDistance = this.state.distances.find(d => d.active)
+
     return <div>{items.map(d => {
       return <div class="item" onMouseEnter={() => {
         let activeSentence = this.state.sets.find(d => d.active)
-        let dimensionality = this.state.dimensions.find(d => d.active).number
         let sourceEncoding = encodingsDict[activeSentence.sentence][dimensionality]
         let sourceIndex = sentenceDict[activeSentence.sentence]
         let hoverEncoding = encodingsDict[trim(d)][dimensionality]
         let targetIndex = sentenceDict[trim(d)]
-        let activeDistance = this.state.distances.find(d => d.active)
         let distance = getDistance[activeDistance.id](subVectors(hoverEncoding, sourceEncoding), sourceIndex, targetIndex, dimensionality)
 
         this.setState({ 
@@ -177,6 +184,9 @@ class Permutations extends Component {
   componentDidUpdate() {
     let activeSentence = this.state.sets.find(d => d.active)
     let activeDimensionality = this.state.dimensions.find(d => d.active)
+    let activeDistance = this.state.distances.find(d => d.active)
+    let sourceEncoding = encodingsDict[activeSentence.sentence][activeDimensionality.number]
+    let sourceIndex = sentenceDict[activeSentence.sentence]
 
     let points = [ this.state.hoverEncoding, encodingsDict[activeSentence.sentence][activeDimensionality.number] ]
     let selectors = ['.hover-encoding path', '.base-encoding path']
@@ -186,6 +196,29 @@ class Permutations extends Component {
         let angle = degreesToRadians(i * 360/activeDimensionality.number)
         return [angle, radius + radiusScale(d)]
       })) + 'z')      
+    })
+
+    let sparklinePoints = progressions.map(p => {
+      let items = this.getProgressionItems(activeSentence, activeSentence.sentence.split(" "), p)
+      return items.map(item => {
+        let hoverEncoding = encodingsDict[trim(item)][activeDimensionality.number]
+        let targetIndex = sentenceDict[trim(item)]
+        return getDistance[activeDistance.id](subVectors(hoverEncoding, sourceEncoding), sourceIndex, targetIndex, activeDimensionality.number)
+      })
+    })
+
+    progressions.forEach((p, pi) => {
+      let max = sparklinePoints[pi].reduce((acc, curr) => {
+        if(curr > acc) {
+          return curr
+        }
+        return acc
+      }, 0)
+
+      select(document.querySelector(`#g_${p}`)).node().innerHTML = ''
+
+      select(document.querySelector(`#g_${p}`)).append("path")
+        .attr("d", line().x((d, i) => i * 5).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[pi]))
     })
   }
 
@@ -229,6 +262,11 @@ class Permutations extends Component {
           let items = this.getProgression(activeSentence, p)
           return <div class="progression">{[label, items]}</div>
         })}</div>
+        <div class="sparklines">
+          <svg>
+            {progressions.map((d, di) => <g transform={`translate(0, ${di * graphHeight + 20})`} id={`g_${d}`}></g>)}
+          </svg>
+        </div>
       </div>
     )
   }
