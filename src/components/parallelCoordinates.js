@@ -29,11 +29,13 @@ class ParallelCoordinates extends Component {
     let min = []
     let ranges = []
     let constraints = []
+    let knobPositions = []
     for(let i=0; i<dim; i++) {
       max.push(0)
       min.push(Infinity)
       ranges.push([])
       constraints.push([0, 1/res])
+      knobPositions.push([0, cellSize * (1/res)])
     }
 
     this.state = {
@@ -41,7 +43,7 @@ class ParallelCoordinates extends Component {
       max, min,
       ranges,
       overallMax: 0,
-      constraints
+      constraints, knobPositions
     }
   }
 
@@ -112,13 +114,34 @@ class ParallelCoordinates extends Component {
     }
 
     this.setState({ min, max, ranges })
+
+    window.addEventListener("mousemove", e => {
+      if(!this.state.dragging) return
+
+      this.setState({
+        knobPositions: this.state.knobPositions.map((d, dim) => {
+          if(dim === this.state.dragTarget) {
+            d[this.state.dragIndex] = e.clientY - this.state.topY
+          }
+          return d
+        })
+      })
+    })
+
+    window.addEventListener("mouseup", e => {
+      this.setState({ dragging: false })
+    })
   }
 
   componentDidMount() {
     this.count()
+
+    this.setState({
+      topY: document.querySelector("#parallel_coordinates .column").getBoundingClientRect().top
+    })
   }
 
-  render({}, { bins, max, min, overallMax, constraints }) {
+  render({}, { bins, max, min, overallMax, constraints, knobPositions }) {
     return (<div id="parallel_coordinates">{bins.map((bin, dim) => {
       return <div class="column-wrapper">
         <div class="label max">{max[dim].toFixed(2)}</div>
@@ -126,8 +149,12 @@ class ParallelCoordinates extends Component {
           <div class="column">{bin.map(d => {
             return <div style={`width:${cellSize}px; height:${cellSize}px; background-color: rgba(255, 0, 0, ${d > 0 ? 0.05 + 0.95 * (d / overallMax) : 0})`} class="cell"></div>
           })}</div>
-          <div style={`top:${constraints[dim][0] * cellSize}px`} class="constraint top"></div>
-          <div style={`top:${constraints[dim][1] * cellSize}px`} class="constraint bottom"></div>
+          <div onMouseDown={() => {
+            this.setState({ dragging: true, dragTarget: dim, dragIndex: 0 })
+          }} style={`top:${knobPositions[dim][0]}px`} class="constraint top"></div>
+          <div onMouseDown = {() => {
+            this.setState({ dragging: true, dragTarget: dim, dragIndex: 1 })
+          }} style={`top:${knobPositions[dim][1]}px`} class="constraint bottom"></div>
         </div>
         <div class="label min">{min[dim].toFixed(2)}</div>
       </div>

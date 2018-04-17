@@ -1,6 +1,7 @@
 #parallel_coordinates {
   margin: 50px;
   .label {
+    user-select: none;
   }
   .constraint {
     position: absolute;
