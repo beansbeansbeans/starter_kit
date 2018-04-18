@@ -15,6 +15,10 @@ def convert_dict_to_json(file_path):
             for x in range(len(data)):
                 for key in data[x]['dists'].keys():
                     data[x]['dists'][key] = data[x]['dists'][key].tolist()
+                # data[x]['manipulated_embs'] = []
+                for y in range(len(data[x]['manipulated_embs'])):
+                    data[x]['manipulated_embs'][y] = data[x]['manipulated_embs'][y].tolist()
+                data[x]['manipulated_embs'] = data[x]['manipulated_embs'].tolist()
         else:
             for sent in data:
                 data[sent] = data[sent].tolist()
