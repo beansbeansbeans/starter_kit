@@ -1,0 +1,241 @@
+[
+    {
+        "dists": {
+            "cosine": [
+                0.0055104646914522215,
+                0.007011625524011356,
+                0.011363198081773329,
+                0.007103998010543733,
+                0.006876914974441206,
+                0.007689844117185984
+            ],
+            "energy": [
+                0.004159846963593737,
+                0.005096299358459267,
+                0.010034498001235383,
+                0.00535929334757384,
+                0.004466543345479295,
+                0.00598706689333388
+            ],
+            "euclidean": [
+                0.2068744195293263,
+                0.24050254461490844,
+                0.3405231879142053,
+                0.2461499221923229,
+                0.23375752980337683,
+                0.2568471285759738
+            ],
+            "wasserstein": [
+                0.004159846963593737,
+                0.005096299358459267,
+                0.010034498001235383,
+                0.00535929334757384,
+                0.004466543345479295,
+                0.00598706689333388
+            ]
+        },
+        "manipulated_sents": [
+            "cow jumped over the moon",
+            "The jumped over the moon",
+            "The cow over the moon",
+            "The cow jumped the moon",
+            "The cow jumped over moon",
+            "The cow jumped over the"
+        ],
+        "method": "dropout",
+        "orig_sent": "The cow jumped over the moon"
+    },
+    {
+        "dists": {
+            "cosine": [
+                0.005508144543582727,
+                0.00655062414423313,
+                0.006982228127716983,
+                0.020083255278508183,
+                0.00792847507647032
+            ],
+            "energy": [
+                0.0040410092162104175,
+                0.007327273664159294,
+                0.004168695729749743,
+                0.01620306653268927,
+                0.007062906756570253
+            ],
+            "euclidean": [
+                0.20985985775414187,
+                0.26001304435032147,
+                0.2355891887775982,
+                0.49026578005341487,
+                0.28393792135172224
+            ],
+            "wasserstein": [
+                0.0040410092162104175,
+                0.007327273664159294,
+                0.004168695729749743,
+                0.01620306653268927,
+                0.007062906756570253
+            ]
+        },
+        "manipulated_sents": [
+            "candle was surprisingly bright",
+            "The was surprisingly bright",
+            "The candle surprisingly bright",
+            "The candle was bright",
+            "The candle was surprisingly"
+        ],
+        "method": "dropout",
+        "orig_sent": "The candle was surprisingly bright"
+    },
+    {
+        "dists": {
+            "cosine": [
+                0.009652519567817874,
+                0.006068286798429079,
+                0.006153470192002297,
+                0.006686760427077942,
+                0.005847562605082346,
+                0.010886296796093875
+            ],
+            "energy": [
+                0.007104184358031489,
+                0.003246844037639675,
+                0.0055687534333749966,
+                0.005091629066203798,
+                0.004092743737273848,
+                0.011449627564337182
+            ],
+            "euclidean": [
+                0.2999244069273386,
+                0.21341542242391132,
+                0.2358406803133069,
+                0.23626925152648764,
+                0.21286989023684932,
+                0.36618206540903314
+            ],
+            "wasserstein": [
+                0.007104184358031489,
+                0.003246844037639675,
+                0.0055687534333749966,
+                0.005091629066203798,
+                0.004092743737273848,
+                0.011449627564337182
+            ]
+        },
+        "manipulated_sents": [
+            "in death rates are concerning",
+            "Disparities death rates are concerning",
+            "Disparities in rates are concerning",
+            "Disparities in death are concerning",
+            "Disparities in death rates concerning",
+            "Disparities in death rates are"
+        ],
+        "method": "dropout",
+        "orig_sent": "Disparities in death rates are concerning"
+    },
+    {
+        "dists": {
+            "cosine": [
+                0.0035454306092121968,
+                0.004376800093480626,
+                0.005228790187702281,
+                0.003809925544342785,
+                0.0038671822055960092,
+                0.003924990182807897,
+                0.003741519634360313,
+                0.003990352644909434,
+                0.004084846706462364,
+                0.0036782740825919147,
+                0.004215883550107269,
+                0.004488555019673268,
+                0.0032519980211930255,
+                0.003483743532606942,
+                0.00377434159907708,
+                0.003300249151089507,
+                0.0032801675271425523,
+                0.00453263854407826
+            ],
+            "energy": [
+                0.003630996486172079,
+                0.004321531500221075,
+                0.004869044714287157,
+                0.004428683722411129,
+                0.004300563980262572,
+                0.004120155385753605,
+                0.004099911150697155,
+                0.005034715351551618,
+                0.004810317239316646,
+                0.0032946204063288563,
+                0.004158608270518017,
+                0.0037195916597071717,
+                0.0034874887105252146,
+                0.003655144561004515,
+                0.0047530728942365395,
+                0.004216046024715373,
+                0.003819474568784547,
+                0.004539777330258706
+            ],
+            "euclidean": [
+                0.2139873288862288,
+                0.240112359787712,
+                0.2603529752886214,
+                0.22477262106332152,
+                0.2246228041478067,
+                0.22495402507768328,
+                0.222847107152481,
+                0.2380046339599415,
+                0.2347725939953107,
+                0.2180966113617022,
+                0.23513290274016949,
+                0.24052047853003,
+                0.2047841449508673,
+                0.2133754827600991,
+                0.22550162979481392,
+                0.2104001484242417,
+                0.20651279019135718,
+                0.24269080583791192
+            ],
+            "wasserstein": [
+                0.003630996486172079,
+                0.004321531500221075,
+                0.004869044714287157,
+                0.004428683722411129,
+                0.004300563980262572,
+                0.004120155385753605,
+                0.004099911150697155,
+                0.005034715351551618,
+                0.004810317239316646,
+                0.0032946204063288563,
+                0.004158608270518017,
+                0.0037195916597071717,
+                0.0034874887105252146,
+                0.003655144561004515,
+                0.0047530728942365395,
+                0.004216046024715373,
+                0.003819474568784547,
+                0.004539777330258706
+            ]
+        },
+        "manipulated_sents": [
+            "cozy familiar blue paint and white shutters helped to relax me as i pushed open the door",
+            "its familiar blue paint and white shutters helped to relax me as i pushed open the door",
+            "its cozy blue paint and white shutters helped to relax me as i pushed open the door",
+            "its cozy familiar paint and white shutters helped to relax me as i pushed open the door",
+            "its cozy familiar blue and white shutters helped to relax me as i pushed open the door",
+            "its cozy familiar blue paint white shutters helped to relax me as i pushed open the door",
+            "its cozy familiar blue paint and shutters helped to relax me as i pushed open the door",
+            "its cozy familiar blue paint and white helped to relax me as i pushed open the door",
+            "its cozy familiar blue paint and white shutters to relax me as i pushed open the door",
+            "its cozy familiar blue paint and white shutters helped relax me as i pushed open the door",
+            "its cozy familiar blue paint and white shutters helped to me as i pushed open the door",
+            "its cozy familiar blue paint and white shutters helped to relax as i pushed open the door",
+            "its cozy familiar blue paint and white shutters helped to relax me i pushed open the door",
+            "its cozy familiar blue paint and white shutters helped to relax me as pushed open the door",
+            "its cozy familiar blue paint and white shutters helped to relax me as i open the door",
+            "its cozy familiar blue paint and white shutters helped to relax me as i pushed the door",
+            "its cozy familiar blue paint and white shutters helped to relax me as i pushed open door",
+            "its cozy familiar blue paint and white shutters helped to relax me as i pushed open the"
+        ],
+        "method": "dropout",
+        "orig_sent": "its cozy familiar blue paint and white shutters helped to relax me as i pushed open the door"
+    }
+]

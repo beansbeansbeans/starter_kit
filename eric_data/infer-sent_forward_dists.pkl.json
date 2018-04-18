@@ -1,0 +1,221 @@
+[
+    {
+        "dists": {
+            "cosine": [
+                0.6840515020330256,
+                0.303507011655635,
+                0.1417772889346235,
+                0.10165610821533888,
+                0.1862445653522271
+            ],
+            "energy": [
+                0.028390176617873686,
+                0.018001548298565484,
+                0.009809958756093251,
+                0.006389582715634723,
+                0.01592103551185807
+            ],
+            "euclidean": [
+                3.352506877000162,
+                2.545136178681208,
+                1.8187264948411792,
+                1.551667711504682,
+                2.1229237965875036
+            ],
+            "wasserstein": [
+                0.028390176617873686,
+                0.018001548298565484,
+                0.009809958756093251,
+                0.006389582715634723,
+                0.01592103551185807
+            ]
+        },
+        "manipulated_sents": [
+            "The",
+            "The cow",
+            "The cow jumped",
+            "The cow jumped over",
+            "The cow jumped over the"
+        ],
+        "method": "forward",
+        "orig_sent": "The cow jumped over the moon"
+    },
+    {
+        "dists": {
+            "cosine": [
+                0.6763307565171867,
+                0.3094701842807581,
+                0.21763352004915104,
+                0.20987956591656332
+            ],
+            "energy": [
+                0.021869532315551554,
+                0.011941720091893149,
+                0.00921595969084077,
+                0.01636262624672634
+            ],
+            "euclidean": [
+                2.847464495037134,
+                2.175365834606439,
+                1.8785620510743217,
+                1.9512212313858892
+            ],
+            "wasserstein": [
+                0.021869532315551554,
+                0.011941720091893149,
+                0.00921595969084077,
+                0.01636262624672634
+            ]
+        },
+        "manipulated_sents": [
+            "The",
+            "The candle",
+            "The candle was",
+            "The candle was surprisingly"
+        ],
+        "method": "forward",
+        "orig_sent": "The candle was surprisingly bright"
+    },
+    {
+        "dists": {
+            "cosine": [
+                0.41451189158426827,
+                0.33828738175510087,
+                0.16094360420265386,
+                0.06730869864588518,
+                0.12381331782319838
+            ],
+            "energy": [
+                0.020948426933347752,
+                0.01793252389386879,
+                0.01089957819466103,
+                0.004916457716731104,
+                0.013502671844189837
+            ],
+            "euclidean": [
+                2.7745870666440697,
+                2.5693802231248,
+                1.8688062974322726,
+                1.2345414957823717,
+                1.7268363610878605
+            ],
+            "wasserstein": [
+                0.020948426933347752,
+                0.01793252389386879,
+                0.01089957819466103,
+                0.004916457716731104,
+                0.013502671844189837
+            ]
+        },
+        "manipulated_sents": [
+            "Disparities",
+            "Disparities in",
+            "Disparities in death",
+            "Disparities in death rates",
+            "Disparities in death rates are"
+        ],
+        "method": "forward",
+        "orig_sent": "Disparities in death rates are concerning"
+    },
+    {
+        "dists": {
+            "cosine": [
+                0.6550377970080514,
+                0.4070505893530022,
+                0.3479678378655654,
+                0.2319803487442086,
+                0.17109905681491977,
+                0.15618710301844074,
+                0.14626740163920937,
+                0.11770288771983228,
+                0.0946251318675887,
+                0.08317365673163368,
+                0.0643493721502073,
+                0.05212964299584166,
+                0.05068228466275704,
+                0.043576094314744185,
+                0.03181451378896771,
+                0.021842412343204276,
+                0.010770383669221117
+            ],
+            "energy": [
+                0.04973361793129001,
+                0.03982434249625129,
+                0.03483100344530994,
+                0.029169281600036248,
+                0.023637854064812627,
+                0.02237550496592007,
+                0.020502600969556875,
+                0.018020327428492314,
+                0.015426103506372149,
+                0.01387640541935127,
+                0.010939718848621174,
+                0.008727801603907251,
+                0.008756113984348238,
+                0.007599319296638887,
+                0.006212909570012817,
+                0.005285715129999494,
+                0.0012893336793220606
+            ],
+            "euclidean": [
+                4.522535778785008,
+                3.893742322276908,
+                3.6570132984459947,
+                3.1007284149143186,
+                2.699439812379893,
+                2.5950671842014503,
+                2.5022226790998148,
+                2.265011307170754,
+                2.0454672461831556,
+                1.9227938265451676,
+                1.6920462986640246,
+                1.5254230758630767,
+                1.505715284091555,
+                1.397828057729386,
+                1.197810053498239,
+                0.995090424707209,
+                0.7002817357980022
+            ],
+            "wasserstein": [
+                0.04973361793129001,
+                0.03982434249625129,
+                0.03483100344530994,
+                0.029169281600036248,
+                0.023637854064812627,
+                0.02237550496592007,
+                0.020502600969556875,
+                0.018020327428492314,
+                0.015426103506372149,
+                0.01387640541935127,
+                0.010939718848621174,
+                0.008727801603907251,
+                0.008756113984348238,
+                0.007599319296638887,
+                0.006212909570012817,
+                0.005285715129999494,
+                0.0012893336793220606
+            ]
+        },
+        "manipulated_sents": [
+            "its",
+            "its cozy",
+            "its cozy familiar",
+            "its cozy familiar blue",
+            "its cozy familiar blue paint",
+            "its cozy familiar blue paint and",
+            "its cozy familiar blue paint and white",
+            "its cozy familiar blue paint and white shutters",
+            "its cozy familiar blue paint and white shutters helped",
+            "its cozy familiar blue paint and white shutters helped to",
+            "its cozy familiar blue paint and white shutters helped to relax",
+            "its cozy familiar blue paint and white shutters helped to relax me",
+            "its cozy familiar blue paint and white shutters helped to relax me as",
+            "its cozy familiar blue paint and white shutters helped to relax me as i",
+            "its cozy familiar blue paint and white shutters helped to relax me as i pushed",
+            "its cozy familiar blue paint and white shutters helped to relax me as i pushed open",
+            "its cozy familiar blue paint and white shutters helped to relax me as i pushed open the"
+        ],
+        "method": "forward",
+        "orig_sent": "its cozy familiar blue paint and white shutters helped to relax me as i pushed open the door"
+    }
+]
