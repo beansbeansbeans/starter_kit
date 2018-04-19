@@ -22,7 +22,7 @@ def convert_dict_to_json(file_path):
         else:
             for sent in data:
                 data[sent] = data[sent].tolist()
-        json.dump(data, fjson, ensure_ascii=False, sort_keys=True, indent=4)
+        json.dump(data, fjson, ensure_ascii=False, sort_keys=True, separators=(',',':'))
 
 
 def main():
