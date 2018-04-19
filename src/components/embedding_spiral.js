@@ -64,16 +64,7 @@ class EmbeddingSpiral extends Component {
     Promise.all(files.map(getEricData)).then(resp => {
       console.log(resp)
 
-      // let canvas = document.querySelector("#embedding_spiral #canvas")
-      // this.ctx = canvas.getContext('2d')
-      // let canvasSize = 50
-
-      // canvas.width = 2 * canvasSize
-      // canvas.height = 2 * canvasSize
-      // canvas.style.width = canvasSize + 'px'
-      // canvas.style.height = canvasSize + 'px'
-
-      // this.ctx.scale(2, 2)
+      
 
       let sentences = resp[0].map(d => d.orig_sent)
       let data = {}
@@ -122,6 +113,23 @@ class EmbeddingSpiral extends Component {
       document.querySelector(`#text_min_${dist}`).textContent = `min: ${Math.min(...sparklinePoints[di]).toFixed(3)}`
       document.querySelector(`#text_max_${dist}`).textContent = `max: ${max.toFixed(3)}`
       document.querySelector(`#text_curr_${dist}`).textContent = `current: ${sparklinePoints[di][hoverIndex].toFixed(3)}`
+    })
+
+    let sents = activeManipulation.sentences[activeSentenceIndex].manipulations
+
+    sents.forEach((sent, i) => {
+      let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
+      let ctx = canvas.getContext('2d')
+      let canvasSize = 50
+
+      canvas.width = 2 * canvasSize
+      canvas.height = 2 * canvasSize
+      canvas.style.width = canvasSize + 'px'
+      canvas.style.height = canvasSize + 'px'
+
+      ctx.scale(2, 2)
+
+      console.log(data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i])
     })
   }
 
