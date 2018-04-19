@@ -15,4 +15,20 @@
     margin-top: 4px;
     margin-bottom: 18px;
   }
+  #highlighted_sentences {
+    position: fixed;
+    width: 500px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    padding: 20px;
+    overflow: scroll;
+    .label {
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .sentence {
+      margin-bottom: 10px;
+    }
+  }
 }
