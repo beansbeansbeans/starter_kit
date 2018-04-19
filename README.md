@@ -17,3 +17,8 @@ knobs:
 - type of progression (dropout | forward | permutation)
 - distance (cosine | energy | euclidean | wasserstein)
 - base sentence (4 options)
+
+
+STEPS
+- render the sparklines for distances
+- hover over the sentences to move the vertical line

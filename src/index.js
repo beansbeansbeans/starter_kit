@@ -51,8 +51,8 @@ class App extends Component {
     // let main = <Embeddings10D data={data} />
     // let main = <Aggregation data={data} />
     // let main = <PairWise data={data} />
-    // let main = <Spiral />
-    let main = <ParallelCoordinates data={data} />
+    let main = <Spiral />
+    // let main = <ParallelCoordinates data={data} />
 
     return <app>{main}</app>
   }

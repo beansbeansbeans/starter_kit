@@ -219,7 +219,6 @@ class Permutations extends Component {
       }, 0)
 
     progressions.forEach((p, pi) => {
-
       select(document.querySelector(`#g_${p}`)).select("path")
         .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[pi]))
     })

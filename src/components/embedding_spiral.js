@@ -3,7 +3,14 @@ import helpers from '../helpers/helpers'
 const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional, degreesToRadians, trim } = helpers
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
-import { getData, getShader } from '../api'
+import { getEricData, getShader } from '../api'
+import { line } from 'd3-shape'
+import { select } from 'd3-selection'
+
+// const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
+const models = ['comp-ngrams']
+
+const manipulations = ['dropout', 'forward', 'shuffle']
 
 class Dropdown extends Component {
   render({ options, change }) {
@@ -19,47 +26,101 @@ class Dropdown extends Component {
   }
 }
 
+function createDropdown(d, i) {
+  return {
+    active: i === 0,
+    id: d,
+    label: d
+  }
+}
+
 class EmbeddingSpiral extends Component {
   constructor(props) {
     super(props)
 
-    let sentences = [
-      "i'm going to give it a marginal thumbs up . i liked it just enough .",
-      "a deliciously nonsensical comedy about a city coming apart at its seams ."
-    ]
+    
 
-    this.setState({
-      sentences: sentences.map((d, i) => {
-        return {
-          label: d,
-          id: d,
-          active: i === 0
-        }
-      })
+    this.setState({ 
+      sentences: [],
+      distances: [],
+      models: models.map(createDropdown),
+      manipulations: manipulations.map(createDropdown)
     })
   }
 
   componentWillMount() {
     bindAll(this, ['changeDropdown'])
 
-    Promise.all(['encodings_permutations_2400'].map(getData)).then(resp => {
-      console.log(resp[0])
-      let canvas = document.querySelector("#embedding_spiral #canvas")
-      this.ctx = canvas.getContext('2d')
-      let canvasSize = Math.ceil(Math.sqrt(resp[0][0].encoding.length))
-      let max = this.state.max
+    let files = []
 
-      canvas.width = 2 * canvasSize
-      canvas.height = 2 * canvasSize
-      canvas.style.width = canvasSize + 'px'
-      canvas.style.height = canvasSize + 'px'
+    models.forEach(m => {
+      manipulations.forEach(man => {
+        files.push(`${m}_${man}_dists.pkl`)
+      })
+      files.push(`${m}_sents-embs.pkl`)
+    })
 
-      this.ctx.scale(2, 2)
+    Promise.all(files.map(getEricData)).then(resp => {
+      console.log(resp)
+
+      // let canvas = document.querySelector("#embedding_spiral #canvas")
+      // this.ctx = canvas.getContext('2d')
+      // let canvasSize = 50
+
+      // canvas.width = 2 * canvasSize
+      // canvas.height = 2 * canvasSize
+      // canvas.style.width = canvasSize + 'px'
+      // canvas.style.height = canvasSize + 'px'
+
+      // this.ctx.scale(2, 2)
+
+      let sentences = resp[0].map(d => d.orig_sent)
+      let data = {}
+      models.forEach((m, i) => {
+        data[m] = {
+          embeddings: resp[i * 4 + 3],
+          manipulations: resp.slice(i * 4, i * 4 + 3)
+        }
+      })
+
+      this.setState({
+        data,
+        sentences: sentences.map(createDropdown),
+        distances: Object.keys(resp[0][0].dists),
+        manipulations: this.state.manipulations.map((d, i) => {
+          d.sentences = sentences.map((sent, si) => {
+            return {
+              base: sent,
+              manipulations: resp[i][si].manipulated_sents
+            }
+          })
+          return d
+        })
+      })
     })
   }
 
   componentDidUpdate() {
+    let { distances, manipulations, sentences, data, models } = this.state
+    let activeManipulation = manipulations.find(d => d.active)
+    let activeManipulationIndex = manipulations.findIndex(d => d.active)
+    let activeModel = models.find(d => d.active)
+    let activeSentenceIndex = sentences.findIndex(d => d.active)
 
+    let sparklinePoints = distances.map((d, distIndex) => {
+      return data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].dists[d]
+    })
+
+    let graphXIncrement = 200 / sparklinePoints[0].length
+    let graphHeight = 100
+
+    distances.forEach((dist, di) => {
+      let max = Math.max(...sparklinePoints[di])
+      select(document.querySelector(`#svg_${dist}`)).select("path")
+        .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di]))
+    })
+
+    console.log(sparklinePoints)
   }
 
   changeDropdown(id, key) {
@@ -76,10 +137,41 @@ class EmbeddingSpiral extends Component {
     })
   }
 
-  render({}, { sentences }) {
+  render({}, { sentences, models, manipulations, distances }) {
+    let activeManipulation = manipulations.find(d => d.active)
+    let activeSentenceIndex = sentences.findIndex(d => d.active)
+
+    let sentencesDOM
+
+    if(activeSentenceIndex > -1) {
+      sentencesDOM = activeManipulation.sentences[activeSentenceIndex].manipulations.map((d, i) => {
+        return <div class="sentence-wrapper">
+          <div>{d}</div>
+          <canvas id={`canvas_${i}`}></canvas>
+        </div>
+      })
+    }
+
     return (
       <div id="embedding_spiral">
-        <canvas id="canvas"></canvas>
+        <div class="sentences-wrapper">
+          {sentencesDOM}
+        </div>
+        <div class="controls">
+          <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+          <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
+          <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+          <br />
+          <div class="distances-wrapper">{distances.map(d => {
+            return <div class="distance-wrapper">
+              <div class="label">{d}</div>
+              <svg id={`svg_${d}`}>
+                <line></line>
+                <path></path>
+              </svg>
+            </div>
+          })}</div>
+        </div>
       </div>
     )
   }

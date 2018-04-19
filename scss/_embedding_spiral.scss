@@ -1,0 +1,19 @@
+#embedding_spiral {
+  .sentences-wrapper, .controls {
+    padding: 20px;
+    width: 50vw;
+    display: inline-block;
+    vertical-align: top;
+  }
+  .sentences-wrapper {
+    overflow: scroll;
+    height: 100vh;
+  }
+  svg {
+    overflow: visible;
+    path {
+      fill: none;
+      stroke: #222;
+    }
+  }
+}
