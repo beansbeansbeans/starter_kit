@@ -1,4 +1,11 @@
 #embedding_spiral {
+  .sentence-wrapper {
+    &[data-active="true"] {
+      .label {
+        background: yellow
+      }
+    }
+  }
   .sentences-wrapper, .controls {
     padding: 20px;
     width: 50vw;
@@ -15,5 +22,11 @@
       fill: none;
       stroke: #222;
     }
+    line {
+      stroke: orange;
+    }
+  }
+  canvas {
+    border: none;
   }
 }

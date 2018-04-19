@@ -11,6 +11,8 @@ import { select } from 'd3-selection'
 const models = ['comp-ngrams']
 
 const manipulations = ['dropout', 'forward', 'shuffle']
+let graphHeight = 100
+let graphXIncrement = 0
 
 class Dropdown extends Component {
   render({ options, change }) {
@@ -38,9 +40,8 @@ class EmbeddingSpiral extends Component {
   constructor(props) {
     super(props)
 
-    
-
     this.setState({ 
+      hoverIndex: 0,
       sentences: [],
       distances: [],
       models: models.map(createDropdown),
@@ -101,7 +102,7 @@ class EmbeddingSpiral extends Component {
   }
 
   componentDidUpdate() {
-    let { distances, manipulations, sentences, data, models } = this.state
+    let { distances, manipulations, sentences, data, models, hoverIndex } = this.state
     let activeManipulation = manipulations.find(d => d.active)
     let activeManipulationIndex = manipulations.findIndex(d => d.active)
     let activeModel = models.find(d => d.active)
@@ -111,16 +112,17 @@ class EmbeddingSpiral extends Component {
       return data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].dists[d]
     })
 
-    let graphXIncrement = 200 / sparklinePoints[0].length
-    let graphHeight = 100
+    graphXIncrement = 400 / sparklinePoints[0].length
 
     distances.forEach((dist, di) => {
       let max = Math.max(...sparklinePoints[di])
       select(document.querySelector(`#svg_${dist}`)).select("path")
         .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di]))
-    })
 
-    console.log(sparklinePoints)
+      document.querySelector(`#text_min_${dist}`).textContent = `min: ${Math.min(...sparklinePoints[di]).toFixed(3)}`
+      document.querySelector(`#text_max_${dist}`).textContent = `max: ${max.toFixed(3)}`
+      document.querySelector(`#text_curr_${dist}`).textContent = `current: ${sparklinePoints[di][hoverIndex].toFixed(3)}`
+    })
   }
 
   changeDropdown(id, key) {
@@ -137,7 +139,7 @@ class EmbeddingSpiral extends Component {
     })
   }
 
-  render({}, { sentences, models, manipulations, distances }) {
+  render({}, { sentences, models, manipulations, distances, hoverIndex }) {
     let activeManipulation = manipulations.find(d => d.active)
     let activeSentenceIndex = sentences.findIndex(d => d.active)
 
@@ -145,8 +147,10 @@ class EmbeddingSpiral extends Component {
 
     if(activeSentenceIndex > -1) {
       sentencesDOM = activeManipulation.sentences[activeSentenceIndex].manipulations.map((d, i) => {
-        return <div class="sentence-wrapper">
-          <div>{d}</div>
+        return <div data-active={i === hoverIndex} onMouseOver={() => {
+          this.setState({ hoverIndex: i })
+        }} class="sentence-wrapper">
+          <div class="label">{d}</div>
           <canvas id={`canvas_${i}`}></canvas>
         </div>
       })
@@ -166,7 +170,10 @@ class EmbeddingSpiral extends Component {
             return <div class="distance-wrapper">
               <div class="label">{d}</div>
               <svg id={`svg_${d}`}>
-                <line></line>
+                <text y="12" id={`text_min_${d}`}></text>
+                <text y="24" id={`text_max_${d}`}></text>
+                <text y="36" id={`text_curr_${d}`}></text>
+                <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
                 <path></path>
               </svg>
             </div>
