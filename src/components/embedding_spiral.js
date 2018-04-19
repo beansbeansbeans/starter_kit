@@ -146,7 +146,7 @@ class EmbeddingSpiral extends Component {
 
     canvasSize += 1
 
-    let cellDim = 1
+    let cellDim = 100 / canvasSize
 
     let { indices, max } = data[activeModel.id].basePermutations[activeSentenceIndex]
 
@@ -154,16 +154,16 @@ class EmbeddingSpiral extends Component {
       let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
       let ctx = canvas.getContext('2d')
 
-      canvas.width = 2 * canvasSize
-      canvas.height = 2 * canvasSize
-      canvas.style.width = canvasSize + 'px'
-      canvas.style.height = canvasSize + 'px'
+      canvas.width = 2 * (canvasSize * cellDim)
+      canvas.height = 2 * (canvasSize * cellDim)
+      canvas.style.width = (canvasSize * cellDim) + 'px'
+      canvas.style.height = (canvasSize * cellDim) + 'px'
 
       ctx.scale(2, 2)
 
-      ctx.clearRect(0, 0, canvasSize, canvasSize)
+      ctx.clearRect(0, 0, (canvasSize * cellDim), (canvasSize * cellDim))
 
-      let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i]
+      let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i].slice(0)
       emb = permute(emb, indices)
 
       let r = 0
@@ -218,6 +218,7 @@ class EmbeddingSpiral extends Component {
 
   changeDropdown(id, key) {
     this.setState({
+      hoverIndex: 0,
       [key]: this.state[key].map(d => {
         if(d.id == id) {
           d.active = true
