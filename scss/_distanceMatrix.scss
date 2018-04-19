@@ -1,7 +1,15 @@
 #distance_matrix {
   margin: 20px;
-  canvas {
+  .canvas_wrapper {
     margin-top: 20px;
+    position: relative;
+    .highlight-region {
+      position: absolute;
+      border: solid 2px white;
+    }
+  }
+  canvas {
+    pointer-events: none;
   }
   select {
     margin-top: 4px;

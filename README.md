@@ -9,16 +9,6 @@ embedding spiral implementation steps
 
 ---
 
-next step with eric's data
+distance matrix next steps
 
-- build embedding spiral
-
-knobs:
-- type of progression (dropout | forward | permutation)
-- distance (cosine | energy | euclidean | wasserstein)
-- base sentence (4 options)
-
-
-steps:
-- permute according to base order
-- make the cells bigger as necessary
+- render a rectangle that moves with the user's cursor

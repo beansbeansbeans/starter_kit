@@ -7,7 +7,7 @@ import { debounce, defer } from 'underscore'
 import sharedState from './sharedState'
 import mediator from './mediator'
 import { handleResize } from './listeners'
-import model from './model/index'
+// import model from './model/index'
 import randomModule from './helpers/random'
 const random = randomModule.random(42)
 import PairWise from './components/pairwise'

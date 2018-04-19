@@ -46,7 +46,10 @@ class DistanceMatrix extends Component {
     })
 
     this.setState({
+      canvasTop: 0,
+      canvasLeft: 0,
       max,
+      dragging: false,
       dimensions: dimensions.map((d, i) => {
         return {
           active: i === 0,
@@ -68,12 +71,19 @@ class DistanceMatrix extends Component {
         d.id = d.label
         return d
       }),
-      data
+      data,
+      canvasSize: 0,
+      highlightRegion: {
+        x: 0,
+        y: 0,
+        width: 10,
+        height: 10
+      }
     })
   }
 
   componentWillMount() {
-    bindAll(this, ['changeDropdown'])
+    bindAll(this, ['changeDropdown', 'draw'])
 
     let files = []
 
@@ -119,31 +129,33 @@ class DistanceMatrix extends Component {
         }
       }
 
-      max.wasserstein['100'] = 0.025
+      max.wasserstein['100'] = 0.025 // otherwise everything is super close
 
-      this.setState({ data, max })
+      this.setState({ data, max, canvasSize }, () => {
+        let rect = document.querySelector("canvas").getBoundingClientRect()
+        this.setState({
+          canvasLeft: rect.left,
+          canvasTop: rect.top
+        }, this.draw)
+      })
+    })
+
+    window.addEventListener("mousemove", e => {
+      if(!this.state.dragging) return
+
+
+    })
+
+    window.addEventListener("mouseup", e => {
+      this.setState({ dragging: false })
     })
   }
 
   componentDidMount() {
-
+    this.draw()
   }
 
-  changeDropdown(id, key) {
-    this.setState({
-      [key]: this.state[key].map(d => {
-        if(d.id == id) {
-          d.active = true
-        } else {
-          d.active = false
-        }
-
-        return d
-      })
-    })
-  }
-
-  componentDidUpdate() {
+  draw() {
     let { data, max, dimensions, distances, sortBy } = this.state
     let activeDim = dimensions.find(d => d.active).label
     let activeDistance = distances.find(d => d.active).label
@@ -179,7 +191,21 @@ class DistanceMatrix extends Component {
     }
   }
 
-  render({}, {distances, sortBy, dimensions, data}) {
+  changeDropdown(id, key) {
+    this.setState({
+      [key]: this.state[key].map(d => {
+        if(d.id == id) {
+          d.active = true
+        } else {
+          d.active = false
+        }
+
+        return d
+      })
+    }, this.draw)
+  }
+
+  render({}, {distances, sortBy, dimensions, data, highlightRegion, canvasSize, canvasLeft, canvasTop}) {
     return (
       <div id="distance_matrix">
         <div>DIMENSIONS</div>
@@ -189,7 +215,18 @@ class DistanceMatrix extends Component {
         <div>SORT BY</div>
         <Dropdown change={id => this.changeDropdown(id, 'sortBy')} options={sortBy} />
         <br/>
-        <canvas id="canvas"></canvas>
+        <div onMouseDown={e => {
+          highlightRegion.x = e.clientX - canvasLeft
+          highlightRegion.y = e.clientY - canvasTop
+
+          this.setState({ 
+            dragging: true,
+            highlightRegion
+          })
+        }} style={`width:${canvasSize}px;height:${canvasSize}px`} class="canvas_wrapper">
+          <canvas id="canvas"></canvas>
+          <div style={`width:${highlightRegion.width}px;height:${highlightRegion.height}px;top:${highlightRegion.y}px;left:${highlightRegion.x}px;`} class="highlight-region"></div>
+        </div>
       </div>
     )
   }
