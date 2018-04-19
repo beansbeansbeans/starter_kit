@@ -64,14 +64,34 @@ class EmbeddingSpiral extends Component {
     Promise.all(files.map(getEricData)).then(resp => {
       console.log(resp)
 
-      
-
       let sentences = resp[0].map(d => d.orig_sent)
       let data = {}
       models.forEach((m, i) => {
+        let embeddings = resp[i * 4 + 3]
+
+        let basePermutations = sentences.map((d, si) => {
+          let emb = embeddings[d]
+
+          let indices = [], max = 0
+          for(let i=0; i<emb.length; i++) {
+            indices.push(i)
+            if(emb[i] > max) max = emb[i]
+          }
+
+          indices.sort((a, b) => {
+            if(emb[a] > emb[b]) {
+              return -1
+            }
+            return 1
+          })
+
+          return { indices, max }
+        })
+
         data[m] = {
-          embeddings: resp[i * 4 + 3],
-          manipulations: resp.slice(i * 4, i * 4 + 3)
+          embeddings,
+          manipulations: resp.slice(i * 4, i * 4 + 3),
+          basePermutations
         }
       })
 
@@ -127,19 +147,8 @@ class EmbeddingSpiral extends Component {
     canvasSize += 1
 
     let cellDim = 1
-    let baseEmbedding = data[activeModel.id].embeddings[activeSentence.id]
-    let indices = [], max = 0
-    for(let i=0; i<baseEmbedding.length; i++) {
-      indices.push(i)
-      if(baseEmbedding[i] > max) max = baseEmbedding[i]
-    }
 
-    indices.sort((a, b) => {
-      if(baseEmbedding[a] > baseEmbedding[b]) {
-        return -1
-      }
-      return 1
-    })
+    let { indices, max } = data[activeModel.id].basePermutations[activeSentenceIndex]
 
     sents.forEach((sent, i) => {
       let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
@@ -156,8 +165,6 @@ class EmbeddingSpiral extends Component {
 
       let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i]
       emb = permute(emb, indices)
-
-      console.log(emb.length)
 
       let r = 0
       let c = 1
