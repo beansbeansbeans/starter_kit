@@ -141,8 +141,6 @@ class EmbeddingSpiral extends Component {
       return 1
     })
 
-    console.log(indices)
-
     sents.forEach((sent, i) => {
       let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
       let ctx = canvas.getContext('2d')
@@ -158,6 +156,8 @@ class EmbeddingSpiral extends Component {
 
       let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i]
       emb = permute(emb, indices)
+
+      console.log(emb.length)
 
       let r = 0
       let c = 1
