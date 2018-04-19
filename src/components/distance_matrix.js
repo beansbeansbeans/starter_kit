@@ -143,7 +143,14 @@ class DistanceMatrix extends Component {
     window.addEventListener("mousemove", e => {
       if(!this.state.dragging) return
 
+      let highlightRegion = this.state.highlightRegion
 
+      let left = e.clientX - this.state.canvasLeft
+      let top = e.clientY - this.state.canvasTop
+
+      highlightRegion.width = left - highlightRegion.x
+      highlightRegion.height = top - highlightRegion.y
+      this.setState({ highlightRegion})
     })
 
     window.addEventListener("mouseup", e => {
@@ -218,6 +225,8 @@ class DistanceMatrix extends Component {
         <div onMouseDown={e => {
           highlightRegion.x = e.clientX - canvasLeft
           highlightRegion.y = e.clientY - canvasTop
+          highlightRegion.width = 0
+          highlightRegion.height = 0
 
           this.setState({ 
             dragging: true,
