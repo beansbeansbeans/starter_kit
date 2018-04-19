@@ -7,8 +7,8 @@ import { getEricData, getShader } from '../api'
 import { line } from 'd3-shape'
 import { select } from 'd3-selection'
 
-// const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
-const models = ['comp-ngrams']
+const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
+// const models = ['comp-ngrams']
 
 const manipulations = ['dropout', 'forward', 'shuffle']
 let graphHeight = 100
