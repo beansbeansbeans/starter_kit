@@ -117,10 +117,19 @@ class EmbeddingSpiral extends Component {
 
     let sents = activeManipulation.sentences[activeSentenceIndex].manipulations
 
+    let embLength = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[0].length
+    let canvasSize = 2
+    while(canvasSize * canvasSize < embLength) {
+      canvasSize *= 2
+    }
+
+    canvasSize += 1
+
+    let cellDim = 1
+
     sents.forEach((sent, i) => {
       let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
       let ctx = canvas.getContext('2d')
-      let canvasSize = 50
 
       canvas.width = 2 * canvasSize
       canvas.height = 2 * canvasSize
@@ -129,7 +138,58 @@ class EmbeddingSpiral extends Component {
 
       ctx.scale(2, 2)
 
-      console.log(data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i])
+      ctx.clearRect(0, 0, canvasSize, canvasSize)
+
+      let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i]
+      // console.log(emb)
+
+      let r = 0
+      let c = 1
+      let iter = 0
+      let d = 0
+      let mid = Math.floor(canvasSize / 2)
+      let coord = [mid, mid]
+      let direction = 0
+      let xDir = 0
+      let yDir = 1
+
+      for(let idx=0; idx<emb.length; idx++) {
+        if(idx > 0 && iter % d === 0) {
+          if(direction % 4 === 0) { // down
+            xDir = 0
+            yDir = 1
+          } else if(direction % 4 === 1) { // right
+            xDir = 1
+            yDir = 0
+          } else if(direction % 4 === 2) { // up
+            xDir = 0
+            yDir = -1
+          } else { // left
+            xDir = -1
+            yDir = 0
+          }
+
+          direction++ 
+        }
+
+        // paint
+        ctx.fillStyle = `rgba(0, 0, 0, ${idx / emb.length})`
+        ctx.fillRect(coord[0] * cellDim, coord[1] * cellDim, cellDim, cellDim)
+
+        iter++
+
+        if(iter === c) {
+          iter = 0
+          r += 1
+          d += 2
+          c = 4 * (r * 2 - 1) + 4
+
+          coord = [mid - r, mid - r]
+        } else {
+          coord[0] += xDir
+          coord[1] += yDir            
+        }
+      }        
     })
   }
 
