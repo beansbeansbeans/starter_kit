@@ -97,6 +97,7 @@ class EmbeddingSpiral extends Component {
     let activeManipulation = manipulations.find(d => d.active)
     let activeManipulationIndex = manipulations.findIndex(d => d.active)
     let activeModel = models.find(d => d.active)
+    let activeSentence = sentences.find(d => d.active)
     let activeSentenceIndex = sentences.findIndex(d => d.active)
 
     let sparklinePoints = distances.map((d, distIndex) => {
@@ -126,6 +127,21 @@ class EmbeddingSpiral extends Component {
     canvasSize += 1
 
     let cellDim = 1
+    let baseEmbedding = data[activeModel.id].embeddings[activeSentence.id]
+    let indices = [], max = 0
+    for(let i=0; i<baseEmbedding.length; i++) {
+      indices.push(i)
+      if(baseEmbedding[i] > max) max = baseEmbedding[i]
+    }
+
+    indices.sort((a, b) => {
+      if(baseEmbedding[a] > baseEmbedding[b]) {
+        return -1
+      }
+      return 1
+    })
+
+    console.log(indices)
 
     sents.forEach((sent, i) => {
       let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
@@ -141,7 +157,7 @@ class EmbeddingSpiral extends Component {
       ctx.clearRect(0, 0, canvasSize, canvasSize)
 
       let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i]
-      // console.log(emb)
+      emb = permute(emb, indices)
 
       let r = 0
       let c = 1
@@ -173,7 +189,7 @@ class EmbeddingSpiral extends Component {
         }
 
         // paint
-        ctx.fillStyle = `rgba(0, 0, 0, ${idx / emb.length})`
+        ctx.fillStyle = `rgba(0, 0, 0, ${emb[idx] / max})`
         ctx.fillRect(coord[0] * cellDim, coord[1] * cellDim, cellDim, cellDim)
 
         iter++

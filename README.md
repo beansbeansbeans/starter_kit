@@ -19,3 +19,6 @@ knobs:
 - base sentence (4 options)
 
 
+steps:
+- permute according to base order
+- make the cells bigger as necessary
