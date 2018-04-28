@@ -47,9 +47,9 @@ module.exports = function(options) {
         useStrict: false
       }).code
 
-      mkdirp('./dist', function() {
+      mkdirp('./public', function() {
         try {
-          fs.writeFileSync(`./dist/${ global.library }.js`, result, 'utf8')
+          fs.writeFileSync(`./public/${ global.library }.js`, result, 'utf8')
           resolve()
         } catch (e) {
           reject(e)

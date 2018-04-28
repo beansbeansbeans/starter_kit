@@ -61,5 +61,5 @@ class App extends Component {
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
   console.log(embeddings)
-  render(<App data={embeddings} />, document.body)
+  render(<App data={embeddings} />, document.querySelector("#dt-article"))
 })
