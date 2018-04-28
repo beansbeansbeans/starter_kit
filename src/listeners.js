@@ -5,10 +5,6 @@ import mediator from './mediator'
 export const handleResize = () => {
   sharedState.set("windowWidth", window.innerWidth)
   sharedState.set("windowHeight", window.innerHeight)
-
-  const rect = document.querySelector("#webgl-wrapper").getBoundingClientRect()
-  sharedState.set("containerWidth", rect.width)
-  sharedState.set("containerHeight", rect.height)
 }
 
 window.addEventListener("resize", debounce(handleResize, 250))
