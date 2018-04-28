@@ -1139,7 +1139,7 @@ function render(vnode, parent, merge) {
  * Creates seeded PRNG with two methods:
  *   next() and nextDouble()
  */
-function random$2(inputSeed) {
+function random$1(inputSeed) {
   var seed = typeof inputSeed === 'number' ? inputSeed : +new Date();
   var randomFunc = function () {
     // Robert Jenkins' 32 bit integer hash function.
@@ -1177,7 +1177,7 @@ function random$2(inputSeed) {
  * Time complexity is guaranteed to be O(n);
  */
 function randomIterator(array, customRandom) {
-  var localRandom = customRandom || random$2();
+  var localRandom = customRandom || random$1();
   if (typeof localRandom.next !== 'function') {
     throw new Error('customRandom does not match expected API: next() function is missing');
   }
@@ -1217,12 +1217,12 @@ function randomIterator(array, customRandom) {
 }
 
 var randomModule = {
-  random: random$2,
+  random: random$1,
   randomIterator
 };
 
 // import vec3 from 'gl-vec3'
-const random$1 = randomModule.random(42);
+const random = randomModule.random(42);
 
 const UINT8_VIEW = new Uint8Array(4);
 const FLOAT_VIEW = new Float32Array(UINT8_VIEW.buffer);
@@ -1335,7 +1335,7 @@ function shuffle$1(array) {
   // While there are elements in the array
   while (counter > 0) {
     // Pick a random index
-    let index = Math.floor(random$1.nextDouble() * counter);
+    let index = Math.floor(random.nextDouble() * counter);
 
     // Decrease counter by 1
     counter--;
@@ -1459,8 +1459,6 @@ var helpers = {
 const getData = url => fetch(`data/${url}.json`).then(data => data.json());
 
 const getEricData = url => fetch(`eric_data/${url}.json`).then(data => data.json());
-
-const getShader = url => fetch(`shaders/${url}.glsl`).then(response => response.text());
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -3102,7 +3100,7 @@ window.addEventListener("mouseleave", e => {
 });
 
 const { roundDown: roundDown$1, bindAll: bindAll$1, removeDuplicates: removeDuplicates$1, wrapIterator: wrapIterator$2, shuffle: shuffle$2, subVectors: subVectors$2, dotProduct: dotProduct$2, vectorLength: vectorLength$2, manhattanLength: manhattanLength$2, permute: permute$2 } = helpers;
-const random$3 = randomModule.random(42);
+const random$2 = randomModule.random(42);
 const size = 20;
 
 let increment = 1 / size;
@@ -3152,7 +3150,7 @@ class Dropdown extends Component {
   }
 }
 
-const random$4 = randomModule.random(42);
+const random$3 = randomModule.random(42);
 class Dropdown$1 extends Component {
   render({ options: options$$1, change }) {
     return h(
@@ -8481,7 +8479,7 @@ var point$5 = function(node, event) {
 };
 
 const { roundDown: roundDown$3, bindAll: bindAll$3, removeDuplicates: removeDuplicates$3, wrapIterator: wrapIterator$4, shuffle: shuffle$4, subVectors: subVectors$4, dotProduct: dotProduct$4, vectorLength: vectorLength$4, manhattanLength: manhattanLength$4, permute: permute$4, fractional: fractional$2, degreesToRadians, trim } = helpers;
-const random$5 = randomModule.random(42);
+const random$4 = randomModule.random(42);
 const progressions = ['forwards', 'backwards', 'scrambled'];
 const radius = 100;
 const spokeLength = 50;
@@ -8522,7 +8520,7 @@ class Dropdown$2 extends Component {
 }
 
 const { roundDown: roundDown$4, bindAll: bindAll$4, removeDuplicates: removeDuplicates$4, wrapIterator: wrapIterator$5, shuffle: shuffle$6, subVectors: subVectors$5, dotProduct: dotProduct$5, vectorLength: vectorLength$5, manhattanLength: manhattanLength$5, permute: permute$6, fractional: fractional$3, degreesToRadians: degreesToRadians$1, trim: trim$1 } = helpers;
-const random$6 = randomModule.random(42);
+const random$5 = randomModule.random(42);
 const radius$1 = 100;
 const spokeLength$1 = 50;
 
@@ -8554,7 +8552,7 @@ class Dropdown$3 extends Component {
   }
 }
 
-const random$7 = randomModule.random(42);
+const random$6 = randomModule.random(42);
 let distances$1 = ['euclidean', 'manhattan', 'wasserstein'];
 let dimensions$1 = ['100'];
 let sentences = [];
@@ -8578,7 +8576,7 @@ class Dropdown$4 extends Component {
 }
 
 const { roundDown: roundDown$6, bindAll: bindAll$6, removeDuplicates: removeDuplicates$6, wrapIterator: wrapIterator$7, shuffle: shuffle$8, subVectors: subVectors$7, dotProduct: dotProduct$7, vectorLength: vectorLength$7, manhattanLength: manhattanLength$7, permute: permute$8, fractional: fractional$5, degreesToRadians: degreesToRadians$3, trim: trim$3 } = helpers;
-const random$8 = randomModule.random(42);
+const random$7 = randomModule.random(42);
 const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip'];
 // const models = ['comp-ngrams']
 
@@ -8879,7 +8877,7 @@ class EmbeddingSpiral extends Component {
 }
 
 const { roundDown: roundDown$7, bindAll: bindAll$7, removeDuplicates: removeDuplicates$7, wrapIterator: wrapIterator$8, shuffle: shuffle$9, subVectors: subVectors$8, dotProduct: dotProduct$8, vectorLength: vectorLength$8, manhattanLength: manhattanLength$8, permute: permute$9, fractional: fractional$6, degreesToRadians: degreesToRadians$4, trim: trim$4 } = helpers;
-const random$9 = randomModule.random(42);
+const random$8 = randomModule.random(42);
 let res = 0.05;
 let dim = 10;
 let cellSize = 5;
@@ -8905,19 +8903,61 @@ let binSearch = (range, lower, upper, val) => {
   return binSearch(range, lower, mid, val);
 };
 
+function Section(WrappedComponent) {
+  return class extends Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {};
+    }
+
+    render({ title }) {
+      return h(
+        'div',
+        { 'class': 'section' },
+        h(
+          'h2',
+          null,
+          title
+        ),
+        h(WrappedComponent, this.props),
+        h('hr', null)
+      );
+    }
+  };
+}
+
+class Introduction extends Component {
+  render() {
+    return h(
+      'p',
+      null,
+      'This is some background on what sentence embeddings are.'
+    );
+  }
+}
+
+Introduction = Section(Introduction);
+
+var Introduction$1 = Introduction;
+
+class ManipulateSentence extends Component {
+  render() {
+    return h(
+      'p',
+      null,
+      'Investigation into individual sentence embeddings.'
+    );
+  }
+}
+
+ManipulateSentence = Section(ManipulateSentence);
+
+var ManipulateSentence$1 = ManipulateSentence;
+
 const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle: shuffle$$1, subVectors, dotProduct, vectorLength, manhattanLength, permute } = helpers;
-// import model from './model/index'
-const random = randomModule.random(42);
-let shaderFiles = [];
-let embeddings;
-
-const shaders = {};
+// sections
 const preload = {
-  getShaders: () => Promise.all(shaderFiles.map(getShader)).then(data => {
-    for (let i = 0; i < data.length; i++) shaders[shaderFiles[i]] = data[i];
-    return data;
-  }),
-
   getData: () => Promise.all(['encodings_pca_100', 'encodings_pca_50', 'encodings_pca_10'].map(getData)).then(data => {
     console.log(data);
     let indices = [];
@@ -8943,14 +8983,20 @@ class App extends Component {
     // let main = <ParallelCoordinates data={data} />
 
     return h(
-      'app',
-      null,
+      'dt-article',
+      { 'class': 'dt-article' },
+      h(
+        'h1',
+        null,
+        'Sentence Embeddings'
+      ),
+      h(Introduction$1, { title: 'Introduction' }),
+      h(ManipulateSentence$1, { title: 'Manipulating sentences' }),
       main
     );
   }
 }
 
 Promise.all(Object.keys(preload).map(k => preload[k]())).then(() => {
-  console.log(embeddings);
-  render(h(App, { data: embeddings }), document.querySelector("#dt-article"));
+  render(h(App, { data: embeddings }), document.body);
 });
