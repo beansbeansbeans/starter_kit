@@ -3,4 +3,21 @@
     font-style: italic;
     color: lighten($dove-gray, 5%);
   }
+  .vector {
+    font-size: 12px;
+    line-height: 2;
+    &:before {
+      content: "[ "
+    }
+    &:after {
+      content: " ]"
+    }
+    .cell {
+      width: 8px;
+      height: 8px;
+      display: inline-block;
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  }
 }
