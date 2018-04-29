@@ -26,8 +26,9 @@ class Introduction extends Component {
   render() {
     return (
       <div class="section-contents">
-        <p>This is some background on what sentence embeddings are.</p>
+        <p>This is some background on the problem.</p>
         <h3>Example</h3>
+        <p>Here's where we can introduce the idea of an embedding and how we get from the raw embedding to the visual representation we'll be using in the post.</p>
         <figure>
           <h4>Sentence:</h4>
           <p class="sentence">{`“${example.sentence}”`}</p>
@@ -39,6 +40,7 @@ class Introduction extends Component {
           <h5>STEP 2: Colored</h5>
           <div class="vector">{example.embeddingSorted.map(d => <div class="cell" style={`background: rgba(123, 43, 20, ${((d - example.embeddingMin) / (example.embeddingMax - example.embeddingMin))})`}></div>)}</div>
           <h5>STEP 3: Spiralized</h5>
+          <p>We can eventually import your code here for a live version, but wanted to use the video as a placeholder.</p>
           <video width="240" height="240" autoplay loop>
             <source src="videos/spiral_emb.mp4" type="video/mp4" />
           </video>
