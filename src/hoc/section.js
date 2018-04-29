@@ -11,7 +11,7 @@ function Section(WrappedComponent) {
     }
 
     render({ title }) {
-      return <div class="section">
+      return <div id={`${title.toLowerCase().split(" ").join("_")}`} class="section">
         <h2>{title}</h2>
         <WrappedComponent {...this.props} />
         <hr/>

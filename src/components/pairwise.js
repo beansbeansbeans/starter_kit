@@ -334,7 +334,7 @@ class PairWise extends Component {
     data = data[numDimensions]
 
     return (
-      <div id="webgl-wrapper">
+      <div id="pairwise">
         <div class="dropdown-wrapper">
           <div>start:</div>
           <Dropdown change={id => this.userSelectTarget(id, 'startIndex')} options={startOptions} />

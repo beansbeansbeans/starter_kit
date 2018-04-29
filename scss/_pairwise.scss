@@ -1,0 +1,118 @@
+#pairwise {
+  .canvas-wrapper {
+    display: block;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20vh;  
+    &:before, &:after {
+      position: absolute;
+      display: block;
+    }
+    &:before {
+      content: "distance from start sentence";
+      transform: rotate(-90deg);
+      transform-origin: 0;
+      bottom: 0;
+      left: -10px;
+    }
+    &:after {
+      content: "distance from end sentence"
+    }
+  }
+
+  .distances {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 40px;
+  }
+
+  canvas {
+    border-left: solid 1px #222;
+    border-bottom: solid 1px #222;
+  }
+
+  button {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  $webgl-buffer: 0px;
+
+  #webgl-wrapper {
+    position: fixed;
+    left: $webgl-buffer;
+    top: $webgl-buffer;
+    bottom: 0;
+    width: calc(100vw - #{$controls-width} - #{$webgl-buffer});
+  }
+
+  #debug canvas {
+
+  }
+
+  #line {
+    position: fixed;
+    top: 10vh;
+    left: 10vw;
+    right: 10vw;
+  }
+
+  #start, #finish {
+    position: absolute;
+  }
+
+  #start {
+    left: 0;
+    .marker {
+      left: 0;
+    }
+  }
+
+  .marker {
+    background: #222;
+    border-radius: 50%;
+  }
+
+  .intermediary {
+    position: absolute;
+    .sentence {
+      position: absolute;
+      display: none;
+      white-space: nowrap;
+    }
+    &:hover {
+      .sentence {
+        display: block;
+      }
+    }
+    .marker {
+      position: absolute;
+      top: 15px;
+      width: 5px;
+      height: 5px;
+    }
+  }
+
+  #finish {
+    right: 0;
+    .marker {
+      right: 0;
+    }
+    .sentence {
+      position: absolute;
+      top: 25px;
+      right: 0;
+      white-space: nowrap;
+    }
+  }
+
+  #start, #finish {
+    .marker {
+      width: 8px;
+      height: 8px;
+      top: 15px;
+      position: absolute;
+    }
+  } 
+}

@@ -31,7 +31,7 @@ class App extends Component {
   render({ data }) {
     return <dt-article class="dt-article">
       <h1>Sentence Embeddings</h1>
-      <Introduction title="Introduction" />
+      <Introduction data={data} title="Introduction" />
       <ManipulateSentence data={data} title="Manipulating sentences" />
       
     </dt-article>
