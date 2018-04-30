@@ -26,6 +26,13 @@ class ManipulateSentence extends Component {
       <div class="section-contents">
         <p>Investigation into individual sentence embeddings.</p>
         {main}
+        <h3>Catalog of insights</h3>
+        <p>Here we could point out the things we figured out by comparing models / manipulations / sentences. Here's a pretend list to start with:</p>
+        <ul>
+          <li><p>Doc2Vec is overly sensitive to unusual words (see [insert sentence] under dropout manipulation)</p></li>
+          <li><p>SkipThoughts very sensitive to last words (see [insert sentence] under forward manipulation)</p></li>
+          <li><p>Certain models (like Computation n-grams) under forward manipulation report opposite results for Euclidean as opposed to Wasserstein metrics.</p></li>
+        </ul>
       </div>
     )
   }

@@ -7,6 +7,8 @@ import { getEricData, getShader } from '../api'
 import { line } from 'd3-shape'
 import { select } from 'd3-selection'
 
+const vizHeight = 500
+
 const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
 // const models = ['comp-ngrams']
 
@@ -231,7 +233,7 @@ class EmbeddingSpiral extends Component {
     })
   }
 
-  render({}, { sentences, models, manipulations, distances, hoverIndex }) {
+  render({}, { left, sentences, models, manipulations, distances, hoverIndex }) {
     let activeManipulation = manipulations.find(d => d.active)
     let activeSentenceIndex = sentences.findIndex(d => d.active)
 
@@ -249,27 +251,29 @@ class EmbeddingSpiral extends Component {
     }
 
     return (
-      <div id="embedding_spiral">
-        <div class="sentences-wrapper">
-          {sentencesDOM}
-        </div>
-        <div class="controls">
-          <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
-          <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
-          <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
-          <br />
-          <div class="distances-wrapper">{distances.map(d => {
-            return <div class="distance-wrapper">
-              <div class="label">{d}</div>
-              <svg id={`svg_${d}`}>
-                <text y="12" id={`text_min_${d}`}></text>
-                <text y="24" id={`text_max_${d}`}></text>
-                <text y="36" id={`text_curr_${d}`}></text>
-                <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
-                <path></path>
-              </svg>
-            </div>
-          })}</div>
+      <div ref={ c => this.root=c } id="embedding_spiral">
+        <div style={`height:${vizHeight}px`} class="buffer"></div>
+        <div style={`height:${vizHeight}px`} class="contents">
+          <div class="controls">
+            <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
+            <div class="distances-wrapper">{distances.map(d => {
+              return <div class="distance-wrapper">
+                <div class="label">{d}</div>
+                <svg id={`svg_${d}`}>
+                  <text y="12" id={`text_min_${d}`}></text>
+                  <text y="24" id={`text_max_${d}`}></text>
+                  <text y="36" id={`text_curr_${d}`}></text>
+                  <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
+                  <path></path>
+                </svg>
+              </div>
+            })}</div>
+          </div>
+          <div class="sentences-wrapper">
+            <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+            {sentencesDOM}
+            <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+          </div>
         </div>
       </div>
     )

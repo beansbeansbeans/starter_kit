@@ -30,10 +30,13 @@ const preload = {
 class App extends Component {
   render({ data }) {
     return <dt-article class="dt-article">
-      <h1>Sentence Embeddings</h1>
+      <div class="section">
+        <div class="section-contents">
+          <h1>Sentence Embeddings</h1>
+        </div>
+      </div>
       <Introduction data={data} title="Introduction" />
       <ManipulateSentence data={data} title="Manipulating sentences" />
-      
     </dt-article>
   }
 }

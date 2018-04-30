@@ -33,3 +33,10 @@ app {
   top: 0;
   position: absolute;
 }
+
+// distill stylesheet overrides
+
+.section {
+  margin-left: auto !important;
+  margin-right: auto;
+}
