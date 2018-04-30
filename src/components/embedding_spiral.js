@@ -254,25 +254,29 @@ class EmbeddingSpiral extends Component {
       <div ref={ c => this.root=c } id="embedding_spiral">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
-          <div class="controls">
-            <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
-            <div class="distances-wrapper">{distances.map(d => {
-              return <div class="distance-wrapper">
-                <div class="label">{d}</div>
-                <svg id={`svg_${d}`}>
-                  <text y="12" id={`text_min_${d}`}></text>
-                  <text y="24" id={`text_max_${d}`}></text>
-                  <text y="36" id={`text_curr_${d}`}></text>
-                  <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
-                  <path></path>
-                </svg>
-              </div>
-            })}</div>
-          </div>
-          <div class="sentences-wrapper">
-            <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
-            {sentencesDOM}
-            <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+          <div class="inner-contents">
+            <div class="controls">
+              <h4>Distance</h4>
+              <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
+              <div class="distances-wrapper">{distances.map(d => {
+                return <div class="distance-wrapper">
+                  <div class="label">{d}</div>
+                  <svg id={`svg_${d}`}>
+                    <text y="12" id={`text_min_${d}`}></text>
+                    <text y="24" id={`text_max_${d}`}></text>
+                    <text y="36" id={`text_curr_${d}`}></text>
+                    <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
+                    <path></path>
+                  </svg>
+                </div>
+              })}</div>
+            </div>
+            <div class="sentences-wrapper">
+              <h4>Input Sentences</h4>
+              <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+              {sentencesDOM}
+              <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+            </div>
           </div>
         </div>
       </div>
