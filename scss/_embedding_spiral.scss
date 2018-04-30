@@ -35,17 +35,22 @@
     .svg-wrapper {
       position: relative;
     }
-    .graph_max {
+    .graph_max, .graph_min {
       position: absolute;
       font-size: 9px;
       left: 0;
       line-height: 1;
-      top: 0;
       transform: translate3d(-100%, -50%, 0);
       &:after {
         content: "-";
         margin-left: 2px;
-      }
+      }      
+    }
+    .graph_min {
+      bottom: 0;
+    }
+    .graph_max {
+      top: 0;
     }
   }
   .sentences-wrapper {

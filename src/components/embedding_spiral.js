@@ -133,7 +133,9 @@ class EmbeddingSpiral extends Component {
     graphXIncrement = (controlsWidth * innerContentsWidth) / sparklinePoints[0].length
 
     distances.forEach((dist, di) => {
-      let max = Math.max(...sparklinePoints[di].reduce((acc, curr) => acc.concat(curr), []))
+      let flattened = sparklinePoints[di].reduce((acc, curr) => acc.concat(curr), [])
+      let max = Math.max(...flattened)
+      let min = Math.min(...flattened)
 
       models.forEach((model, mi) => {
         select(document.querySelector(`#svg_${dist}`)).select(`path:nth-of-type(${mi + 1})`)
@@ -144,6 +146,7 @@ class EmbeddingSpiral extends Component {
 
       document.querySelector(`#svg_${dist} .marker`).setAttribute("cy", (1 - (sparklinePoints[di][activeModelIndex][hoverIndex] / max)) * graphHeight)
       document.querySelector(`#text_max_${dist}`).textContent = `${max.toFixed(3)}`
+      document.querySelector(`#text_min_${dist}`).textContent = `${min.toFixed(3)}`
     })
 
     let sents = activeManipulation.sentences[activeSentenceIndex].manipulations
@@ -271,6 +274,7 @@ class EmbeddingSpiral extends Component {
                   <h4 class="label">{d}</h4>
                   <div id={`svg_${d}`} class="svg-wrapper">
                     <div class="graph_max" id={`text_max_${d}`}></div>
+                    <div class="graph_min" id={`text_min_${d}`}></div>
                     <svg style={`height:${graphHeight}px`}>
                       <line class="axis" x1="0" x2="0" y1="0" y2={graphHeight}></line>
                       <g class="path_wrapper">{models.map(model => <path></path>)}</g>
