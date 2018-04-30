@@ -287,8 +287,8 @@ class EmbeddingSpiral extends Component {
             <div style={`width:${(1 - controlsWidth) * 100}%`} class="sentences-wrapper">
               <h4>Input Sentences</h4>
               <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
-              {sentencesDOM}
               <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+              {sentencesDOM}
             </div>
           </div>
         </div>

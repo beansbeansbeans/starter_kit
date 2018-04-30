@@ -31,7 +31,7 @@ class ManipulateSentence extends Component {
         <ul>
           <li><p>Doc2Vec is overly sensitive to unusual words (see [insert sentence] under dropout manipulation)</p></li>
           <li><p>SkipThoughts very sensitive to last words (see [insert sentence] under forward manipulation)</p></li>
-          <li><p>Certain models (like Computation n-grams) under forward manipulation report opposite results for Euclidean as opposed to Wasserstein metrics.</p></li>
+          <li><p>Certain models (like computational n-grams) under forward manipulation report opposite results for Euclidean vs. Wasserstein metrics.</p></li>
         </ul>
       </div>
     )
