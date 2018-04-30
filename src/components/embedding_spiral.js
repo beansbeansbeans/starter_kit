@@ -70,6 +70,7 @@ class EmbeddingSpiral extends Component {
 
       let sentences = resp[0].map(d => d.orig_sent)
       let data = {}
+
       models.forEach((m, i) => {
         let embeddings = resp[i * 4 + 3]
 
@@ -121,21 +122,25 @@ class EmbeddingSpiral extends Component {
     let activeManipulation = manipulations.find(d => d.active)
     let activeManipulationIndex = manipulations.findIndex(d => d.active)
     let activeModel = models.find(d => d.active)
+    let activeModelIndex = models.findIndex(d => d.active)
     let activeSentence = sentences.find(d => d.active)
     let activeSentenceIndex = sentences.findIndex(d => d.active)
 
     let sparklinePoints = distances.map((d, distIndex) => {
-      return data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].dists[d]
+      return models.map(model => data[model.id].manipulations[activeManipulationIndex][activeSentenceIndex].dists[d])
     })
 
     graphXIncrement = (controlsWidth * innerContentsWidth) / sparklinePoints[0].length
 
     distances.forEach((dist, di) => {
-      let max = Math.max(...sparklinePoints[di])
-      select(document.querySelector(`#svg_${dist}`)).select("path")
-        .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di]))
+      let max = Math.max(...sparklinePoints[di].reduce((acc, curr) => acc.concat(curr), []))
 
-      document.querySelector(`#svg_${dist} .marker`).setAttribute("cy", (1 - (sparklinePoints[di][hoverIndex] / max)) * graphHeight)
+      models.forEach((model, mi) => {
+        select(document.querySelector(`#svg_${dist}`)).select(`path:nth-of-type(${mi + 1})`)
+          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di][mi]))        
+      })
+
+      document.querySelector(`#svg_${dist} .marker`).setAttribute("cy", (1 - (sparklinePoints[di][activeModelIndex][hoverIndex] / max)) * graphHeight)
       document.querySelector(`#text_max_${dist}`).textContent = `${max.toFixed(3)}`
     })
 
@@ -266,7 +271,7 @@ class EmbeddingSpiral extends Component {
                     <div class="graph_max" id={`text_max_${d}`}></div>
                     <svg style={`height:${graphHeight}px`}>
                       <line class="axis" x1="0" x2="0" y1="0" y2={graphHeight}></line>
-                      <path></path>
+                      <g class="path_wrapper">{models.map(model => <path></path>)}</g>
                       <circle class="marker" r="3" cx={hoverIndex * graphXIncrement}></circle>
                     </svg>
                   </div>
