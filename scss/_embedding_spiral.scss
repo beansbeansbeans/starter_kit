@@ -12,7 +12,6 @@
     top: 0;
     overflow: hidden;
     .inner-contents {
-      width: 960px;
       margin-left: auto;
       margin-right: auto;
     }
@@ -25,10 +24,32 @@
     }
   }
   .controls {
-    width: 30%;
+    h4.label {
+      font-size: 10px;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+    }
+    .distance-wrapper {
+      margin-top: 30px;
+    }
+    .svg-wrapper {
+      position: relative;
+    }
+    .graph_max {
+      position: absolute;
+      font-size: 9px;
+      left: 0;
+      line-height: 1;
+      top: 0;
+      transform: translate3d(-100%, -50%, 0);
+      &:after {
+        content: "-";
+        margin-left: 2px;
+      }
+    }
   }
   .sentences-wrapper {
-    width: 70%;
+
   }
   .sentences-wrapper, .controls {
     padding-top: 15px;
@@ -50,6 +71,9 @@
     }
     line {
       stroke: orange;
+      &.axis {
+        stroke: #222
+      }
     }
   }
   canvas {

@@ -7,7 +7,9 @@ import { getEricData, getShader } from '../api'
 import { line } from 'd3-shape'
 import { select } from 'd3-selection'
 
-const vizHeight = 500
+const vizHeight = 620
+const innerContentsWidth = 960
+const controlsWidth = 0.3
 
 const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
 // const models = ['comp-ngrams']
@@ -100,7 +102,7 @@ class EmbeddingSpiral extends Component {
       this.setState({
         data,
         sentences: sentences.map(createDropdown),
-        distances: Object.keys(resp[0][0].dists),
+        distances: Object.keys(resp[0][0].dists).filter(d => d !== 'energy'),
         manipulations: this.state.manipulations.map((d, i) => {
           d.sentences = sentences.map((sent, si) => {
             return {
@@ -126,15 +128,14 @@ class EmbeddingSpiral extends Component {
       return data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].dists[d]
     })
 
-    graphXIncrement = 400 / sparklinePoints[0].length
+    graphXIncrement = (controlsWidth * innerContentsWidth) / sparklinePoints[0].length
 
     distances.forEach((dist, di) => {
       let max = Math.max(...sparklinePoints[di])
       select(document.querySelector(`#svg_${dist}`)).select("path")
         .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di]))
 
-      document.querySelector(`#text_min_${dist}`).textContent = `min: ${Math.min(...sparklinePoints[di]).toFixed(3)}`
-      document.querySelector(`#text_max_${dist}`).textContent = `max: ${max.toFixed(3)}`
+      document.querySelector(`#text_max_${dist}`).textContent = `${max.toFixed(3)}`
       document.querySelector(`#text_curr_${dist}`).textContent = `current: ${sparklinePoints[di][hoverIndex].toFixed(3)}`
     })
 
@@ -254,24 +255,26 @@ class EmbeddingSpiral extends Component {
       <div ref={ c => this.root=c } id="embedding_spiral">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
-          <div class="inner-contents">
-            <div class="controls">
+          <div style={`width:${innerContentsWidth}px`} class="inner-contents">
+            <div style={`width:${controlsWidth * 100}%`} class="controls">
               <h4>Distance</h4>
               <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
               <div class="distances-wrapper">{distances.map(d => {
                 return <div class="distance-wrapper">
-                  <div class="label">{d}</div>
-                  <svg id={`svg_${d}`}>
-                    <text y="12" id={`text_min_${d}`}></text>
-                    <text y="24" id={`text_max_${d}`}></text>
-                    <text y="36" id={`text_curr_${d}`}></text>
-                    <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
-                    <path></path>
-                  </svg>
+                  <h4 class="label">{d}</h4>
+                  <div id={`svg_${d}`} class="svg-wrapper">
+                    <div class="graph_max" id={`text_max_${d}`}></div>
+                    <svg style={`height:${graphHeight}px`}>
+                      <text y="36" id={`text_curr_${d}`}></text>
+                      <line class="axis" x1="0" x2="0" y1="0" y2={graphHeight}></line>
+                      <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
+                      <path></path>
+                    </svg>
+                  </div>
                 </div>
               })}</div>
             </div>
-            <div class="sentences-wrapper">
+            <div style={`width:${(1 - controlsWidth) * 100}%`} class="sentences-wrapper">
               <h4>Input Sentences</h4>
               <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
               {sentencesDOM}
