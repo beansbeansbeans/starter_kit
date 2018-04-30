@@ -137,7 +137,9 @@ class EmbeddingSpiral extends Component {
 
       models.forEach((model, mi) => {
         select(document.querySelector(`#svg_${dist}`)).select(`path:nth-of-type(${mi + 1})`)
-          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di][mi]))        
+          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di][mi]))    
+          .style("stroke-width", mi === activeModelIndex ? "1.5" : "0.5")    
+          .style("stroke", mi === activeModelIndex ? "#FF6468" : "#999")
       })
 
       document.querySelector(`#svg_${dist} .marker`).setAttribute("cy", (1 - (sparklinePoints[di][activeModelIndex][hoverIndex] / max)) * graphHeight)
