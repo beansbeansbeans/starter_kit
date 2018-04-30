@@ -69,11 +69,12 @@
       fill: none;
       stroke: #222;
     }
-    line {
-      stroke: orange;
-      &.axis {
-        stroke: #222
-      }
+    circle {
+      stroke: none;
+      fill: orange;
+    }
+    .axis {
+      stroke: #222
     }
   }
   canvas {

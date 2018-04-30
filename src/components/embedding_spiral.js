@@ -135,8 +135,8 @@ class EmbeddingSpiral extends Component {
       select(document.querySelector(`#svg_${dist}`)).select("path")
         .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / max)) * graphHeight)(sparklinePoints[di]))
 
+      document.querySelector(`#svg_${dist} .marker`).setAttribute("cy", (1 - (sparklinePoints[di][hoverIndex] / max)) * graphHeight)
       document.querySelector(`#text_max_${dist}`).textContent = `${max.toFixed(3)}`
-      document.querySelector(`#text_curr_${dist}`).textContent = `current: ${sparklinePoints[di][hoverIndex].toFixed(3)}`
     })
 
     let sents = activeManipulation.sentences[activeSentenceIndex].manipulations
@@ -265,10 +265,9 @@ class EmbeddingSpiral extends Component {
                   <div id={`svg_${d}`} class="svg-wrapper">
                     <div class="graph_max" id={`text_max_${d}`}></div>
                     <svg style={`height:${graphHeight}px`}>
-                      <text y="36" id={`text_curr_${d}`}></text>
                       <line class="axis" x1="0" x2="0" y1="0" y2={graphHeight}></line>
-                      <line x1={hoverIndex * graphXIncrement} x2={hoverIndex * graphXIncrement} y1="0" y2={graphHeight}></line>
                       <path></path>
+                      <circle class="marker" r="3" cx={hoverIndex * graphXIncrement}></circle>
                     </svg>
                   </div>
                 </div>
