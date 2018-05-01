@@ -5,3 +5,13 @@ button {
   outline: none;
   cursor: pointer;
 }
+
+.dropdown-wrapper {
+  h4, select {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  select {
+    margin-left: 6px;
+  }
+}

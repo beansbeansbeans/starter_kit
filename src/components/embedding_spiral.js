@@ -290,7 +290,10 @@ class EmbeddingSpiral extends Component {
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
             <div style={`width:${controlsWidth * 100}%`} class="controls">
               <h4>Distance</h4>
-              <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
+              <div class="dropdown-wrapper">
+                <h4 class="label">Model</h4>
+                <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
+              </div>
               <div class="distances-wrapper">{distances.map(d => {
                 return <div class="distance-wrapper">
                   <h4 class="label">{d}</h4>
@@ -308,9 +311,15 @@ class EmbeddingSpiral extends Component {
             </div>
             <div style={`width:${(1 - controlsWidth) * 100}%`} class="sentences-wrapper">
               <h4>Input Sentences</h4>
-              <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+              <div class="dropdown-wrapper">
+                <h4 class="label">Base</h4>
+                <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+              </div>
               {baseSentence}
-              <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+              <div class="dropdown-wrapper">
+                <h4 class="label">Manipulations</h4>
+                <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+              </div>
               {sentencesDOM}
             </div>
           </div>
