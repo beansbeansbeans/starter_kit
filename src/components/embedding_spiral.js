@@ -10,7 +10,7 @@ import { select } from 'd3-selection'
 const vizHeight = 620
 const innerContentsWidth = 960
 const controlsWidth = 0.3
-const canvasRenderSize = 100
+const canvasRenderSize = 75
 
 const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
 // const models = ['comp-ngrams']
@@ -18,6 +18,7 @@ const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought'
 const manipulations = ['dropout', 'forward', 'shuffle']
 let graphHeight = 100
 let graphXIncrement = 0
+let headingHeight = 0
 
 class Dropdown extends Component {
   render({ options, change }) {
@@ -242,6 +243,8 @@ class EmbeddingSpiral extends Component {
       emb = permute(emb, indices)
       paint(canvas, emb)                
     })
+
+    headingHeight = this.root.querySelector(".heading").getBoundingClientRect().height
   }
 
   changeDropdown(id, key) {
@@ -259,7 +262,7 @@ class EmbeddingSpiral extends Component {
     })
   }
 
-  render({}, { left, sentences, models, manipulations, distances, hoverIndex }) {
+  render({ }, { left, sentences, models, manipulations, distances, hoverIndex }) {
     let activeManipulation = manipulations.find(d => d.active)
     let activeSentenceIndex = sentences.findIndex(d => d.active)
 
@@ -270,14 +273,14 @@ class EmbeddingSpiral extends Component {
         return <div data-active={i === hoverIndex} onMouseOver={() => {
           this.setState({ hoverIndex: i })
         }} class="sentence-wrapper">
-          <div class="label">{d}</div>
           <canvas id={`canvas_${i}`}></canvas>
+          <div style={`width:calc(100% - ${canvasRenderSize})`} class="label">{d}</div>
         </div>
       })
 
       baseSentence = <div class="sentence-wrapper">
-        <div class="label">{sentences[activeSentenceIndex].label}</div>
         <canvas id="canvas_base"></canvas>
+        <div style={`width:calc(100% - ${canvasRenderSize})`} class="label">{sentences[activeSentenceIndex].label}</div>
       </div>
     }
 
@@ -310,17 +313,19 @@ class EmbeddingSpiral extends Component {
               })}</div>
             </div>
             <div style={`width:${(1 - controlsWidth) * 100}%`} class="sentences-wrapper">
-              <h4>Input Sentences</h4>
-              <div class="dropdown-wrapper">
-                <h4 class="label">Base</h4>
-                <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+              <div class="heading">
+                <h4>Input Sentences</h4>
+                <div class="dropdown-wrapper">
+                  <h4 class="label">Base</h4>
+                  <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+                </div>
+                {baseSentence}
+                <div class="dropdown-wrapper">
+                  <h4 class="label">Manipulations</h4>
+                  <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
+                </div>
               </div>
-              {baseSentence}
-              <div class="dropdown-wrapper">
-                <h4 class="label">Manipulations</h4>
-                <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
-              </div>
-              {sentencesDOM}
+              <div style={`height:${vizHeight - headingHeight}px`} class="manipulations-wrapper">{sentencesDOM}</div>
             </div>
           </div>
         </div>

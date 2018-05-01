@@ -22,6 +22,14 @@
         background: yellow
       }
     }
+    canvas, .label {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .label {
+      font-size: 12px;
+      margin-left: 10px;
+    }
   }
   .controls {
     .distance-wrapper {
@@ -51,14 +59,21 @@
   .sentences-wrapper {
 
   }
+  .manipulations-wrapper {
+    overflow: scroll;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    border-top: solid 1px darken(whitesmoke, 10%);
+  }
   .sentences-wrapper, .controls {
-    padding-top: 15px;
     display: inline-block;
     vertical-align: top;
     h4 {
+      padding-top: 15px;
       font-size: 12px;
     }
     h4.label {
+      padding-top: 0;
       font-size: 10px;
       margin-bottom: 15px;
       text-transform: uppercase;
@@ -67,6 +82,7 @@
   .sentences-wrapper {
     overflow: scroll;
     height: 100vh;
+    padding-left: 20px;
   }
   svg {
     overflow: visible;
