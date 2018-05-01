@@ -10,6 +10,7 @@ import mediator from './mediator'
 // sections
 import Introduction from './sections/introduction'
 import ManipulateSentence from './sections/manipulate_sentence'
+import MultipleSentences from './sections/multiple_sentences'
 
 const preload = {
   getData: () => 
@@ -36,7 +37,8 @@ class App extends Component {
         </div>
       </div>
       <Introduction data={data} title="Introduction" />
-      <ManipulateSentence data={data} title="Manipulating sentences" />
+      <ManipulateSentence data={data} title="Manipulating Sentences" />
+      <MultipleSentences data={data} title="Comparing Sentences" />
     </dt-article>
   }
 }

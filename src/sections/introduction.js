@@ -10,7 +10,6 @@ const cellMinOpacity = 0.15
 class Introduction extends Component {
   componentWillMount() {
     let { data } = this.props
-    console.log(data)
 
     let embedding = data[100].find(d => d.sentence.indexOf(example.sentence) > -1).encoding
 
@@ -18,9 +17,6 @@ class Introduction extends Component {
     example.embeddingSorted = embedding.sort((a, b) => a - b).reverse().map(d => d.toFixed(3))
     example.embeddingMax = Math.max(...embedding)
     example.embeddingMin = Math.min(...embedding)
-
-    console.log(example.embeddingMax)
-    console.log(example.embeddingMin)
   }
 
   render() {

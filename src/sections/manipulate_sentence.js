@@ -26,7 +26,7 @@ class ManipulateSentence extends Component {
       <div class="section-contents">
         <p>Investigation into individual sentence embeddings.</p>
         {main}
-        <h3>Catalog of insights</h3>
+        <h3>Catalog of Insights</h3>
         <p>Here we could point out the things we figured out by comparing models / manipulations / sentences. Here's a pretend list to start with:</p>
         <ul>
           <li><p>Doc2Vec is overly sensitive to unusual words (see [insert sentence] under dropout manipulation)</p></li>

@@ -68,8 +68,6 @@ class EmbeddingSpiral extends Component {
     })
 
     Promise.all(files.map(getEricData)).then(resp => {
-      console.log(resp)
-
       let sentences = resp[0].map(d => d.orig_sent)
       let data = {}
 
@@ -164,9 +162,6 @@ class EmbeddingSpiral extends Component {
     let cellDim = canvasRenderSize / canvasSize
 
     let { indices, max } = data[activeModel.id].basePermutations[activeSentenceIndex]
-
-    console.log("hi")
-    console.log(data)
 
     function paint(canvas, emb) {
       let ctx = canvas.getContext('2d')
@@ -283,8 +278,6 @@ class EmbeddingSpiral extends Component {
         <div style={`width:calc(100% - ${canvasRenderSize})`} class="label">{sentences[activeSentenceIndex].label}</div>
       </div>
     }
-
-    console.log(sentences[activeSentenceIndex])
 
     return (
       <div ref={ c => this.root=c } id="embedding_spiral">
