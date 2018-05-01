@@ -10,6 +10,7 @@ import { select } from 'd3-selection'
 const vizHeight = 620
 const innerContentsWidth = 960
 const controlsWidth = 0.3
+const canvasRenderSize = 100
 
 const models = ['comp-ngrams', 'doc2vec', 'glove', 'infer-sent', 'quick-thought', 'skip']
 // const models = ['comp-ngrams']
@@ -149,7 +150,7 @@ class EmbeddingSpiral extends Component {
       document.querySelector(`#text_min_${dist}`).textContent = `${min.toFixed(3)}`
     })
 
-    let sents = activeManipulation.sentences[activeSentenceIndex].manipulations
+    let sents = [activeSentence].concat(activeManipulation.sentences[activeSentenceIndex].manipulations)
 
     let embLength = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[0].length
     let canvasSize = 2
@@ -159,12 +160,14 @@ class EmbeddingSpiral extends Component {
 
     canvasSize += 1
 
-    let cellDim = 100 / canvasSize
+    let cellDim = canvasRenderSize / canvasSize
 
     let { indices, max } = data[activeModel.id].basePermutations[activeSentenceIndex]
 
-    sents.forEach((sent, i) => {
-      let canvas = document.querySelector(`#embedding_spiral #canvas_${i}`)
+    console.log("hi")
+    console.log(data)
+
+    function paint(canvas, emb) {
       let ctx = canvas.getContext('2d')
 
       canvas.width = 2 * (canvasSize * cellDim)
@@ -175,9 +178,6 @@ class EmbeddingSpiral extends Component {
       ctx.scale(2, 2)
 
       ctx.clearRect(0, 0, (canvasSize * cellDim), (canvasSize * cellDim))
-
-      let emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i].slice(0)
-      emb = permute(emb, indices)
 
       let r = 0
       let c = 1
@@ -225,7 +225,22 @@ class EmbeddingSpiral extends Component {
           coord[0] += xDir
           coord[1] += yDir            
         }
-      }        
+      }  
+    }
+
+    sents.forEach((sent, i) => {
+      let canvas, emb
+
+      if(i === 0) {
+        canvas = document.querySelector("#canvas_base")
+        emb = data[activeModel.id].embeddings[activeSentence.label].slice(0)
+      } else {
+        canvas = document.querySelector(`#embedding_spiral #canvas_${i - 1}`)
+        emb = data[activeModel.id].manipulations[activeManipulationIndex][activeSentenceIndex].manipulated_embs[i - 1].slice(0)
+      }
+
+      emb = permute(emb, indices)
+      paint(canvas, emb)                
     })
   }
 
@@ -248,7 +263,7 @@ class EmbeddingSpiral extends Component {
     let activeManipulation = manipulations.find(d => d.active)
     let activeSentenceIndex = sentences.findIndex(d => d.active)
 
-    let sentencesDOM
+    let sentencesDOM, baseSentence
 
     if(activeSentenceIndex > -1) {
       sentencesDOM = activeManipulation.sentences[activeSentenceIndex].manipulations.map((d, i) => {
@@ -259,7 +274,14 @@ class EmbeddingSpiral extends Component {
           <canvas id={`canvas_${i}`}></canvas>
         </div>
       })
+
+      baseSentence = <div class="sentence-wrapper">
+        <div class="label">{sentences[activeSentenceIndex].label}</div>
+        <canvas id="canvas_base"></canvas>
+      </div>
     }
+
+    console.log(sentences[activeSentenceIndex])
 
     return (
       <div ref={ c => this.root=c } id="embedding_spiral">
@@ -287,6 +309,7 @@ class EmbeddingSpiral extends Component {
             <div style={`width:${(1 - controlsWidth) * 100}%`} class="sentences-wrapper">
               <h4>Input Sentences</h4>
               <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
+              {baseSentence}
               <Dropdown change={id => this.changeDropdown(id, 'manipulations')} options={manipulations} />
               {sentencesDOM}
             </div>
