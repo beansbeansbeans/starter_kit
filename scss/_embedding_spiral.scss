@@ -1,21 +1,4 @@
 #embedding_spiral {
-  position: relative;
-  margin: 40px 0;
-  .contents {
-    background: whitesmoke;
-    border-top: solid 1px $silver-sand;
-    border-bottom: solid 1px $silver-sand;
-    position: absolute;
-    width: 100vw;
-    left: 50%;
-    transform: translateX(-50%);
-    top: 0;
-    overflow: hidden;
-    .inner-contents {
-      margin-left: auto;
-      margin-right: auto;
-    }
-  }
   .sentence-wrapper {
     &[data-active="true"] {
       .label {

@@ -8,7 +8,7 @@ import PairWise from '../components/pairwise'
 import Aggregation from '../components/aggregation'
 import Permutations from '../components/permutations'
 import Embeddings10D from '../components/embeddings10d'
-import DistanceMatrix from '../components/distance_matrix'
+
 import Spiral from '../components/embedding_spiral'
 import ParallelCoordinates from '../components/parallelCoordinates'
 
@@ -19,13 +19,12 @@ class ManipulateSentence extends Component {
     // let main = <Embeddings10D data={data} />
     // let main = <Aggregation data={data} />
     // let main = <PairWise data={data} />
-    let main = <Spiral />
     // let main = <ParallelCoordinates data={data} />
 
     return (
       <div class="section-contents">
         <p>Investigation into individual sentence embeddings.</p>
-        {main}
+        <Spiral />
         <h3>Catalog of Insights</h3>
         <p>Here we could point out the things we figured out by comparing models / manipulations / sentences. Here's a pretend list to start with:</p>
         <ul>

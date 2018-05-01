@@ -280,7 +280,7 @@ class EmbeddingSpiral extends Component {
     }
 
     return (
-      <div ref={ c => this.root=c } id="embedding_spiral">
+      <div class="inset_visualization" ref={ c => this.root=c } id="embedding_spiral">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">

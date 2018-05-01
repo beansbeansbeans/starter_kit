@@ -5,6 +5,7 @@ import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 import { getData, getShader } from '../api'
 
+const vizHeight = 650
 let distances = ['euclidean', 'manhattan', 'wasserstein']
 let sortBy = [{
   label: 'euclidean',
@@ -246,42 +247,45 @@ class DistanceMatrix extends Component {
     }
 
     return (
-      <div id="distance_matrix">
-        <div>DIMENSIONS</div>
-        <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
-        <div>COLOR BY</div>
-        <Dropdown change={id => this.changeDropdown(id, 'distances')} options={distances} />
-        <div>SORT BY</div>
-        <Dropdown change={id => {
-          this.changeDropdown(id, 'sortBy')
-          this.setState({
-            highlightRegion: {
-              x: 0,
-              y: 0,
-              width: 0,
-              height: 0
-            },
-            highlightedSentences: []
-          })
-        }} options={sortBy} />
-        <br/>
-        <div onMouseDown={e => {
-          highlightRegion.x = e.clientX - canvasLeft
-          highlightRegion.y = e.clientY - canvasTop
-          highlightRegion.width = 0
-          highlightRegion.height = 0
+      <div class="inset_visualization" id="distance_matrix">
+        <div style={`height:${vizHeight}px`} class="buffer"></div>
+        <div style={`height:${vizHeight}px`} class="contents">
+          <div>DIMENSIONS</div>
+          <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
+          <div>COLOR BY</div>
+          <Dropdown change={id => this.changeDropdown(id, 'distances')} options={distances} />
+          <div>SORT BY</div>
+          <Dropdown change={id => {
+            this.changeDropdown(id, 'sortBy')
+            this.setState({
+              highlightRegion: {
+                x: 0,
+                y: 0,
+                width: 0,
+                height: 0
+              },
+              highlightedSentences: []
+            })
+          }} options={sortBy} />
+          <br/>
+          <div onMouseDown={e => {
+            highlightRegion.x = e.clientX - canvasLeft
+            highlightRegion.y = e.clientY - canvasTop
+            highlightRegion.width = 0
+            highlightRegion.height = 0
 
-          this.setState({ 
-            dragging: true,
-            highlightRegion
-          })
-        }} style={`width:${canvasSize}px;height:${canvasSize}px`} class="canvas_wrapper">
-          <canvas id="canvas"></canvas>
-          <div style={`width:${highlightRegion.width}px;height:${highlightRegion.height}px;top:${highlightRegion.y}px;left:${highlightRegion.x}px;`} class="highlight-region"></div>
-        </div>
-        <div id="highlighted_sentences">
-          <div class="label">HIGHLIGHTED SENTENCES</div>
-          {sentences}
+            this.setState({ 
+              dragging: true,
+              highlightRegion
+            })
+          }} style={`width:${canvasSize}px;height:${canvasSize}px`} class="canvas_wrapper">
+            <canvas id="canvas"></canvas>
+            <div style={`width:${highlightRegion.width}px;height:${highlightRegion.height}px;top:${highlightRegion.y}px;left:${highlightRegion.x}px;`} class="highlight-region"></div>
+          </div>
+          <div id="highlighted_sentences">
+            <div class="label">HIGHLIGHTED SENTENCES</div>
+            {sentences}
+          </div>
         </div>
       </div>
     )
