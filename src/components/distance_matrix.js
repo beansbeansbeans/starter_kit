@@ -4,6 +4,7 @@ const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors,
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 import { getData, getShader } from '../api'
+import { debounce } from 'underscore'
 
 const vizHeight = 650
 const innerContentsWidth = 960
@@ -87,7 +88,7 @@ class DistanceMatrix extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['changeDropdown', 'draw'])
+    bindAll(this, ['changeDropdown', 'draw', 'calculateSize'])
 
     let files = []
 
@@ -138,13 +139,7 @@ class DistanceMatrix extends Component {
 
       max.wasserstein['100'] = 0.025 // otherwise everything is super close
 
-      this.setState({ data, max, canvasSize }, () => {
-        let rect = document.querySelector("canvas").getBoundingClientRect()
-        this.setState({
-          canvasLeft: rect.left,
-          canvasTop: rect.top
-        }, this.draw)
-      })
+      this.setState({ data, max, canvasSize }, this.draw)
     })
 
     window.addEventListener("mousemove", e => {
@@ -161,30 +156,35 @@ class DistanceMatrix extends Component {
     })
 
     window.addEventListener("mouseup", e => {
-      let { x, y, width, height } = this.state.highlightRegion
+      if(this.state.dragging) {
+        let { x, y, width, height } = this.state.highlightRegion
 
-      let indices = []
-      for(let i=0; i<width; i++) {
-        indices.push(x + i)
-      }
+        let indices = []
+        for(let i=0; i<width; i++) {
+          indices.push(x + i)
+        }
 
-      for(let i=0; i<height; i++) {
-        if(indices.indexOf(y + i) === -1) indices.push(y + i)
-      }
+        for(let i=0; i<height; i++) {
+          if(indices.indexOf(y + i) === -1) indices.push(y + i)
+        }
 
-      this.setState({ 
-        dragging: false,
-        highlightedSentences: indices.map(index => {
-          return {
-            index,
-            sentence: sentences[index].sentence
-          }
+        this.setState({ 
+          dragging: false,
+          highlightedSentences: indices.map(index => {
+            return {
+              index,
+              sentence: sentences[index].sentence
+            }
+          })
         })
-      })
+      }
     })
+
+    window.addEventListener("scroll", debounce(this.calculateSize, 200))
   }
 
   componentDidMount() {
+    this.calculateSize()
     this.draw()
   }
 
@@ -224,6 +224,15 @@ class DistanceMatrix extends Component {
     }
   }
 
+  calculateSize() {
+    let rect = document.querySelector("#distance_matrix #canvas").getBoundingClientRect()
+
+    this.setState({
+      canvasLeft: Math.round(rect.left),
+      canvasTop: Math.round(rect.top)
+    })
+  }
+
   changeDropdown(id, key) {
     this.setState({
       [key]: this.state[key].map(d => {
@@ -253,7 +262,7 @@ class DistanceMatrix extends Component {
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
-            <div class="left">
+            <div style={`width:${canvasSize}px`} class="left">
               <h4 class="side-header">Distance Matrix</h4>
               <div class="dropdown-wrapper">
                 <h4 class="label">Dimensions</h4>
@@ -294,7 +303,7 @@ class DistanceMatrix extends Component {
                 <div style={`width:${highlightRegion.width}px;height:${highlightRegion.height}px;top:${highlightRegion.y}px;left:${highlightRegion.x}px;`} class="highlight-region"></div>
               </div>
             </div>
-            <div id="highlighted_sentences">
+            <div style={`width:calc(100% - ${canvasSize}px)`} id="highlighted_sentences">
               <h4 class="side-header">HIGHLIGHTED SENTENCES</h4>
               {sentences}
             </div>
