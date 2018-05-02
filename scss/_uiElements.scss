@@ -14,6 +14,10 @@ button {
   select {
     margin-left: 6px;
   }
+  h4 {
+    font-size: 10px;
+    text-transform: uppercase;
+  }
 }
 
 .inset_visualization {
@@ -32,6 +36,11 @@ button {
     .inner-contents {
       margin-left: auto;
       margin-right: auto;
+      height: 100%;
+      .side-header {
+        padding-top: 15px;
+        font-size: 12px;
+      }
     }
   }
 }

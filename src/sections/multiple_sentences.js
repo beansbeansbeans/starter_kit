@@ -5,7 +5,7 @@ import DistanceMatrix from '../components/distance_matrix'
 
 class MultipleSentences extends Component {
   componentWillMount() {
-    let { data } = this.props
+
   }
 
   render({ data }) {

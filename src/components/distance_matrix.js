@@ -6,6 +6,8 @@ const random = randomModule.random(42)
 import { getData, getShader } from '../api'
 
 const vizHeight = 650
+const innerContentsWidth = 960
+
 let distances = ['euclidean', 'manhattan', 'wasserstein']
 let sortBy = [{
   label: 'euclidean',
@@ -250,41 +252,52 @@ class DistanceMatrix extends Component {
       <div class="inset_visualization" id="distance_matrix">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
-          <div>DIMENSIONS</div>
-          <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
-          <div>COLOR BY</div>
-          <Dropdown change={id => this.changeDropdown(id, 'distances')} options={distances} />
-          <div>SORT BY</div>
-          <Dropdown change={id => {
-            this.changeDropdown(id, 'sortBy')
-            this.setState({
-              highlightRegion: {
-                x: 0,
-                y: 0,
-                width: 0,
-                height: 0
-              },
-              highlightedSentences: []
-            })
-          }} options={sortBy} />
-          <br/>
-          <div onMouseDown={e => {
-            highlightRegion.x = e.clientX - canvasLeft
-            highlightRegion.y = e.clientY - canvasTop
-            highlightRegion.width = 0
-            highlightRegion.height = 0
+          <div style={`width:${innerContentsWidth}px`} class="inner-contents">
+            <div class="left">
+              <h4 class="side-header">Distance Matrix</h4>
+              <div class="dropdown-wrapper">
+                <h4 class="label">Dimensions</h4>
+                <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
+              </div>
+              <div class="dropdown-wrapper">
+                <h4 class="label">Color by</h4>
+                <Dropdown change={id => this.changeDropdown(id, 'distances')} options={distances} />
+              </div>
+              <div class="dropdown-wrapper">
+                <h4 class="label">Sort by</h4>
+                <Dropdown change={id => {
+                  this.changeDropdown(id, 'sortBy')
+                  this.setState({
+                    highlightRegion: {
+                      x: 0,
+                      y: 0,
+                      width: 0,
+                      height: 0
+                    },
+                    highlightedSentences: []
+                  })
+                }} options={sortBy} />
+              </div>
+              <br/>
+              <div onMouseDown={e => {
+                highlightRegion.x = e.clientX - canvasLeft
+                highlightRegion.y = e.clientY - canvasTop
+                highlightRegion.width = 0
+                highlightRegion.height = 0
 
-            this.setState({ 
-              dragging: true,
-              highlightRegion
-            })
-          }} style={`width:${canvasSize}px;height:${canvasSize}px`} class="canvas_wrapper">
-            <canvas id="canvas"></canvas>
-            <div style={`width:${highlightRegion.width}px;height:${highlightRegion.height}px;top:${highlightRegion.y}px;left:${highlightRegion.x}px;`} class="highlight-region"></div>
-          </div>
-          <div id="highlighted_sentences">
-            <div class="label">HIGHLIGHTED SENTENCES</div>
-            {sentences}
+                this.setState({ 
+                  dragging: true,
+                  highlightRegion
+                })
+              }} style={`width:${canvasSize}px;height:${canvasSize}px`} class="canvas_wrapper">
+                <canvas id="canvas"></canvas>
+                <div style={`width:${highlightRegion.width}px;height:${highlightRegion.height}px;top:${highlightRegion.y}px;left:${highlightRegion.x}px;`} class="highlight-region"></div>
+              </div>
+            </div>
+            <div id="highlighted_sentences">
+              <h4 class="side-header">HIGHLIGHTED SENTENCES</h4>
+              {sentences}
+            </div>
           </div>
         </div>
       </div>

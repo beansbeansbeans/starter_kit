@@ -1,7 +1,11 @@
 #distance_matrix {
   margin: 20px;
+  .dropdown-wrapper {
+    display: inline-block;
+    margin-right: 18px;
+  }
   .canvas_wrapper {
-    margin-top: 20px;
+    margin-top: 5px;
     position: relative;
     .highlight-region {
       position: absolute;
@@ -11,19 +15,19 @@
   canvas {
     pointer-events: none;
   }
-  select {
-    margin-top: 4px;
-    margin-bottom: 18px;
+  .left, #highlighted_sentences {
+    display: inline-block;
+    vertical-align: top;
+  }
+  .inner-contents {
+    padding-bottom: 20px;
   }
   #highlighted_sentences {
-    position: fixed;
-    width: 500px;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    padding: 20px;
+    height: 100%;
     overflow: scroll;
+    padding-left: 40px;
     .label {
+      margin-top: 0;
       font-weight: bold;
       margin-bottom: 20px;
     }

@@ -285,7 +285,7 @@ class EmbeddingSpiral extends Component {
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
             <div style={`width:${controlsWidth * 100}%`} class="controls">
-              <h4>Distance</h4>
+              <h4 class="side-header">Distance</h4>
               <div class="dropdown-wrapper">
                 <h4 class="label">Model</h4>
                 <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
@@ -307,7 +307,7 @@ class EmbeddingSpiral extends Component {
             </div>
             <div style={`width:${(1 - controlsWidth) * 100}%`} class="sentences-wrapper">
               <div class="heading">
-                <h4>Input Sentences</h4>
+                <h4 class="side-header">Input Sentences</h4>
                 <div class="dropdown-wrapper">
                   <h4 class="label">Base</h4>
                   <Dropdown change={id => this.changeDropdown(id, 'sentences')} options={sentences} />
