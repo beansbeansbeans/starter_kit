@@ -23,8 +23,10 @@ class Introduction extends Component {
     return (
       <div class="section-contents">
         <p>This is some background on the problem.</p>
+        <p>Explain the point of the post, which is to demonstrate how different models / distance metrics hold up against our own intuitions about semantic distance.</p>
         <h3>Example</h3>
         <p>Here's where we can introduce the idea of an embedding and how we get from the raw embedding to the visual representation we'll be using in the post.</p>
+        <p>Maybe here we want to list the models we'll be comparing. We can briefly describe each one - why people would prefer this model, some of its known drawbacks, etc.</p>
         <figure>
           <h4>Sentence:</h4>
           <p class="sentence">{`“${example.sentence}”`}</p>

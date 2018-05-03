@@ -40,3 +40,7 @@ app {
   margin-left: auto !important;
   margin-right: auto;
 }
+
+hr:last-of-type {
+  display: none;
+}
