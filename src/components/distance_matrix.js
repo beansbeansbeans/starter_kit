@@ -7,7 +7,7 @@ import { getData, getShader } from '../api'
 import { debounce } from 'underscore'
 import Dropdown from './dropdown'
 
-const vizHeight = 650
+const vizHeight = 725
 const innerContentsWidth = 960
 
 let distances = ['euclidean', 'manhattan', 'wasserstein']
@@ -21,6 +21,23 @@ let sortBy = [{
   id: 'wasserstein',
   perm: [430,222,485,427,54,326,467,239,183,247,64,394,118,476,391,34,44,449,442,484,434,25,390,431,179,379,15,96,453,212,187,193,478,296,408,41,268,52,446,261,340,230,201,487,69,119,458,336,244,388,251,1,451,356,194,59,178,245,235,403,414,156,208,209,316,260,129,397,499,376,144,417,63,418,73,237,233,56,320,404,22,139,323,168,304,439,65,272,428,332,393,74,420,198,475,70,292,479,7,23,231,381,16,20,333,188,369,121,214,267,215,189,470,174,130,377,27,224,436,31,158,368,197,220,441,133,443,396,99,312,406,335,399,163,306,472,143,206,49,106,107,4,17,269,432,450,126,366,175,281,389,53,180,147,412,382,173,71,329,461,284,339,324,357,310,358,407,141,77,465,37,392,385,240,371,256,62,395,148,263,246,82,83,181,474,279,254,57,468,42,293,186,51,353,283,348,123,11,3,359,413,211,489,445,13,355,236,494,483,362,462,68,307,305,109,39,308,88,112,98,167,176,219,398,91,45,419,36,166,115,199,311,300,350,364,328,40,498,226,202,26,380,493,314,117,495,60,46,200,225,325,303,81,154,145,400,402,190,257,33,136,253,151,152,285,18,238,28,80,411,248,490,192,334,61,444,410,423,66,79,486,337,297,223,67,162,92,111,140,351,195,102,146,327,471,264,421,455,477,14,435,317,482,331,84,301,302,21,127,6,338,50,205,466,19,155,216,229,491,276,473,349,330,322,405,116,12,384,170,282,85,75,343,213,361,387,128,274,457,345,367,492,341,93,290,424,55,425,32,459,207,241,142,415,452,365,97,496,124,137,255,89,273,204,30,172,165,469,295,463,134,0,289,29,373,108,122,347,280,346,252,221,294,275,259,286,191,278,160,447,480,101,35,138,309,454,203,243,448,150,177,360,386,299,132,104,47,86,409,497,370,354,5,131,429,456,184,422,9,161,218,113,43,265,228,438,125,440,270,352,287,182,72,103,262,135,344,232,164,460,258,401,437,321,76,372,114,313,378,58,271,375,242,488,288,157,217,315,234,171,433,95,416,110,426,266,249,87,153,363,318,210,149,464,94,291,90,169,196,10,38,48,185,342,319,227,8,374,277,298,24,120,481,105,2,383,78,159,100,250]
 }]
+
+let presets = [ // dummy
+  {
+    model: 'skip_thought',
+    distance: 'euclidean',
+    topLeft: [170, 170],
+    bottomRight: [110, 110],
+    description: "These sentences all have this unusual thing in common."
+  },
+  {
+    model: 'skip_thought',
+    distance: 'wasserstein',
+    topLeft: [170, 170],
+    bottomRight: [110, 110],
+    description: "These sentences all have this unusual thing in common."
+  }
+]
 
 let dimensions = ['100'], sentences = []
 
@@ -53,6 +70,10 @@ class DistanceMatrix extends Component {
           d.active = true
         }
         d.id = d.label
+        return d
+      }),
+      presets: presets.map(d => {
+        d.active = false
         return d
       }),
       data,
@@ -226,7 +247,7 @@ class DistanceMatrix extends Component {
     }, this.draw)
   }
 
-  render({}, { models, distances, sortBy, dimensions, data, highlightRegion, canvasSize, canvasLeft, canvasTop, highlightedSentences}) {
+  render({}, { models, distances, sortBy, dimensions, data, highlightRegion, canvasSize, canvasLeft, canvasTop, highlightedSentences, presets }) {
 
     let sentences = null
 
@@ -267,6 +288,33 @@ class DistanceMatrix extends Component {
                 }} options={sortBy} />
               </div>
               <br/>
+              <div class="presets">
+                <h4 class="label">Presets</h4>
+                <div class="preset-options">{presets.map((d, i) => {
+                  return <div onClick={e => {
+                    let newPresets = presets.map((p, pi) => {
+                      if(pi === i) {
+                        p.active = !d.active
+                      } else {
+                        p.active = false
+                      }
+                      return p
+                    })
+
+                    let newState = { presets: newPresets }
+
+                    let activePreset = newPresets.find(d => d.active)
+
+                    if(activePreset) {
+                      this.changeDropdown(activePreset.distance, 'sortBy')
+                      this.changeDropdown(activePreset.distance, 'distances')
+                      this.changeDropdown(activePreset.model, 'models')
+                    }
+
+                    this.setState(newState)
+                  }} data-active={d.active} class="preset">{i}</div>
+                })}</div>
+              </div>
               <div onMouseDown={e => {
                 highlightRegion.x = e.clientX - canvasLeft
                 highlightRegion.y = e.clientY - canvasTop

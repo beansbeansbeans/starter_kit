@@ -8,7 +8,7 @@ import { line } from 'd3-shape'
 import { select } from 'd3-selection'
 import Dropdown from './dropdown'
 
-const vizHeight = 620
+const vizHeight = 650
 const innerContentsWidth = 960
 const controlsWidth = 0.3
 const canvasRenderSize = 75
