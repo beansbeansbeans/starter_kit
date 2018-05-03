@@ -112,6 +112,14 @@ const viewportToLocal = (width, height) => arr =>
 //   return t
 // }
 
+function createDropdown(d, i) {
+  return {
+    active: i === 0,
+    id: d,
+    label: d
+  }
+}
+
 function shuffle(array) {
   let counter = array.length;
 
@@ -190,6 +198,8 @@ export default {
   createInterpolator,
 
   wrapIterator,
+
+  createDropdown,
 
   // intersectTriangle,
 

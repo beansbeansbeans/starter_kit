@@ -1,11 +1,12 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
-const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional, degreesToRadians, trim } = helpers
+const { roundDown, bindAll, removeDuplicates, wrapIterator, shuffle, subVectors, dotProduct, vectorLength, manhattanLength, permute, fractional, degreesToRadians, trim, createDropdown } = helpers
 import randomModule from '../helpers/random'
 const random = randomModule.random(42)
 import { getEricData, getShader } from '../api'
 import { line } from 'd3-shape'
 import { select } from 'd3-selection'
+import Dropdown from './dropdown'
 
 const vizHeight = 620
 const innerContentsWidth = 960
@@ -19,28 +20,6 @@ const manipulations = ['dropout', 'forward', 'shuffle']
 let graphHeight = 100
 let graphXIncrement = 0
 let headingHeight = 0
-
-class Dropdown extends Component {
-  render({ options, change }) {
-    return (
-      <select onChange={e => change(e.target.value)} class="options">
-        {options.map(d => {
-          return <option 
-            value={d.id}
-            selected={d.active} class="option">{d.label}</option>
-        })}
-      </select>
-    )
-  }
-}
-
-function createDropdown(d, i) {
-  return {
-    active: i === 0,
-    id: d,
-    label: d
-  }
-}
 
 class EmbeddingSpiral extends Component {
   constructor(props) {
