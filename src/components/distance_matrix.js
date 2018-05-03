@@ -26,8 +26,8 @@ let presets = [ // dummy
   {
     model: 'skip_thought',
     distance: 'euclidean',
-    topLeft: [170, 170],
-    bottomRight: [110, 110],
+    topLeft: [170, 260],
+    bottomRight: [184, 457],
     description: "These sentences all have this unusual thing in common."
   },
   {
@@ -88,7 +88,7 @@ class DistanceMatrix extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['changeDropdown', 'draw', 'calculateSize'])
+    bindAll(this, ['changeDropdown', 'draw', 'calculateSize', 'updateHighlightedSentences'])
 
     let files = []
 
@@ -157,30 +157,34 @@ class DistanceMatrix extends Component {
 
     window.addEventListener("mouseup", e => {
       if(this.state.dragging) {
-        let { x, y, width, height } = this.state.highlightRegion
-
-        let indices = []
-        for(let i=0; i<width; i++) {
-          indices.push(x + i)
-        }
-
-        for(let i=0; i<height; i++) {
-          if(indices.indexOf(y + i) === -1) indices.push(y + i)
-        }
-
-        this.setState({ 
-          dragging: false,
-          highlightedSentences: indices.map(index => {
-            return {
-              index,
-              sentence: sentences[index].sentence
-            }
-          })
-        })
+        this.updateHighlightedSentences()
       }
     })
 
     window.addEventListener("scroll", debounce(this.calculateSize, 200))
+  }
+
+  updateHighlightedSentences() {
+    let { x, y, width, height } = this.state.highlightRegion
+
+    let indices = []
+    for(let i=0; i<width; i++) {
+      indices.push(x + i)
+    }
+
+    for(let i=0; i<height; i++) {
+      if(indices.indexOf(y + i) === -1) indices.push(y + i)
+    }
+
+    this.setState({ 
+      dragging: false,
+      highlightedSentences: indices.map(index => {
+        return {
+          index,
+          sentence: sentences[index].sentence
+        }
+      })
+    })
   }
 
   componentDidMount() {
@@ -277,12 +281,7 @@ class DistanceMatrix extends Component {
                 <Dropdown change={id => {
                   this.changeDropdown(id, 'sortBy')
                   this.setState({
-                    highlightRegion: {
-                      x: 0,
-                      y: 0,
-                      width: 0,
-                      height: 0
-                    },
+                    highlightRegion: { x: 0, y: 0, width: 0, height: 0 },
                     highlightedSentences: []
                   })
                 }} options={sortBy} />
@@ -309,9 +308,23 @@ class DistanceMatrix extends Component {
                       this.changeDropdown(activePreset.distance, 'sortBy')
                       this.changeDropdown(activePreset.distance, 'distances')
                       this.changeDropdown(activePreset.model, 'models')
-                    }
 
-                    this.setState(newState)
+                      let { perm } = sortBy.find(d => d.id === activePreset.distance)
+
+                      this.setState(Object.assign({
+                        highlightRegion: {
+                          x: perm.indexOf(activePreset.topLeft[0]),
+                          y: perm.indexOf(activePreset.topLeft[1]),
+                          width: perm.indexOf(activePreset.bottomRight[0]) - perm.indexOf(activePreset.topLeft[0]),
+                          height: perm.indexOf(activePreset.bottomRight[1]) - perm.indexOf(activePreset.topLeft[1])                          
+                        }
+                      }, newState), this.updateHighlightedSentences)
+                    } else {
+                      this.setState(Object.assign({
+                        highlightRegion: { x: 0, y: 0, width: 0, height: 0 },
+                        highlightedSentences: []
+                      }, newState))
+                    }
                   }} data-active={d.active} class="preset">{i}</div>
                 })}</div>
               </div>
