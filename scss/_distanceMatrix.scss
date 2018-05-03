@@ -53,7 +53,18 @@
     overflow: scroll;
     padding-left: 50px;
     h4 {
-      margin-bottom: 25px;
+      margin-bottom: 5px;
+    }
+    .preset-description {
+      font-size: 12px;
+      span {
+        margin-right: 5px;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+    }
+    .sentences-wrapper {
+      margin-top: 25px;
     }
     .sentence {
       margin-bottom: 15px;

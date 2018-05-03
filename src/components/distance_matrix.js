@@ -261,6 +261,14 @@ class DistanceMatrix extends Component {
       })
     }
 
+    let presetDescription = null
+
+    let activePresetIndex = presets.findIndex(d => d.active)
+
+    if(activePresetIndex > -1) {
+      presetDescription = <div class="preset-description"><span>{`Preset ${activePresetIndex}:`}</span>{`${presets[activePresetIndex].description}`}</div>
+    }
+
     return (
       <div class="inset_visualization" id="distance_matrix">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
@@ -345,7 +353,8 @@ class DistanceMatrix extends Component {
             </div>
             <div style={`width:calc(100% - ${canvasSize}px)`} id="highlighted_sentences">
               <h4 class="side-header">HIGHLIGHTED SENTENCES</h4>
-              {sentences}
+              {presetDescription}
+              <div class="sentences-wrapper">{sentences}</div>
             </div>
           </div>
         </div>
