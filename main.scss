@@ -39,8 +39,9 @@ app {
 .section {
   margin-left: auto !important;
   margin-right: auto;
-}
-
-hr:last-of-type {
-  display: none;
+  &:last-of-type {
+    hr {
+      display: none;
+    }
+  }
 }
