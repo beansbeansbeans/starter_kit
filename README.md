@@ -11,7 +11,9 @@ embedding spiral implementation steps
 
 distance matrix next steps
 
-- render a rectangle that moves with the user's cursor
+- add option of different corpora, each with different models available
+- move presets into corpora
+- load in guns + glove data
 
 ---
 

@@ -10,8 +10,14 @@ import Dropdown from './dropdown'
 const vizHeight = 725
 const innerContentsWidth = 960
 
+let corpora = [{
+  label: 'movies',
+  models: ['skip_thought']
+}, {
+  label: 'guns',
+  models: ['glove']
+}]
 let distances = ['euclidean', 'manhattan', 'wasserstein']
-let models = ['skip_thought']
 let sortBy = [{
   label: 'euclidean',
   id: 'euclidean',
@@ -62,8 +68,16 @@ class DistanceMatrix extends Component {
       max,
       highlightedSentences: [],
       dragging: false,
+      corpora: corpora.map((d, i) => {
+        return {
+          active: i === 0,
+          id: d.label,
+          label: d.label,
+          models: d.models
+        }
+      }),
       dimensions: dimensions.map(createDropdown),
-      models: models.map(createDropdown),
+      models: corpora[0].models.map(createDropdown),
       distances: distances.map(createDropdown),
       sortBy: sortBy.map((d, i) => {
         if(i === 0) {
@@ -251,7 +265,7 @@ class DistanceMatrix extends Component {
     }, this.draw)
   }
 
-  render({}, { models, distances, sortBy, dimensions, data, highlightRegion, canvasSize, canvasLeft, canvasTop, highlightedSentences, presets }) {
+  render({}, { models, distances, sortBy, dimensions, data, highlightRegion, canvasSize, canvasLeft, canvasTop, highlightedSentences, presets, corpora }) {
 
     let sentences = null
 
@@ -276,6 +290,16 @@ class DistanceMatrix extends Component {
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
             <div style={`width:${canvasSize}px`} class="left">
               <h4 class="side-header">Distance Matrix</h4>
+              <div class="dropdown-wrapper">
+                <h4 class="label">Corpora</h4>
+                <Dropdown change={id => {
+                  let newActiveCorpora = corpora.find(d => d.id === id)
+                  this.changeDropdown(id, 'corpora')
+                  this.setState({
+                    models: newActiveCorpora.models.map(createDropdown)
+                  })
+                }} options={corpora} />
+              </div>
               <div class="dropdown-wrapper">
                 <h4 class="label">Model</h4>
                 <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
