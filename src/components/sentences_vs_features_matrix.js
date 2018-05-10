@@ -25,8 +25,6 @@ class SentencesVsFeaturesMatrix extends Component {
   draw() {
     let canvas = this.root.querySelector("canvas")
 
-    console.log(this.sentences)
-
     this.ctx = canvas.getContext('2d')
     let width = this.sentences.length * cellSize
     let height = this.sentences[0].encoding.length * cellSize
@@ -96,14 +94,14 @@ class SentencesVsFeaturesMatrix extends Component {
       })
 
       this.draw()
-      this.calculateSize()
+      setTimeout(this.calculateSize, 0)
     })
 
     window.addEventListener("mousemove", e => {
       if(!this.sentences) return
 
       let left = e.clientX - this.state.canvasLeft
-      let index = Math.round(left / cellSize)
+      let index = Math.floor(left / cellSize)
 
       this.setState({ sentence: index > 0 && index < this.sentences.length ? index : -1 })
     })
@@ -111,14 +109,16 @@ class SentencesVsFeaturesMatrix extends Component {
     window.addEventListener("scroll", debounce(this.calculateSize, 200))
   }
 
-  render({}, { sentence, canvasWidth }) {
+  render({}, { sentence, canvasWidth, canvasHeight }) {
+
     return (
       <div ref={ c => this.root=c } class="inset_visualization" id="sentences_vs_features_matrix">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
-            <div class="canvas-wrapper">
+            <div style={`width:${canvasWidth}px;`} class="canvas-wrapper">
               <canvas></canvas>
+              <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
             </div>
             <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? this.sentences[sentence].sentence : ''}</div>
           </div>

@@ -9,9 +9,22 @@
     margin-top: 15px;
     line-height: 1.75;
   }
-  .active-sentence, canvas {
+  .active-sentence, .canvas-wrapper {
     position: relative;
     left: 50%;
     transform: translateX(-50%);    
+  }
+  .canvas-wrapper {
+    position: relative;
+  }
+  .mask {
+    position: absolute;
+    top: -1px;
+    width: 2px;
+    border: solid 1px #222;
+    box-sizing: content-box;
+    &:not([data-active="true"]) {
+      display: none;
+    }
   }
 }

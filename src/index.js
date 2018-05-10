@@ -38,10 +38,10 @@ class App extends Component {
           <h1>Sentence Embeddings</h1>
         </div>
       </div>
-{/*      <Introduction data={data} title="Introduction" />
+      <Introduction data={data} title="Introduction" />
       <ManipulateSentence data={data} title="Manipulating Sentences" />
       <MultipleSentences data={data} title="Comparing Sentences" />
-*/}      <SentencesVsFeatures data={data} title="Extracting Meaning From Features" />
+      <SentencesVsFeatures data={data} title="Extracting Meaning From Features" />
       <Conclusion data={data} title="Conclusion" />
     </dt-article>
   }
