@@ -2,6 +2,7 @@ import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 import { getData, getShader } from '../api'
 const { bindAll } = helpers
+import { interpolateRdGy } from 'd3-scale-chromatic'
 
 const vizHeight = 600
 const innerContentsWidth = 900
@@ -44,10 +45,15 @@ class SentencesVsFeaturesMatrix extends Component {
       }
     }
 
+    min += 0.2
+    max -= 0.2
+
     for(let i=0; i<this.sentences.length; i++) {
       for(let row=0; row<this.sentences[0].encoding.length; row++) {
         let val = this.sentences[i].encoding[row]
-        this.ctx.fillStyle = `rgba(0, 0, 0, ${(val - min) / (max - min)})`
+        val = (val - min) / (max - min)
+
+        this.ctx.fillStyle = interpolateRdGy(val)
         this.ctx.fillRect(i * cellSize, row * cellSize, cellSize, cellSize)
       }
     }
