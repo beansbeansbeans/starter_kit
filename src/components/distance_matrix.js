@@ -114,6 +114,8 @@ class DistanceMatrix extends Component {
 
     files.push('distance_matrix_sentences')
 
+    console.log(files)
+
     Promise.all(files.map(getData)).then(resp => {
       sentences = resp[files.length - 1]
 
