@@ -1,7 +1,7 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 import { getData, getShader } from '../api'
-const { bindAll } = helpers
+const { bindAll, permute } = helpers
 import { interpolateRdGy } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
 
@@ -51,6 +51,8 @@ class SentencesVsFeaturesMatrix extends Component {
       }
     }
 
+    console.log(min, max)
+
     min += 0.2
     max -= 0.2
 
@@ -79,8 +81,17 @@ class SentencesVsFeaturesMatrix extends Component {
   componentWillMount() {
     bindAll(this, ['draw', 'calculateSize'])
 
-    Promise.all(['didion_encodings_pca_500'].map(getData)).then(resp => {
-      this.sentences = resp[0]
+    Promise.all(['didion_encodings_pca_500', 'didion_tsne'].map(getData)).then(resp => {
+      let permArray = []
+      for(let i=0; i<resp[1].length; i++) permArray.push(i)
+
+      permArray.sort((a, b) => resp[1][a] - resp[1][b])
+
+      this.sentences = resp[0].map(d => {
+        d.encoding = permute(d.encoding, permArray)
+        return d
+      })
+
       this.draw()
       this.calculateSize()
     })
