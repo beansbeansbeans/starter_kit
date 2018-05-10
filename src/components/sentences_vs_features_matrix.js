@@ -3,23 +3,29 @@ import helpers from '../helpers/helpers'
 import { getData, getShader } from '../api'
 const { bindAll } = helpers
 import { interpolateRdGy } from 'd3-scale-chromatic'
+import { debounce } from 'underscore'
 
 const vizHeight = 600
 const innerContentsWidth = 900
+let cellSize = 2
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
     super(props)
 
-    this.setState({})
+    this.setState({
+      canvasLeft: 0,
+      canvasTop: 0,
+      canvasWidth: 0,
+      canvasHeight: 0,
+      sentence: -1
+    })
   }
 
   draw() {
     let canvas = this.root.querySelector("canvas")
 
     console.log(this.sentences)
-
-    let cellSize = 2
 
     this.ctx = canvas.getContext('2d')
     let width = this.sentences.length * cellSize
@@ -59,16 +65,39 @@ class SentencesVsFeaturesMatrix extends Component {
     }
   }
 
+  calculateSize() {
+    let rect = this.root.querySelector("canvas").getBoundingClientRect()
+
+    this.setState({
+      canvasLeft: Math.round(rect.left),
+      canvasTop: Math.round(rect.top),
+      canvasWidth: rect.width,
+      canvasHeight: rect.height
+    })
+  }
+
   componentWillMount() {
-    bindAll(this, ['draw'])
+    bindAll(this, ['draw', 'calculateSize'])
 
     Promise.all(['didion_encodings_pca_500'].map(getData)).then(resp => {
       this.sentences = resp[0]
       this.draw()
+      this.calculateSize()
     })
+
+    window.addEventListener("mousemove", e => {
+      if(!this.sentences) return
+
+      let left = e.clientX - this.state.canvasLeft
+      let index = Math.round(left / cellSize)
+
+      this.setState({ sentence: index > 0 && index < this.sentences.length ? index : -1 })
+    })
+
+    window.addEventListener("scroll", debounce(this.calculateSize, 200))
   }
 
-  render() {
+  render({}, { sentence, canvasWidth }) {
     return (
       <div ref={ c => this.root=c } class="inset_visualization" id="sentences_vs_features_matrix">
         <div style={`height:${vizHeight}px`} class="buffer"></div>
@@ -77,6 +106,7 @@ class SentencesVsFeaturesMatrix extends Component {
             <div class="canvas-wrapper">
               <canvas></canvas>
             </div>
+            <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? this.sentences[sentence].sentence : ''}</div>
           </div>
         </div>
       </div>
