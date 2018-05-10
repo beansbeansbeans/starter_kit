@@ -54,8 +54,8 @@ class SentencesVsFeaturesMatrix extends Component {
     // min += 0.2
     // max -= 0.2
 
-    min = -0.4
-    max = 0.4
+    min = -0.35
+    max = 0.35
 
     for(let i=0; i<this.sentences.length; i++) {
       for(let row=0; row<this.sentences[0].encoding.length; row++) {
