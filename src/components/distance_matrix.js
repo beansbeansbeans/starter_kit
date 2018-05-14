@@ -86,7 +86,7 @@ class DistanceMatrix extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['changeDropdown', 'draw', 'calculateSize', 'updateHighlightedSentences'])
+    bindAll(this, ['changeDropdown', 'draw', 'calculateSize', 'updateHighlightedSentences', 'resetHighlighted'])
 
     let files = []
 
@@ -217,6 +217,13 @@ class DistanceMatrix extends Component {
     this.calculateSize()
   }
 
+  resetHighlighted() {
+    this.setState({
+      highlightRegion: { x: 0, y: 0, width: 0, height: 0 },
+      highlightedSentences: []
+    })
+  }
+
   draw() {
     let { data, max, dimensions, distances, sortBy, models, corpora } = this.state
     let activeCorpus = corpora.find(d => d.active).label
@@ -264,7 +271,7 @@ class DistanceMatrix extends Component {
     })
   }
 
-  changeDropdown(id, key) {
+  changeDropdown(id, key, reset = true) {
     this.setState({
       [key]: this.state[key].map(d => {
         if(d.id == id) {
@@ -276,6 +283,8 @@ class DistanceMatrix extends Component {
         return d
       })
     }, this.draw)
+
+    if(reset) this.resetHighlighted()
   }
 
   render({}, { models, distances, sortBy, dimensions, data, highlightRegion, canvasSize, canvasLeft, canvasTop, highlightedSentences, presets, corpora }) {
@@ -313,17 +322,11 @@ class DistanceMatrix extends Component {
               </div>
               <div class="dropdown-wrapper">
                 <h4 class="label">Color</h4>
-                <Dropdown change={id => this.changeDropdown(id, 'distances')} options={distances} />
+                <Dropdown change={id => this.changeDropdown(id, 'distances', false)} options={distances} />
               </div>
               <div class="dropdown-wrapper">
                 <h4 class="label">Sort</h4>
-                <Dropdown change={id => {
-                  this.changeDropdown(id, 'sortBy')
-                  this.setState({
-                    highlightRegion: { x: 0, y: 0, width: 0, height: 0 },
-                    highlightedSentences: []
-                  })
-                }} options={sortBy} />
+                <Dropdown change={id => this.changeDropdown(id, 'sortBy')} options={sortBy} />
               </div>
               <br/>
 {/*              <div class="presets">
