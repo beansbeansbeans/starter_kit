@@ -184,15 +184,22 @@ class DistanceMatrix extends Component {
   }
 
   updateHighlightedSentences() {
-    let { x, y, width, height } = this.state.highlightRegion
+    let { data, max, dimensions, distances, sortBy, models, corpora, highlightRegion } = this.state
+    let { x, y, width, height } = highlightRegion
+
+    let activeCorpus = corpora.find(d => d.active).label
+    let activeDim = dimensions.find(d => d.active).label
+    let activeModel = models.find(d => d.active).label
+    let activeSortBy = sortBy.find(d => d.active).label
+    let perm = data[activeCorpus][activeModel][activeSortBy][`${activeDim}_perm`]
 
     let indices = []
     for(let i=0; i<width; i++) {
-      indices.push(x + i)
+      indices.push(perm[x + i])
     }
 
     for(let i=0; i<height; i++) {
-      if(indices.indexOf(y + i) === -1) indices.push(y + i)
+      if(indices.indexOf(perm[y + i]) === -1) indices.push(perm[y + i])
     }
 
     this.setState({ 
