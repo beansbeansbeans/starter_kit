@@ -14,7 +14,7 @@ const canvasSize = 500
 let corpora = ['movies', 'guns']
 let dimensions = [100]
 let distances = ['euclidean', 'cosine', 'emd-norm', 'minkowski-10']
-let models = ['glove', 'doc2vec', 'infer-sent']
+let models = ['glove', 'doc2vec', 'infer-sent', 'quick-thought']
 
 let presets = [ // dummy
   {
