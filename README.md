@@ -35,7 +35,7 @@ Resources:
 library("rjson")
 library('seriation')
 
-json_file <- "/Users/annyuan/Desktop/DISTILL_DATA/ann_dist_matrix/movies/glove/processedDistance_pca-100_emd-norm.json"
+json_file <- "/Users/annyuan/Desktop/DISTILL_DATA/ann_dist_matrix/movies/infer-sent/processedDistance_pca-100_cosine.json"
 json_data <- fromJSON(file=json_file)
 mat <- matrix(c(json_data), nrow=500)
 customDist = as.dist(mat)
