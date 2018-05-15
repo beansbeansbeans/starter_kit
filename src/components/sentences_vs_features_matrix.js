@@ -37,13 +37,13 @@ class SentencesVsFeaturesMatrix extends Component {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
-    let sentences = data[activeStory][activeModel][activeDimension]
+    let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
 
     let canvas = this.root.querySelector("canvas")
 
     this.ctx = canvas.getContext('2d')
-    let width = sentences.length * cellSize
-    let naturalHeight = sentences[0].encoding.length * cellSize
+    let width = embeddings.length * cellSize
+    let naturalHeight = embeddings[0].encoding.length * cellSize
     let height = Math.min(naturalHeight, maxCanvasHeight)
     let cellWidth = cellSize
     let cellHeight = (height / naturalHeight) * cellSize
@@ -56,29 +56,9 @@ class SentencesVsFeaturesMatrix extends Component {
 
     this.ctx.scale(2, 2)
 
-    let min = 100, max = -100
-    for(let i=0; i<sentences.length; i++) {
-      let encodings = sentences[i].encoding
-
-      for(let j=0; j<encodings.length; j++) {
-        let val = encodings[j]
-
-        if(val > max) max = val
-        if(val < min) min = val
-      }
-    }
-
-    console.log(min, max)
-
-    // min += 0.2
-    // max -= 0.2
-
-    // min = -0.35
-    // max = 0.35
-
-    for(let i=0; i<sentences.length; i++) {
-      for(let row=0; row<sentences[0].encoding.length; row++) {
-        let val = sentences[i].encoding[row]
+    for(let i=0; i<embeddings.length; i++) {
+      for(let row=0; row<embeddings[0].encoding.length; row++) {
+        let val = embeddings[i].encoding[row]
         val = (val - min) / (max - min)
 
         this.ctx.fillStyle = interpolateRdGy(val)
@@ -131,15 +111,27 @@ class SentencesVsFeaturesMatrix extends Component {
 
             permArray.sort((a, b) => tSnePerm[a] - tSnePerm[b])
 
-            data[s][m][d] = resp[index].map(sent => {
+            let sentences = resp[index].map(sent => {
               sent.encoding = permute(sent.encoding, permArray)
               return sent
             })
+
+            let min = 100, max = -100
+            for(let i=0; i<sentences.length; i++) {
+              let encodings = sentences[i].encoding
+
+              for(let j=0; j<encodings.length; j++) {
+                let val = encodings[j]
+
+                if(val > max) max = val.toFixed(2)
+                if(val < min) min = val.toFixed(2)
+              }
+            }
+
+            data[s][m][d] = { embeddings: sentences, min, max }
           })
         })
       })
-
-      console.log(data)
 
       this.setState({ data })
 
@@ -154,7 +146,7 @@ class SentencesVsFeaturesMatrix extends Component {
       let activeModel = getActiveOption(models)
       let activeStory = getActiveOption(stories)
       let activeDimension = getActiveOption(dimensions)
-      let sentences = data[activeStory][activeModel][activeDimension]
+      let sentences = data[activeStory][activeModel][activeDimension].embeddings
 
       let left = e.clientX - this.state.canvasLeft
       let index = Math.floor(left / cellSize)
@@ -186,11 +178,16 @@ class SentencesVsFeaturesMatrix extends Component {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
-    let sentences, activeSentence
+    let activeSentence, scale
 
     if(Object.keys(data).length) {
-      sentences = data[activeStory][activeModel][activeDimension]
-      activeSentence = <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? sentences[sentence].sentence : ''}</div>
+      let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
+      activeSentence = <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? embeddings[sentence].sentence : ''}</div>
+      scale = <div class="scale-wrapper">
+        <div class="scale-label">{min}</div>
+        <div style={`background-image: linear-gradient(to right, ${interpolateRdGy(0)}, ${interpolateRdGy(0.25)}, ${interpolateRdGy(0.5)}, ${interpolateRdGy(0.75)}, ${interpolateRdGy(1)})`} class="color-bar"></div>
+        <div class="scale-label">{max}</div>
+      </div>
     }
 
     return (
@@ -212,6 +209,7 @@ class SentencesVsFeaturesMatrix extends Component {
                   <h4 class="label">Dimensions</h4>
                   <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
                 </div>
+                {scale}
               </div>
               <canvas></canvas>
               <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
