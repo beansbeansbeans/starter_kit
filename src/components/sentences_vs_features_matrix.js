@@ -6,13 +6,13 @@ import { interpolateRdGy } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
 import Dropdown from './dropdown'
 
-const vizHeight = 1000
+const vizHeight = 750
 const innerContentsWidth = 900
 const maxCanvasHeight = 500
 let cellSize = 1.5
 
 let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
-let dimensions = [100, 500]
+let dimensions = [500, 100]
 let stories = ['didion']
 
 class SentencesVsFeaturesMatrix extends Component {
