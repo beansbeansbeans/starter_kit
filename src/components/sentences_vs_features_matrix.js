@@ -8,6 +8,7 @@ import Dropdown from './dropdown'
 
 const vizHeight = 1000
 const innerContentsWidth = 900
+const maxCanvasHeight = 500
 let cellSize = 1.5
 
 let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
@@ -42,7 +43,10 @@ class SentencesVsFeaturesMatrix extends Component {
 
     this.ctx = canvas.getContext('2d')
     let width = sentences.length * cellSize
-    let height = sentences[0].encoding.length * cellSize
+    let naturalHeight = sentences[0].encoding.length * cellSize
+    let height = Math.min(naturalHeight, maxCanvasHeight)
+    let cellWidth = cellSize
+    let cellHeight = (height / naturalHeight) * cellSize
 
     canvas.width = 2 * width
     canvas.height = 2 * height
@@ -78,7 +82,7 @@ class SentencesVsFeaturesMatrix extends Component {
         val = (val - min) / (max - min)
 
         this.ctx.fillStyle = interpolateRdGy(val)
-        this.ctx.fillRect(i * cellSize, row * cellSize, cellSize, cellSize)
+        this.ctx.fillRect(i * cellWidth, row * cellHeight, cellWidth, cellHeight)
       }
     }
   }
