@@ -6,11 +6,11 @@ import { interpolateRdGy } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
 import Dropdown from './dropdown'
 
-const vizHeight = 600
+const vizHeight = 1000
 const innerContentsWidth = 900
-let cellSize = 2
+let cellSize = 1.5
 
-let models = ['skip-thought']
+let models = ['skip-thought', 'doc2vec']
 let dimensions = [500]
 let stories = ['didion']
 
@@ -84,8 +84,8 @@ class SentencesVsFeaturesMatrix extends Component {
     // min += 0.2
     // max -= 0.2
 
-    min = -0.35
-    max = 0.35
+    // min = -0.35
+    // max = 0.35
 
     for(let i=0; i<sentences.length; i++) {
       for(let row=0; row<sentences[0].encoding.length; row++) {
@@ -187,7 +187,10 @@ class SentencesVsFeaturesMatrix extends Component {
 
         return d
       })
-    }, this.draw)
+    }, () => {
+      this.draw()
+      this.calculateSize()
+    })
   }
 
   render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data }) {

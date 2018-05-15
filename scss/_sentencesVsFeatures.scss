@@ -28,7 +28,7 @@
   .mask {
     position: absolute;
     top: -1px;
-    width: 2px;
+    width: 1.5px;
     border: solid 1px #222;
     box-sizing: content-box;
     &:not([data-active="true"]) {
