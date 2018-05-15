@@ -11,7 +11,7 @@ const innerContentsWidth = 900
 let cellSize = 1.5
 
 let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
-let dimensions = [500]
+let dimensions = [100, 500]
 let stories = ['didion']
 
 class SentencesVsFeaturesMatrix extends Component {
