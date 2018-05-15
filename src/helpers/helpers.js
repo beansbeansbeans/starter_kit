@@ -120,6 +120,10 @@ function createDropdown(d, i) {
   }
 }
 
+function getActiveOption(arr) {
+  return arr.find(d => d.active).label
+}
+
 function shuffle(array) {
   let counter = array.length;
 
@@ -200,6 +204,8 @@ export default {
   wrapIterator,
 
   createDropdown,
+
+  getActiveOption,
 
   // intersectTriangle,
 

@@ -1,7 +1,7 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 import { getData, getShader } from '../api'
-const { bindAll, permute, createDropdown } = helpers
+const { bindAll, permute, createDropdown, getActiveOption } = helpers
 import { interpolateRdGy } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
 import Dropdown from './dropdown'
@@ -13,6 +13,21 @@ let cellSize = 2
 let models = ['skip-thought']
 let dimensions = [500]
 let stories = ['didion']
+
+/*
+data: {
+  didion: {
+    skip-thought: {
+      500: [
+        {
+          sentence: "you sit down to dinner",
+          encoding: [12...] // permuted by t-sne
+        }
+      ]
+    }
+  }
+}
+*/
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
@@ -26,16 +41,23 @@ class SentencesVsFeaturesMatrix extends Component {
       sentence: -1,
       models: models.map(createDropdown),
       dimensions: dimensions.map(createDropdown),
-      stories: stories.map(createDropdown)
+      stories: stories.map(createDropdown),
+      data: {}
     })
   }
 
   draw() {
+    let { models, stories, dimensions, data } = this.state
+    let activeModel = getActiveOption(models)
+    let activeStory = getActiveOption(stories)
+    let activeDimension = getActiveOption(dimensions)
+    let sentences = data[activeStory][activeModel][activeDimension]
+
     let canvas = this.root.querySelector("canvas")
 
     this.ctx = canvas.getContext('2d')
-    let width = this.sentences.length * cellSize
-    let height = this.sentences[0].encoding.length * cellSize
+    let width = sentences.length * cellSize
+    let height = sentences[0].encoding.length * cellSize
 
     canvas.width = 2 * width
     canvas.height = 2 * height
@@ -46,8 +68,8 @@ class SentencesVsFeaturesMatrix extends Component {
     this.ctx.scale(2, 2)
 
     let min = 100, max = -100
-    for(let i=0; i<this.sentences.length; i++) {
-      let encodings = this.sentences[i].encoding
+    for(let i=0; i<sentences.length; i++) {
+      let encodings = sentences[i].encoding
 
       for(let j=0; j<encodings.length; j++) {
         let val = encodings[j]
@@ -65,9 +87,9 @@ class SentencesVsFeaturesMatrix extends Component {
     min = -0.35
     max = 0.35
 
-    for(let i=0; i<this.sentences.length; i++) {
-      for(let row=0; row<this.sentences[0].encoding.length; row++) {
-        let val = this.sentences[i].encoding[row]
+    for(let i=0; i<sentences.length; i++) {
+      for(let row=0; row<sentences[0].encoding.length; row++) {
+        let val = sentences[i].encoding[row]
         val = (val - min) / (max - min)
 
         this.ctx.fillStyle = interpolateRdGy(val)
@@ -91,9 +113,13 @@ class SentencesVsFeaturesMatrix extends Component {
     bindAll(this, ['draw', 'calculateSize', 'changeDropdown'])
 
     let files = []
+    let data = {}
     stories.forEach(s => {
+      data[s] = {}
       models.forEach(m => {
+        data[s][m] = {}
         dimensions.forEach(d => {
+          data[s][m][d] = []
           files.push(`sentences_vs_features/${s}_${m}_${d}`)
           files.push(`sentences_vs_features/${s}_${m}_${d}_tsne`)
         })
@@ -103,27 +129,48 @@ class SentencesVsFeaturesMatrix extends Component {
     console.log(files)
 
     Promise.all(files.map(getData)).then(resp => {
-      let permArray = []
-      for(let i=0; i<resp[1].length; i++) permArray.push(i)
+      stories.forEach((s, si) => {
+        let storyBatchLength = models.length * dimensions.length * 2
+        models.forEach((m, mi) => {
+          let modelBatchLength = dimensions.length * 2
+          dimensions.forEach((d, di) => {
+            let index = si * storyBatchLength + mi * modelBatchLength + di * 2
+            let tSnePerm = resp[index + 1]
 
-      permArray.sort((a, b) => resp[1][a] - resp[1][b])
+            let permArray = []
+            for(let i=0; i<tSnePerm.length; i++) permArray.push(i)
 
-      this.sentences = resp[0].map(d => {
-        d.encoding = permute(d.encoding, permArray)
-        return d
+            permArray.sort((a, b) => tSnePerm[a] - tSnePerm[b])
+
+            data[s][m][d] = resp[index].map(sent => {
+              sent.encoding = permute(sent.encoding, permArray)
+              return sent
+            })
+          })
+        })
       })
+
+      console.log(data)
+
+      this.setState({ data })
 
       this.draw()
       setTimeout(this.calculateSize, 0)
     })
 
     window.addEventListener("mousemove", e => {
-      if(!this.sentences) return
+      let { data, models, stories, dimensions } = this.state
+      if(!Object.keys(data).length) return
+
+      let activeModel = getActiveOption(models)
+      let activeStory = getActiveOption(stories)
+      let activeDimension = getActiveOption(dimensions)
+      let sentences = data[activeStory][activeModel][activeDimension]
 
       let left = e.clientX - this.state.canvasLeft
       let index = Math.floor(left / cellSize)
 
-      this.setState({ sentence: index > 0 && index < this.sentences.length ? index : -1 })
+      this.setState({ sentence: index > 0 && index < sentences.length ? index : -1 })
     })
 
     window.addEventListener("scroll", debounce(this.calculateSize, 200))
@@ -143,7 +190,16 @@ class SentencesVsFeaturesMatrix extends Component {
     }, this.draw)
   }
 
-  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories }) {
+  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data }) {
+    let activeModel = getActiveOption(models)
+    let activeStory = getActiveOption(stories)
+    let activeDimension = getActiveOption(dimensions)
+    let sentences, activeSentence
+
+    if(Object.keys(data).length) {
+      sentences = data[activeStory][activeModel][activeDimension]
+      activeSentence = <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? sentences[sentence].sentence : ''}</div>
+    }
 
     return (
       <div ref={ c => this.root=c } class="inset_visualization" id="sentences_vs_features_matrix">
@@ -168,7 +224,7 @@ class SentencesVsFeaturesMatrix extends Component {
               <canvas></canvas>
               <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
             </div>
-            <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? this.sentences[sentence].sentence : ''}</div>
+            {activeSentence}
           </div>
         </div>
       </div>
