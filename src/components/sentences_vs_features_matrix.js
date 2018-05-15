@@ -11,7 +11,7 @@ const innerContentsWidth = 900
 let cellSize = 2
 
 let models = ['skip-thought']
-let dimensions = [100]
+let dimensions = [500]
 let stories = ['didion']
 
 class SentencesVsFeaturesMatrix extends Component {
@@ -90,7 +90,19 @@ class SentencesVsFeaturesMatrix extends Component {
   componentWillMount() {
     bindAll(this, ['draw', 'calculateSize', 'changeDropdown'])
 
-    Promise.all(['didion_encodings_pca_500', 'didion_tsne'].map(getData)).then(resp => {
+    let files = []
+    stories.forEach(s => {
+      models.forEach(m => {
+        dimensions.forEach(d => {
+          files.push(`sentences_vs_features/${s}_${m}_${d}`)
+          files.push(`sentences_vs_features/${s}_${m}_${d}_tsne`)
+        })
+      })
+    })
+
+    console.log(files)
+
+    Promise.all(files.map(getData)).then(resp => {
       let permArray = []
       for(let i=0; i<resp[1].length; i++) permArray.push(i)
 
