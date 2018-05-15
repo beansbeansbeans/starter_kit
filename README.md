@@ -6,22 +6,11 @@ sentence progressions
 
 ---
 
-distance matrix next steps
+SVF
 
-- add option of different corpora, each with different models available
-- move presets into corpora
-
-
-- add movie corpus
-
-- load in guns + glove data
-
-- load in the rest of the guns data
-
-- what is "distance_matrix_sentences"?
-
-
-
+- add dropdown for different models
+- add dropdown for different dimensions
+- add dropdown anticipating different stories
 
 ---
 
@@ -35,7 +24,7 @@ Resources:
 library("rjson")
 library('seriation')
 
-json_file <- "/Users/annyuan/Desktop/DISTILL_DATA/ann_dist_matrix/guns/quick-thought/processedDistance_pca-100_minkowski-10.json"
+json_file <- "/Users/annyuan/Desktop/DISTILL_DATA/ann_dist_matrix/movies/quick-thought/processedDistance_pca-100_minkowski-10.json"
 json_data <- fromJSON(file=json_file)
 mat <- matrix(c(json_data), nrow=500)
 customDist = as.dist(mat)

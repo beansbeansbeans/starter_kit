@@ -1,13 +1,18 @@
 import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 import { getData, getShader } from '../api'
-const { bindAll, permute } = helpers
+const { bindAll, permute, createDropdown } = helpers
 import { interpolateRdGy } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
+import Dropdown from './dropdown'
 
 const vizHeight = 600
 const innerContentsWidth = 900
 let cellSize = 2
+
+let models = ['skip-thought']
+let dimensions = [100]
+let stories = ['didion']
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
@@ -18,7 +23,10 @@ class SentencesVsFeaturesMatrix extends Component {
       canvasTop: 0,
       canvasWidth: 0,
       canvasHeight: 0,
-      sentence: -1
+      sentence: -1,
+      models: models.map(createDropdown),
+      dimensions: dimensions.map(createDropdown),
+      stories: stories.map(createDropdown)
     })
   }
 
@@ -80,7 +88,7 @@ class SentencesVsFeaturesMatrix extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['draw', 'calculateSize'])
+    bindAll(this, ['draw', 'calculateSize', 'changeDropdown'])
 
     Promise.all(['didion_encodings_pca_500', 'didion_tsne'].map(getData)).then(resp => {
       let permArray = []
@@ -109,7 +117,21 @@ class SentencesVsFeaturesMatrix extends Component {
     window.addEventListener("scroll", debounce(this.calculateSize, 200))
   }
 
-  render({}, { sentence, canvasWidth, canvasHeight }) {
+  changeDropdown(id, key) {
+    this.setState({
+      [key]: this.state[key].map(d => {
+        if(d.id == id) {
+          d.active = true
+        } else {
+          d.active = false
+        }
+
+        return d
+      })
+    }, this.draw)
+  }
+
+  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories }) {
 
     return (
       <div ref={ c => this.root=c } class="inset_visualization" id="sentences_vs_features_matrix">
@@ -117,6 +139,20 @@ class SentencesVsFeaturesMatrix extends Component {
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
             <div style={`width:${canvasWidth}px;`} class="canvas-wrapper">
+              <div class="dropdown-wrapper-wrapper">
+                <div class="dropdown-wrapper">
+                  <h4 class="label">Stories</h4>
+                  <Dropdown change={id => this.changeDropdown(id, 'stories')} options={stories} />
+                </div>
+                <div class="dropdown-wrapper">
+                  <h4 class="label">Models</h4>
+                  <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
+                </div>
+                <div class="dropdown-wrapper">
+                  <h4 class="label">Dimensions</h4>
+                  <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
+                </div>
+              </div>
               <canvas></canvas>
               <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
             </div>

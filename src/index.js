@@ -40,7 +40,8 @@ class App extends Component {
       </div>
 {/*      <Introduction data={data} title="Introduction" />
       <ManipulateSentence data={data} title="Manipulating Sentences" />
-*/}      <MultipleSentences data={data} title="Comparing Sentences" />
+      <MultipleSentences data={data} title="Comparing Sentences" />
+*/}      
       <SentencesVsFeatures data={data} title="Extracting Meaning From Features" />
       <Conclusion data={data} title="Conclusion" />
     </dt-article>
