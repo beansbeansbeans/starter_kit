@@ -10,24 +10,9 @@ const vizHeight = 1000
 const innerContentsWidth = 900
 let cellSize = 1.5
 
-let models = ['skip-thought', 'doc2vec']
+let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
 let dimensions = [500]
 let stories = ['didion']
-
-/*
-data: {
-  didion: {
-    skip-thought: {
-      500: [
-        {
-          sentence: "you sit down to dinner",
-          encoding: [12...] // permuted by t-sne
-        }
-      ]
-    }
-  }
-}
-*/
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
