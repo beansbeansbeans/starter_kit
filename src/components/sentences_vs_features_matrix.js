@@ -13,7 +13,7 @@ let cellSize = 1.5
 
 let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
 let dimensions = [500, 100]
-let stories = ['didion']
+let stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
@@ -94,8 +94,6 @@ class SentencesVsFeaturesMatrix extends Component {
         })
       })
     })
-
-    console.log(files)
 
     Promise.all(files.map(getData)).then(resp => {
       stories.forEach((s, si) => {
