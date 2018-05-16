@@ -2,7 +2,7 @@ import { h, render, Component } from 'preact'
 import helpers from '../helpers/helpers'
 import { getData, getShader } from '../api'
 const { bindAll, permute, createDropdown, getActiveOption } = helpers
-import { interpolateRdGy } from 'd3-scale-chromatic'
+import { interpolateRdBu } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
 import Dropdown from './dropdown'
 
@@ -61,7 +61,7 @@ class SentencesVsFeaturesMatrix extends Component {
         let val = embeddings[i].encoding[row]
         val = (val - min) / (max - min)
 
-        this.ctx.fillStyle = interpolateRdGy(val)
+        this.ctx.fillStyle = interpolateRdBu(val)
         this.ctx.fillRect(i * cellWidth, row * cellHeight, cellWidth, cellHeight)
       }
     }
@@ -184,7 +184,7 @@ class SentencesVsFeaturesMatrix extends Component {
       activeSentence = <div class="active-sentence">{sentence > -1 ? embeddings[sentence].sentence : ''}</div>
       scale = <div class="scale-wrapper">
         <div class="scale-label">{min}</div>
-        <div style={`background-image: linear-gradient(to right, ${interpolateRdGy(0)}, ${interpolateRdGy(0.25)}, ${interpolateRdGy(0.5)}, ${interpolateRdGy(0.75)}, ${interpolateRdGy(1)})`} class="color-bar"></div>
+        <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
         <div class="scale-label">{max}</div>
       </div>
     }
