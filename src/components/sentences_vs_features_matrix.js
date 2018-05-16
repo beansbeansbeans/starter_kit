@@ -180,7 +180,7 @@ class SentencesVsFeaturesMatrix extends Component {
 
     if(Object.keys(data).length) {
       let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
-      activeSentence = <div style={`width:${canvasWidth}px`} class="active-sentence">{sentence > -1 ? embeddings[sentence].sentence : ''}</div>
+      activeSentence = <div class="active-sentence">{sentence > -1 ? embeddings[sentence].sentence : ''}</div>
       scale = <div class="scale-wrapper">
         <div class="scale-label">{min}</div>
         <div style={`background-image: linear-gradient(to right, ${interpolateRdGy(0)}, ${interpolateRdGy(0.25)}, ${interpolateRdGy(0.5)}, ${interpolateRdGy(0.75)}, ${interpolateRdGy(1)})`} class="color-bar"></div>
@@ -193,7 +193,7 @@ class SentencesVsFeaturesMatrix extends Component {
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
-            <div style={`width:${canvasWidth}px;`} class="canvas-wrapper">
+            <div class="canvas-wrapper">
               <div class="dropdown-wrapper-wrapper">
                 <div class="dropdown-wrapper">
                   <h4 class="label">Stories</h4>
@@ -210,7 +210,7 @@ class SentencesVsFeaturesMatrix extends Component {
                 {scale}
               </div>
               <canvas></canvas>
-              <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
+              <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${(0.5 * (innerContentsWidth - canvasWidth)) + sentence * cellSize - 1}px`} class="mask"></div>
             </div>
             {activeSentence}
           </div>

@@ -3,6 +3,9 @@
     padding-top: 80px;
   }
   canvas {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .active-sentence {
     font-size: 14px;
@@ -19,7 +22,10 @@
   }
   .dropdown-wrapper-wrapper {
     position: absolute;
-    bottom: calc(100% + 10px);
+    bottom: calc(100% + 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
   }
   .scale-wrapper {
     display: inline-block;
