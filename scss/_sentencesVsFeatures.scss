@@ -1,31 +1,25 @@
+$controls-width: 300px;
+
 #sentences_vs_features_matrix {
   .inner-contents {
     padding-top: 80px;
   }
   canvas {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
   }
   .active-sentence {
     font-size: 14px;
     margin-top: 15px;
     line-height: 1.75;
   }
-  .active-sentence, .canvas-wrapper {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);    
+  .canvas-wrapper, .controls {
+    display: inline-block;
+    vertical-align: top;
   }
   .canvas-wrapper {
     position: relative;
+    width: calc(100% - #{$controls-width});
   }
   .dropdown-wrapper-wrapper {
-    position: absolute;
-    bottom: calc(100% + 12px);
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
   }
   .scale-wrapper {
     display: inline-block;
@@ -44,9 +38,10 @@
       width: 100px;
     }
   }
+  .controls {
+    width: $controls-width;
+  }
   .dropdown-wrapper {
-    display: inline-block;
-    margin-right: 15px;
   }
   .mask {
     position: absolute;

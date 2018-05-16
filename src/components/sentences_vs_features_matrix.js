@@ -173,7 +173,7 @@ class SentencesVsFeaturesMatrix extends Component {
     })
   }
 
-  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data }) {
+  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft }) {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
@@ -194,7 +194,7 @@ class SentencesVsFeaturesMatrix extends Component {
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
-            <div class="canvas-wrapper">
+            <div class="controls">
               <div class="dropdown-wrapper-wrapper">
                 <div class="dropdown-wrapper">
                   <h4 class="label">Stories</h4>
@@ -208,12 +208,14 @@ class SentencesVsFeaturesMatrix extends Component {
                   <h4 class="label">Dimensions</h4>
                   <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
                 </div>
-                {scale}
               </div>
-              <canvas></canvas>
-              <div data-active="true" style={`height:${canvasHeight}px;left:${(0.5 * (innerContentsWidth - canvasWidth)) + sentence * cellSize - 1}px`} class="mask"></div>
+              {scale}
             </div>
-            {activeSentence}
+            <div class="canvas-wrapper">
+              <canvas></canvas>
+              <div data-active="true" style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
+              {activeSentence}
+            </div>
           </div>
         </div>
       </div>
