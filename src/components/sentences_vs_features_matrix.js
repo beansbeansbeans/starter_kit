@@ -24,7 +24,7 @@ class SentencesVsFeaturesMatrix extends Component {
       canvasTop: 0,
       canvasWidth: 0,
       canvasHeight: 0,
-      sentence: -1,
+      sentence: 0,
       models: models.map(createDropdown),
       dimensions: dimensions.map(createDropdown),
       stories: stories.map(createDropdown),
@@ -150,7 +150,7 @@ class SentencesVsFeaturesMatrix extends Component {
       let left = e.clientX - this.state.canvasLeft
       let index = Math.floor(left / cellSize)
 
-      this.setState({ sentence: index > 0 && index < sentences.length ? index : -1 })
+      this.setState({ sentence: index > 0 && index < sentences.length ? index : 0 })
     })
 
     window.addEventListener("scroll", debounce(this.calculateSize, 200))
@@ -181,7 +181,7 @@ class SentencesVsFeaturesMatrix extends Component {
 
     if(Object.keys(data).length) {
       let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
-      activeSentence = <div class="active-sentence">{sentence > -1 ? embeddings[sentence].sentence : ''}</div>
+      activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
       scale = <div class="scale-wrapper">
         <div class="scale-label">{min}</div>
         <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
@@ -211,7 +211,7 @@ class SentencesVsFeaturesMatrix extends Component {
                 {scale}
               </div>
               <canvas></canvas>
-              <div data-active={sentence > -1} style={`height:${canvasHeight}px;left:${(0.5 * (innerContentsWidth - canvasWidth)) + sentence * cellSize - 1}px`} class="mask"></div>
+              <div data-active="true" style={`height:${canvasHeight}px;left:${(0.5 * (innerContentsWidth - canvasWidth)) + sentence * cellSize - 1}px`} class="mask"></div>
             </div>
             {activeSentence}
           </div>
