@@ -2,7 +2,7 @@ $controls-width: 300px;
 
 #sentences_vs_features_matrix {
   .inner-contents {
-    padding-top: 80px;
+    padding-top: 40px;
   }
   canvas {
   }
@@ -42,6 +42,13 @@ $controls-width: 300px;
     width: $controls-width;
   }
   .dropdown-wrapper {
+    h4 {
+      margin-bottom: 25px;
+      margin-top: 2px;
+    }
+    select {
+      vertical-align: top;
+    }
   }
   .mask {
     position: absolute;

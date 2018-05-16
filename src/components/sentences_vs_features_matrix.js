@@ -11,9 +11,12 @@ const innerContentsWidth = 900
 const maxCanvasHeight = 500
 let cellSize = 1.5
 
-let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
-let dimensions = [500, 100]
-let stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
+// let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
+let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'skip-thought', 'doc2vec']
+// let dimensions = [500, 100]
+let dimensions = [500]
+// let stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
+let stories = ['didion', 'frogtoad', 'politicslanguage', 'spacedoctors']
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
@@ -197,11 +200,11 @@ class SentencesVsFeaturesMatrix extends Component {
             <div class="controls">
               <div class="dropdown-wrapper-wrapper">
                 <div class="dropdown-wrapper">
-                  <h4 class="label">Stories</h4>
+                  <h4 class="label">Story</h4>
                   <Dropdown change={id => this.changeDropdown(id, 'stories')} options={stories} />
                 </div>
                 <div class="dropdown-wrapper">
-                  <h4 class="label">Models</h4>
+                  <h4 class="label">Model</h4>
                   <Dropdown change={id => this.changeDropdown(id, 'models')} options={models} />
                 </div>
                 <div class="dropdown-wrapper">
