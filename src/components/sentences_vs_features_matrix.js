@@ -90,7 +90,8 @@ class SentencesVsFeaturesMatrix extends Component {
         dimensions.forEach(d => {
           data[s][m][d] = []
           files.push(`sentences_vs_features/${s}_${m}_${d}`)
-          files.push(`sentences_vs_features/${s}_${m}_${d}_tsne`)
+          // files.push(`sentences_vs_features/${s}_${m}_${d}_tsne`)
+          files.push(`sentences_vs_features/didion_${m}_${d}_tsne`) // try using same tsne for all
         })
       })
     })
