@@ -7,6 +7,7 @@ $controls-buffer: 25px;
   }
   .bins-wrapper {
     margin-bottom: 20px;
+    margin-top: 18px;
     position: relative;
     .max-fraction {
       position: absolute;
@@ -14,6 +15,9 @@ $controls-buffer: 25px;
       top: 0;
       font-size: 10px;
       line-height: 0.5;
+    }
+    svg {
+      overflow: visible;
     }
   }
   .labels {
@@ -27,6 +31,7 @@ $controls-buffer: 25px;
     .min, .max {
       position: absolute;
       font-size: 10px;
+      top: -5px;
     }
   }
   canvas {
@@ -71,7 +76,7 @@ $controls-buffer: 25px;
   }
   .dropdown-wrapper {
     h4 {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       margin-top: 2px;
     }
     select {
