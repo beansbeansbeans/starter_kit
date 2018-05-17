@@ -8,6 +8,7 @@ import Dropdown from './dropdown'
 import { line } from 'd3-shape'
 import { select } from 'd3-selection'
 import { scaleLog } from 'd3-scale'
+import stdev from 'compute-stdev'
 
 const vizHeight = 750
 const innerContentsWidth = 900
@@ -54,7 +55,8 @@ class SentencesVsFeaturesMatrix extends Component {
       meta: {},
       min: -Infinity,
       max: Infinity,
-      maxFraction: 0
+      maxFraction: 0,
+      stdev: [-1, 1]
     })
   }
 
@@ -249,9 +251,11 @@ class SentencesVsFeaturesMatrix extends Component {
     let firstStoryData = bins[stories[0].id][activeModel][activeDimension]
     let total = firstStoryData.length * firstStoryData[0].length
     let maxFraction = 0
+    let dataStdev = []
 
     stories.forEach((s, si) => {
       let storyBins = []
+      let values = []
       for(let i=0; i<binCount; i++) storyBins.push(0)
 
       let storyData = bins[s.id][activeModel][activeDimension]
@@ -259,20 +263,28 @@ class SentencesVsFeaturesMatrix extends Component {
       for(let i=0; i<storyData.length; i++) {
         for(let j=0; j<storyData[0].length; j++) {
           let val = storyData[i][j]
+
           let binIndex = findIndex(val, 0, binCount - 1, binValues)
           storyBins[binIndex]++
+          values.push(val)
 
           if(storyBins[binIndex] / total > maxFraction) maxFraction = storyBins[binIndex] / total
         }
       }
 
       storyBinsArr.push(storyBins)
+
+      if(s.id === activeStory) {
+        let mean = values.reduce((acc, curr) => acc + curr, 0) / values.length
+        let dev = stdev(values)
+        dataStdev = [mean - dev, mean + dev]
+      }
     }) 
 
     let yScale = scaleLog().domain([0.9, maxFraction * total])
 
     this.setState({
-      min, max, maxFraction
+      min, max, maxFraction, stdev: dataStdev
     }, () => {
       storyBinsArr.forEach((storyBins, si) => {
         let s = stories[si]

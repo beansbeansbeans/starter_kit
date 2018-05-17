@@ -74,6 +74,7 @@
   "dependencies": {
     "angle-normals": "^1.0.0",
     "canvas-orbit-camera": "^1.0.2",
+    "compute-stdev": "^1.0.0",
     "d3-hierarchy": "^1.1.5",
     "d3-scale": "^1.0.4",
     "d3-scale-chromatic": "^1.2.0",
