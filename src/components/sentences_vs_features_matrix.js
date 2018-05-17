@@ -7,6 +7,7 @@ import { debounce } from 'underscore'
 import Dropdown from './dropdown'
 import { line } from 'd3-shape'
 import { select } from 'd3-selection'
+import { scaleLog } from 'd3-scale'
 
 const vizHeight = 750
 const innerContentsWidth = 900
@@ -268,6 +269,8 @@ class SentencesVsFeaturesMatrix extends Component {
       storyBinsArr.push(storyBins)
     }) 
 
+    let yScale = scaleLog().domain([0.9, maxFraction * total])
+
     this.setState({
       min, max, maxFraction
     }, () => {
@@ -275,7 +278,7 @@ class SentencesVsFeaturesMatrix extends Component {
         let s = stories[si]
 
         select(this.root.querySelector(`svg path:nth-of-type(${si + 1})`))
-          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / total) / maxFraction) * graphHeight)(storyBins))
+          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - yScale(Math.max(d, 0.9))) * graphHeight)(storyBins))
           .style("stroke-width", s.id === activeStory ? "1.5" : "0.5")
           .style("stroke", s.id === activeStory ? "#FF6468" : "#999")        
       })     
