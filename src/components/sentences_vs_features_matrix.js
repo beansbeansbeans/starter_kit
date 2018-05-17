@@ -19,8 +19,8 @@ const controlsBuffer = 40
 const binCount = 100
 const graphXIncrement = controlsWidth / binCount
 const graphHeight = 150
-const colorSmallValue = 'yellow'
-const colorLargeValue = 'lime'
+const colorSmallValue = 'magenta'
+const colorLargeValue = 'cyan'
 
 // const models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
 const models = ['infer-sent', 'quick-thought']
