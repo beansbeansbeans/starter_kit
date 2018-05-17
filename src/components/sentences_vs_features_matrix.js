@@ -5,6 +5,8 @@ const { bindAll, permute, createDropdown, getActiveOption } = helpers
 import { interpolateRdBu } from 'd3-scale-chromatic'
 import { debounce } from 'underscore'
 import Dropdown from './dropdown'
+import { line } from 'd3-shape'
+import { select } from 'd3-selection'
 
 const vizHeight = 750
 const innerContentsWidth = 900
@@ -84,7 +86,7 @@ class SentencesVsFeaturesMatrix extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['draw', 'calculateSize', 'changeDropdown'])
+    bindAll(this, ['draw', 'calculateSize', 'changeDropdown', 'updateBins'])
 
     let files = []
     let data = {}
@@ -165,6 +167,7 @@ class SentencesVsFeaturesMatrix extends Component {
       this.setState({ data, bins, meta })
 
       this.draw()
+      this.updateBins()
       setTimeout(this.calculateSize, 0)
     })
 
@@ -199,7 +202,27 @@ class SentencesVsFeaturesMatrix extends Component {
       })
     }, () => {
       this.draw()
+      this.updateBins()
       this.calculateSize()
+    })
+  }
+
+  updateBins() {
+    let { data, models, stories, dimensions } = this.state
+    let activeModel = getActiveOption(models)
+    let activeStory = getActiveOption(stories)
+
+    let graphXIncrement = 2
+    let graphHeight = 150
+
+    stories.forEach((s, si) => {
+      let storyBins = []
+      for(let i=0; i<100; i++) storyBins.push(Math.random())
+
+      select(this.root.querySelector(`svg path:nth-of-type(${si + 1})`))
+        .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d)) * graphHeight)(storyBins))
+        .style("stroke-width", s.id === activeStory ? "1.5" : "0.5")
+        .style("stroke", s.id === activeStory ? "#FF6468" : "#999")
     })
   }
 
@@ -237,6 +260,11 @@ class SentencesVsFeaturesMatrix extends Component {
                 <div class="dropdown-wrapper">
                   <h4 class="label">Dimensions</h4>
                   <Dropdown change={id => this.changeDropdown(id, 'dimensions')} options={dimensions} />
+                </div>
+              </div>
+              <div class="bins-wrapper">
+                <div class="svg-wrapper">
+                  <svg>{stories.map(s => <path></path>)}</svg>
                 </div>
               </div>
               {scale}

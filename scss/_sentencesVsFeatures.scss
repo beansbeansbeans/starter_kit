@@ -19,6 +19,11 @@ $controls-width: 300px;
     position: relative;
     width: calc(100% - #{$controls-width});
   }
+  svg {
+    path {
+      fill: none;
+    }
+  }
   .dropdown-wrapper-wrapper {
   }
   .scale-wrapper {
