@@ -21,6 +21,7 @@ const graphXIncrement = controlsWidth / binCount
 const graphHeight = 150
 const colorSmallValue = 'magenta'
 const colorLargeValue = 'cyan'
+const stdevScale = 3
 
 // const models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
 const models = ['infer-sent', 'quick-thought']
@@ -71,8 +72,8 @@ class SentencesVsFeaturesMatrix extends Component {
     let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
 
     let canvas = this.root.querySelector("canvas")
-    let adjustMin = mean - 2 * stdev
-    let adjustMax = mean + 2 * stdev
+    let adjustMin = mean - stdevScale * stdev
+    let adjustMax = mean + stdevScale * stdev
 
     this.ctx = canvas.getContext('2d')
     let width = embeddings.length * cellSize
@@ -320,8 +321,8 @@ class SentencesVsFeaturesMatrix extends Component {
       
       activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
       
-      stdevDOM = <div style={`width:${100 * ((mean + 2 * stdev) - (mean - 2 * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - 2 * stdev) - min) / (max - min)}%`} class="stdev-line">
-          <div class="stdev-label">{`μ: ${mean.toFixed(2)}, 2σ: ${(2 * stdev).toFixed(2)}`}</div>
+      stdevDOM = <div style={`width:${100 * ((mean + stdevScale * stdev) - (mean - stdevScale * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - stdevScale * stdev) - min) / (max - min)}%`} class="stdev-line">
+          <div class="stdev-label">{`μ: ${mean.toFixed(2)}, ${stdevScale}σ: ${(stdevScale * stdev).toFixed(2)}`}</div>
           <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
         </div>
 
