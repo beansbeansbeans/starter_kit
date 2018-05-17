@@ -12,7 +12,7 @@ import stdev from 'compute-stdev'
 
 const vizHeight = 750
 const innerContentsWidth = 900
-const maxCanvasHeight = 500
+const maxCanvasHeight = 600
 let cellSize = 1.5
 let controlsWidth = 275
 let controlsBuffer = 40
@@ -62,13 +62,15 @@ class SentencesVsFeaturesMatrix extends Component {
   }
 
   draw() {
-    let { models, stories, dimensions, data } = this.state
+    let { models, stories, dimensions, data, stdev, mean } = this.state
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
     let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
 
     let canvas = this.root.querySelector("canvas")
+    let adjustMin = mean - 2 * stdev
+    let adjustMax = mean + 2 * stdev
 
     this.ctx = canvas.getContext('2d')
     let width = embeddings.length * cellSize
@@ -88,9 +90,16 @@ class SentencesVsFeaturesMatrix extends Component {
     for(let i=0; i<embeddings.length; i++) {
       for(let row=0; row<embeddings[0].encoding.length; row++) {
         let val = embeddings[i].encoding[row]
-        val = (val - min) / (max - min)
+        val = (val - adjustMin) / (adjustMax - adjustMin)
 
-        this.ctx.fillStyle = interpolateRdBu(val)
+        if(val >= 0 && val <= 1) {
+          this.ctx.fillStyle = interpolateRdBu(val)
+        } else if(val < 0) {
+          this.ctx.fillStyle = 'orange'
+        } else {
+          this.ctx.fillStyle = 'black'
+        }
+
         this.ctx.fillRect(i * cellWidth, row * cellHeight, cellWidth, cellHeight)
       }
     }
@@ -188,8 +197,8 @@ class SentencesVsFeaturesMatrix extends Component {
 
       this.setState({ data, bins, meta })
 
-      this.draw()
       this.updateBins()
+      this.draw()
       setTimeout(this.calculateSize, 0)
     })
 
@@ -223,8 +232,8 @@ class SentencesVsFeaturesMatrix extends Component {
         return d
       })
     }, () => {
-      this.draw()
       this.updateBins()
+      this.draw()
       this.calculateSize()
     })
   }
