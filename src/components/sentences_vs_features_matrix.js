@@ -13,22 +13,24 @@ import stdev from 'compute-stdev'
 const vizHeight = 750
 const innerContentsWidth = 900
 const maxCanvasHeight = 600
-let cellSize = 1.5
-let controlsWidth = 275
-let controlsBuffer = 40
-let binCount = 100
-let graphXIncrement = controlsWidth / binCount
-let graphHeight = 150
+const cellSize = 1.5
+const controlsWidth = 275
+const controlsBuffer = 40
+const binCount = 100
+const graphXIncrement = controlsWidth / binCount
+const graphHeight = 150
+const colorSmallValue = 'yellow'
+const colorLargeValue = 'lime'
 
-// let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
-let models = ['infer-sent', 'quick-thought']
-// let dimensions = [500, 100]
-let dimensions = [500]
-// let stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
-let stories = ['didion', 'frogtoad']
+// const models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
+const models = ['infer-sent', 'quick-thought']
+// const dimensions = [500, 100]
+const dimensions = [500]
+// const stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
+const stories = ['didion', 'frogtoad']
 
 const findIndex = (val, low, high, arr) => {
-  let mid = Math.floor((low + high) / 2)
+  const mid = Math.floor((low + high) / 2)
   if(mid === high || mid === low || val >= arr[mid] && val <= arr[mid + 1]) return mid
 
   if(val > arr[mid]) {
@@ -95,9 +97,9 @@ class SentencesVsFeaturesMatrix extends Component {
         if(val >= 0 && val <= 1) {
           this.ctx.fillStyle = interpolateRdBu(val)
         } else if(val < 0) {
-          this.ctx.fillStyle = 'orange'
+          this.ctx.fillStyle = colorSmallValue
         } else {
-          this.ctx.fillStyle = 'black'
+          this.ctx.fillStyle = colorLargeValue
         }
 
         this.ctx.fillRect(i * cellWidth, row * cellHeight, cellWidth, cellHeight)
