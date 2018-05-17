@@ -31,7 +31,9 @@ class SentencesVsFeaturesMatrix extends Component {
       models: models.map(createDropdown),
       dimensions: dimensions.map(createDropdown),
       stories: stories.map(createDropdown),
-      data: {}
+      data: {},
+      bins: {},
+      meta: {}
     })
   }
 
@@ -86,12 +88,20 @@ class SentencesVsFeaturesMatrix extends Component {
 
     let files = []
     let data = {}
+    let bins = {}
+    let meta = {}
     stories.forEach(s => {
       data[s] = {}
+      bins[s] = {}
       models.forEach(m => {
         data[s][m] = {}
+        bins[s][m] = {}
+        meta[m] = {}
         dimensions.forEach(d => {
           data[s][m][d] = []
+          bins[s][m][d] = []
+          meta[m][d] = []
+
           files.push(`sentences_vs_features/${s}_${m}_${d}`)
           // files.push(`sentences_vs_features/${s}_${m}_${d}_tsne`)
           files.push(`sentences_vs_features/didion_${m}_${d}_tsne`) // try using same tsne for all
@@ -118,24 +128,41 @@ class SentencesVsFeaturesMatrix extends Component {
               return sent
             })
 
+            let encodingLength = sentences[0].encoding.length
+
+            for(let i=0; i<encodingLength; i++) {
+              bins[s][m][d].push([])
+              if(meta[m][d].length < encodingLength) {
+                meta[m][d].push([Infinity, 0])
+              }
+            }
+
             let min = 100, max = -100
             for(let i=0; i<sentences.length; i++) {
               let encodings = sentences[i].encoding
 
-              for(let j=0; j<encodings.length; j++) {
+              for(let j=0; j<encodingLength; j++) {
                 let val = encodings[j]
+                bins[s][m][d][j].push(val)
+                meta[m][d][j][0] = Math.min(meta[m][d][j][0], val)
+                meta[m][d][j][1] = Math.max(meta[m][d][j][1], val)
 
                 if(val > max) max = val.toFixed(2)
                 if(val < min) min = val.toFixed(2)
               }
             }
 
+            bins[s][m][d].forEach(row => row.sort())
+
             data[s][m][d] = { embeddings: sentences, min, max }
           })
         })
       })
 
-      this.setState({ data })
+      console.log(bins)
+      console.log(meta)
+
+      this.setState({ data, bins, meta })
 
       this.draw()
       setTimeout(this.calculateSize, 0)
