@@ -10,7 +10,7 @@ import { select } from 'd3-selection'
 import { scaleLog } from 'd3-scale'
 import stdev from 'compute-stdev'
 
-const vizHeight = 750
+const vizHeight = 850
 const innerContentsWidth = 900
 const maxCanvasHeight = 600
 const cellSize = 1.5
@@ -314,7 +314,7 @@ class SentencesVsFeaturesMatrix extends Component {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
-    let activeSentence, scale, stdevDOM
+    let activeSentence, scale, stdevDOM, range
 
     if(Object.keys(data).length) {
       let { embeddings, min: storyMin, max: storyMax } = data[activeStory][activeModel][activeDimension]
@@ -335,6 +335,12 @@ class SentencesVsFeaturesMatrix extends Component {
           <div class="scale-label max">{storyMax}</div>
         </div>
       </div>
+
+      let { encoding } = embeddings[sentence]
+      let encodingMin = Math.min(...encoding)
+      let encodingMax = Math.max(...encoding)
+
+      range = <div style={`width:${100 * ((encodingMax - encodingMin) / (max - min))}%; left:${100 * ((encodingMin - min) / (max - min))}%`} class="range"></div>
     }
 
     return (
@@ -366,6 +372,7 @@ class SentencesVsFeaturesMatrix extends Component {
                     <div class="max">{max.toFixed(2)}</div>
                   </div>
                 </div>
+                {range}
               </div>
               {stdevDOM}
               {scale}
