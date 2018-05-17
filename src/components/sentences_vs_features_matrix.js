@@ -363,7 +363,7 @@ class SentencesVsFeaturesMatrix extends Component {
     if(Object.keys(data).length) {
       let { embeddings, min: storyMin, max: storyMax } = data[activeStory][activeModel][activeDimension]
       
-      activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
+      activeSentence = <div class="active-sentence">{`${embeddings[sentence].sentence} (${sentence})`}</div>
       
       stdevDOM = <div style={`width:${100 * ((mean + stdevScale * stdev) - (mean - stdevScale * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - stdevScale * stdev) - min) / (max - min)}%`} class="stdev-line">
           <div class="stdev-label">{`μ: ${mean.toFixed(2)}, ${stdevScale}σ: ${(stdevScale * stdev).toFixed(2)}`}</div>
