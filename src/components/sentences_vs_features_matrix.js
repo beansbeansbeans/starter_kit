@@ -25,12 +25,12 @@ const stdevScale = 3
 const maskHScale = 4
 const maskVScale = 1
 
-// const models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
-const models = ['infer-sent', 'quick-thought']
-// const dimensions = [500, 100]
-const dimensions = [500]
-// const stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
-const stories = ['didion', 'frogtoad']
+const models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
+// const models = ['infer-sent', 'quick-thought']
+const dimensions = [500, 100]
+// const dimensions = [500]
+const stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
+// const stories = ['didion', 'frogtoad']
 
 const findIndex = (val, low, high, arr) => {
   const mid = Math.floor((low + high) / 2)
