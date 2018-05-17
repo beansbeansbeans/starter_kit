@@ -56,7 +56,8 @@ class SentencesVsFeaturesMatrix extends Component {
       min: -Infinity,
       max: Infinity,
       maxFraction: 0,
-      stdev: [-1, 1]
+      mean: 0,
+      stdev: 0
     })
   }
 
@@ -251,7 +252,7 @@ class SentencesVsFeaturesMatrix extends Component {
     let firstStoryData = bins[stories[0].id][activeModel][activeDimension]
     let total = firstStoryData.length * firstStoryData[0].length
     let maxFraction = 0
-    let dataStdev = []
+    let mean, dev
 
     stories.forEach((s, si) => {
       let storyBins = []
@@ -275,16 +276,15 @@ class SentencesVsFeaturesMatrix extends Component {
       storyBinsArr.push(storyBins)
 
       if(s.id === activeStory) {
-        let mean = values.reduce((acc, curr) => acc + curr, 0) / values.length
-        let dev = stdev(values)
-        dataStdev = [mean - dev, mean + dev]
+        mean = values.reduce((acc, curr) => acc + curr, 0) / values.length
+        dev = stdev(values)
       }
     }) 
 
     let yScale = scaleLog().domain([0.9, maxFraction * total])
 
     this.setState({
-      min, max, maxFraction, stdev: dataStdev
+      min, max, maxFraction, stdev: dev, mean
     }, () => {
       storyBinsArr.forEach((storyBins, si) => {
         let s = stories[si]
@@ -297,7 +297,7 @@ class SentencesVsFeaturesMatrix extends Component {
     })
   }
 
-  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft, min, max, maxFraction }) {
+  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft, min, max, maxFraction, mean, stdev }) {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
@@ -307,6 +307,7 @@ class SentencesVsFeaturesMatrix extends Component {
       let { embeddings, min: storyMin, max: storyMax } = data[activeStory][activeModel][activeDimension]
       activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
       scale = <div style={`width:${100 * ((storyMax - storyMin) / (max - min))}%;margin-left:${100 * (storyMin - min) / (max - min)}%`} class="scale-wrapper">
+        <div style={`width:${100 * ((mean + 2 * stdev) - (mean - 2 * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - 2 * stdev) - min) / (max - min)}%`} class="stdev-line"></div>
         <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
         <div class="scale-wrapper-labels">
           <div class="scale-label min">{storyMin}</div>

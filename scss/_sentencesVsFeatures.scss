@@ -56,6 +56,27 @@ $controls-buffer: 25px;
   .dropdown-wrapper-wrapper {
   }
   .scale-wrapper {
+    .stdev-line {
+      height: 1px;
+      background: $mine-shaft;
+      margin-bottom: 6px;
+      position: relative;
+      &:before, &:after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: $mine-shaft;
+        width: 3px;
+        height: 3px;
+        top: -1px;
+      }
+      &:before {
+        left: 0;
+      }
+      &:after {
+        right: 0;
+      }
+    }
     .scale-wrapper-labels {
       position: relative;
     }
