@@ -317,12 +317,18 @@ class SentencesVsFeaturesMatrix extends Component {
 
     if(Object.keys(data).length) {
       let { embeddings, min: storyMin, max: storyMax } = data[activeStory][activeModel][activeDimension]
+      
       activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
+      
       stdevDOM = <div style={`width:${100 * ((mean + 2 * stdev) - (mean - 2 * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - 2 * stdev) - min) / (max - min)}%`} class="stdev-line">
           <div class="stdev-label">{`μ: ${mean.toFixed(2)}, 2σ: ${(2 * stdev).toFixed(2)}`}</div>
+          <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
         </div>
+
+      let meanPercentage = (100 * ((mean - storyMin) / (storyMax - storyMin))) + '%'
+      
       scale = <div style={`width:${100 * ((storyMax - storyMin) / (max - min))}%;margin-left:${100 * (storyMin - min) / (max - min)}%`} class="scale-wrapper">
-        <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
+        <div style={`background-image: linear-gradient(to right, ${colorSmallValue} ${meanPercentage}, ${colorLargeValue} ${meanPercentage})`} class="color-bar"></div>
         <div class="scale-wrapper-labels">
           <div class="scale-label min">{storyMin}</div>
           <div class="scale-label max">{storyMax}</div>

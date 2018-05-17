@@ -60,6 +60,14 @@ $controls-buffer: 25px;
     background: $mine-shaft;
     margin-bottom: 8px;
     position: relative;
+    .color-bar {
+      position: absolute;
+      top: 9px;
+      border-left: solid 2px whitesmoke;
+      border-right: solid 2px whitesmoke;
+      box-sizing: content-box;
+      left: -2px;
+    }
     .stdev-label {
       position: absolute;
       left: 0;
@@ -98,10 +106,10 @@ $controls-buffer: 25px;
         right: 0;
       }
     }
-    .color-bar {
-      height: 4px;
-      width: 100%;
-    }
+  }
+  .color-bar {
+    height: 4px;
+    width: 100%;
   }
   .controls {
   }
