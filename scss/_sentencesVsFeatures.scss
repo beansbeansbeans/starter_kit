@@ -1,8 +1,25 @@
 $controls-width: 300px;
+$controls-buffer: 25px;
 
 #sentences_vs_features_matrix {
   .inner-contents {
     padding-top: 40px;
+  }
+  .bins-wrapper {
+    margin-bottom: 20px;
+  }
+  .labels {
+    position: relative;
+    .min {
+      left: 0;
+    }
+    .max {
+      right: 0;
+    }
+    .min, .max {
+      position: absolute;
+      font-size: 10px;
+    }
   }
   canvas {
   }
@@ -17,7 +34,6 @@ $controls-width: 300px;
   }
   .canvas-wrapper {
     position: relative;
-    width: calc(100% - #{$controls-width});
   }
   svg {
     path {
@@ -44,7 +60,6 @@ $controls-width: 300px;
     }
   }
   .controls {
-    width: $controls-width;
   }
   .dropdown-wrapper {
     h4 {

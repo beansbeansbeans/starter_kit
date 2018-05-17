@@ -12,13 +12,18 @@ const vizHeight = 750
 const innerContentsWidth = 900
 const maxCanvasHeight = 500
 let cellSize = 1.5
+let controlsWidth = 275
+let controlsBuffer = 40
+let binCount = 100
+let graphXIncrement = controlsWidth / binCount
+let graphHeight = 150
 
 // let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
-let models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'skip-thought', 'doc2vec']
+let models = ['infer-sent', 'quick-thought']
 // let dimensions = [500, 100]
 let dimensions = [500]
 // let stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
-let stories = ['didion', 'frogtoad', 'politicslanguage', 'spacedoctors']
+let stories = ['didion', 'frogtoad']
 
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
@@ -35,7 +40,9 @@ class SentencesVsFeaturesMatrix extends Component {
       stories: stories.map(createDropdown),
       data: {},
       bins: {},
-      meta: {}
+      meta: {},
+      min: -Infinity,
+      max: Infinity
     })
   }
 
@@ -208,25 +215,35 @@ class SentencesVsFeaturesMatrix extends Component {
   }
 
   updateBins() {
-    let { data, models, stories, dimensions } = this.state
+    let { data, models, stories, dimensions, meta } = this.state
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
+    let activeDimension = getActiveOption(dimensions)
 
-    let graphXIncrement = 2
-    let graphHeight = 150
+    let min = Infinity
+    let max = -Infinity
 
-    stories.forEach((s, si) => {
-      let storyBins = []
-      for(let i=0; i<100; i++) storyBins.push(Math.random())
+    for(let i=0; i<meta[activeModel][activeDimension].length; i++) {
+      min = Math.min(min, meta[activeModel][activeDimension][i][0])
+      max = Math.max(max, meta[activeModel][activeDimension][i][1])
+    }
 
-      select(this.root.querySelector(`svg path:nth-of-type(${si + 1})`))
-        .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d)) * graphHeight)(storyBins))
-        .style("stroke-width", s.id === activeStory ? "1.5" : "0.5")
-        .style("stroke", s.id === activeStory ? "#FF6468" : "#999")
+    this.setState({
+      min, max
+    }, () => {
+      stories.forEach((s, si) => {
+        let storyBins = []
+        for(let i=0; i<100; i++) storyBins.push(Math.random())
+
+        select(this.root.querySelector(`svg path:nth-of-type(${si + 1})`))
+          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d)) * graphHeight)(storyBins))
+          .style("stroke-width", s.id === activeStory ? "1.5" : "0.5")
+          .style("stroke", s.id === activeStory ? "#FF6468" : "#999")
+      })      
     })
   }
 
-  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft }) {
+  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft, min, max }) {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
@@ -247,7 +264,7 @@ class SentencesVsFeaturesMatrix extends Component {
         <div style={`height:${vizHeight}px`} class="buffer"></div>
         <div style={`height:${vizHeight}px`} class="contents">
           <div style={`width:${innerContentsWidth}px`} class="inner-contents">
-            <div class="controls">
+            <div style={`width:${controlsWidth}px;margin-right: ${controlsBuffer}px`} class="controls">
               <div class="dropdown-wrapper-wrapper">
                 <div class="dropdown-wrapper">
                   <h4 class="label">Story</h4>
@@ -265,11 +282,15 @@ class SentencesVsFeaturesMatrix extends Component {
               <div class="bins-wrapper">
                 <div class="svg-wrapper">
                   <svg>{stories.map(s => <path></path>)}</svg>
+                  <div class="labels">
+                    <div class="min">{min.toFixed(2)}</div>
+                    <div class="max">{max.toFixed(2)}</div>
+                  </div>
                 </div>
               </div>
               {scale}
             </div>
-            <div class="canvas-wrapper">
+            <div style={`width: calc(100% - ${controlsWidth + controlsBuffer}px)`} class="canvas-wrapper">
               <canvas></canvas>
               <div data-active="true" style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
               {activeSentence}

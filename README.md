@@ -32,6 +32,32 @@ o <- seriate(customDist, method="TSP")
 x <- toString(shQuote(lapply(o, function(x) x - 1), type = "cmd"))
 gsub("[\r\n]", "", x)
 
-
-
 pimage(customDist, o)
+
+---
+
+how should the segmentation be stored?
+
+meta = {
+  glove: {
+    500: [
+      [min, max],
+      [min, max],
+      ...
+    ]
+  }
+}
+
+bins = {
+  didion: {
+    glove: {
+      500: [
+        [], // raw values sorted
+        []
+      ]
+    }
+  },
+  spacedoctors: {
+
+  }
+}
