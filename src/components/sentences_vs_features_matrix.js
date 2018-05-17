@@ -87,15 +87,15 @@ class SentencesVsFeaturesMatrix extends Component {
     this.ctx = canvas.getContext('2d')
     let width = embeddings.length * cellSize
     let naturalHeight = embeddings[0].encoding.length * cellSize
-    let height = Math.min(naturalHeight, maxCanvasHeight)
+    this.canvasHeight = Math.min(naturalHeight, maxCanvasHeight)
     let cellWidth = cellSize
-    this.cellHeight = (height / naturalHeight) * cellSize
+    this.cellHeight = (this.canvasHeight / naturalHeight) * cellSize
 
     canvas.width = 2 * width
-    canvas.height = 2 * height
+    canvas.height = 2 * this.canvasHeight
 
     canvas.style.width = width + 'px'
-    canvas.style.height = height + 'px'
+    canvas.style.height = this.canvasHeight + 'px'
 
     this.ctx.scale(2, 2)
 
@@ -109,6 +109,8 @@ class SentencesVsFeaturesMatrix extends Component {
         this.ctx.fillRect(i * cellWidth, row * this.cellHeight, cellWidth, this.cellHeight)
       }
     }
+
+    this.updateMask()
   }
 
   calculateSize() {
@@ -145,7 +147,7 @@ class SentencesVsFeaturesMatrix extends Component {
   }
 
   componentWillMount() {
-    bindAll(this, ['draw', 'calculateSize', 'changeDropdown', 'updateBins', 'paintMask'])
+    bindAll(this, ['draw', 'calculateSize', 'changeDropdown', 'updateBins', 'paintMask', 'updateMask'])
 
     let files = []
     let data = {}
@@ -268,12 +270,12 @@ class SentencesVsFeaturesMatrix extends Component {
     })
   }
 
-  componentDidMount() {
+  updateMask() {
     let maskCanvas = this.root.querySelector("#mask-canvas")
     this.maskCtx = maskCanvas.getContext("2d")
 
     this.maskWidth = cellSize * maskHScale
-    this.maskHeight = maxCanvasHeight * maskVScale
+    this.maskHeight = this.canvasHeight * maskVScale
     maskCanvas.width = this.maskWidth * 2
     maskCanvas.height = this.maskHeight * 2
 
