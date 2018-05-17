@@ -264,6 +264,7 @@ class SentencesVsFeaturesMatrix extends Component {
     let total = firstStoryData.length * firstStoryData[0].length
     let maxFraction = 0
     let mean, dev
+    let valuesArr = []
 
     stories.forEach((s, si) => {
       let storyBins = []
@@ -286,11 +287,11 @@ class SentencesVsFeaturesMatrix extends Component {
 
       storyBinsArr.push(storyBins)
 
-      if(s.id === activeStory) {
-        mean = values.reduce((acc, curr) => acc + curr, 0) / values.length
-        dev = stdev(values)
-      }
-    }) 
+      valuesArr = valuesArr.concat(values)
+    })
+
+    mean = valuesArr.reduce((acc, curr) => acc + curr, 0) / valuesArr.length
+    dev = stdev(valuesArr)
 
     let yScale = scaleLog().domain([0.9, maxFraction * total])
 
