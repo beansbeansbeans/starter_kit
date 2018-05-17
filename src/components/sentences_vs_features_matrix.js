@@ -25,6 +25,16 @@ let dimensions = [500]
 // let stories = ['didion', 'eclipse', 'frogtoad', 'politicslanguage', 'spacedoctors']
 let stories = ['didion', 'frogtoad']
 
+const findIndex = (val, low, high, arr) => {
+  let mid = Math.floor((low + high) / 2)
+  if(mid === high || mid === low || val >= arr[mid] && val <= arr[mid + 1]) return mid
+
+  if(val > arr[mid]) {
+    return findIndex(val, mid, high, arr)
+  }
+  return findIndex(val, low, mid, arr)
+}
+
 class SentencesVsFeaturesMatrix extends Component {
   constructor(props) {
     super(props)
@@ -42,7 +52,8 @@ class SentencesVsFeaturesMatrix extends Component {
       bins: {},
       meta: {},
       min: -Infinity,
-      max: Infinity
+      max: Infinity,
+      maxFraction: 0
     })
   }
 
@@ -215,7 +226,7 @@ class SentencesVsFeaturesMatrix extends Component {
   }
 
   updateBins() {
-    let { data, models, stories, dimensions, meta } = this.state
+    let { data, models, stories, dimensions, meta, bins } = this.state
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
@@ -228,22 +239,50 @@ class SentencesVsFeaturesMatrix extends Component {
       max = Math.max(max, meta[activeModel][activeDimension][i][1])
     }
 
+    let binValues = [], increment = (max - min) / (binCount - 1)
+    for(let i=0; i<binCount; i++) {
+      binValues.push(min + i * increment)
+    }
+
+    let storyBinsArr = []
+    let firstStoryData = bins[stories[0].id][activeModel][activeDimension]
+    let total = firstStoryData.length * firstStoryData[0].length
+    let maxFraction = 0
+
+    stories.forEach((s, si) => {
+      let storyBins = []
+      for(let i=0; i<binCount; i++) storyBins.push(0)
+
+      let storyData = bins[s.id][activeModel][activeDimension]
+
+      for(let i=0; i<storyData.length; i++) {
+        for(let j=0; j<storyData[0].length; j++) {
+          let val = storyData[i][j]
+          let binIndex = findIndex(val, 0, binCount - 1, binValues)
+          storyBins[binIndex]++
+
+          if(storyBins[binIndex] / total > maxFraction) maxFraction = storyBins[binIndex] / total
+        }
+      }
+
+      storyBinsArr.push(storyBins)
+    }) 
+
     this.setState({
-      min, max
+      min, max, maxFraction
     }, () => {
-      stories.forEach((s, si) => {
-        let storyBins = []
-        for(let i=0; i<100; i++) storyBins.push(Math.random())
+      storyBinsArr.forEach((storyBins, si) => {
+        let s = stories[si]
 
         select(this.root.querySelector(`svg path:nth-of-type(${si + 1})`))
-          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d)) * graphHeight)(storyBins))
+          .attr("d", line().x((d, i) => i * graphXIncrement).y(d => (1 - (d / total) / maxFraction) * graphHeight)(storyBins))
           .style("stroke-width", s.id === activeStory ? "1.5" : "0.5")
-          .style("stroke", s.id === activeStory ? "#FF6468" : "#999")
-      })      
+          .style("stroke", s.id === activeStory ? "#FF6468" : "#999")        
+      })     
     })
   }
 
-  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft, min, max }) {
+  render({}, { sentence, canvasWidth, canvasHeight, models, dimensions, stories, data, canvasLeft, min, max, maxFraction }) {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
@@ -281,6 +320,7 @@ class SentencesVsFeaturesMatrix extends Component {
               </div>
               <div class="bins-wrapper">
                 <div class="svg-wrapper">
+                  <div class="max-fraction">{`max: ${maxFraction.toFixed(2)}`}</div>
                   <svg>{stories.map(s => <path></path>)}</svg>
                   <div class="labels">
                     <div class="min">{min.toFixed(2)}</div>
