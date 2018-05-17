@@ -131,10 +131,14 @@ $controls-buffer: 25px;
   }
   .mask {
     position: absolute;
-    top: -1px;
-    width: 1.5px;
-    border: solid 1px #222;
-    box-sizing: content-box;
+    top: 0;
+    canvas {
+      transform: translate3d(-50%, -50%, 0);
+      position: relative;
+      left: 50%;
+      top: 50%;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4)
+    }
     &:not([data-active="true"]) {
       display: none;
     }

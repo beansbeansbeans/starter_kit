@@ -22,6 +22,8 @@ const graphHeight = 150
 const colorSmallValue = 'magenta'
 const colorLargeValue = 'cyan'
 const stdevScale = 3
+const maskHScale = 4
+const maskVScale = 1
 
 // const models = ['infer-sent', 'quick-thought', 'glove', 'unigram-books', 'unigram-wiki', 'skip-thought', 'doc2vec']
 const models = ['infer-sent', 'quick-thought']
@@ -38,6 +40,12 @@ const findIndex = (val, low, high, arr) => {
     return findIndex(val, mid, high, arr)
   }
   return findIndex(val, low, mid, arr)
+}
+
+const getFillStyle = val => {
+  if(val < 0) return colorSmallValue
+  if(val > 1) return colorLargeValue
+  return interpolateRdBu(val)
 }
 
 class SentencesVsFeaturesMatrix extends Component {
@@ -60,7 +68,8 @@ class SentencesVsFeaturesMatrix extends Component {
       max: Infinity,
       maxFraction: 0,
       mean: 0,
-      stdev: 0
+      stdev: 0,
+      activeEncoding: []
     })
   }
 
@@ -71,7 +80,7 @@ class SentencesVsFeaturesMatrix extends Component {
     let activeDimension = getActiveOption(dimensions)
     let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
 
-    let canvas = this.root.querySelector("canvas")
+    let canvas = this.root.querySelector("#main-canvas")
     let adjustMin = mean - stdevScale * stdev
     let adjustMax = mean + stdevScale * stdev
 
@@ -80,7 +89,7 @@ class SentencesVsFeaturesMatrix extends Component {
     let naturalHeight = embeddings[0].encoding.length * cellSize
     let height = Math.min(naturalHeight, maxCanvasHeight)
     let cellWidth = cellSize
-    let cellHeight = (height / naturalHeight) * cellSize
+    this.cellHeight = (height / naturalHeight) * cellSize
 
     canvas.width = 2 * width
     canvas.height = 2 * height
@@ -95,21 +104,15 @@ class SentencesVsFeaturesMatrix extends Component {
         let val = embeddings[i].encoding[row]
         val = (val - adjustMin) / (adjustMax - adjustMin)
 
-        if(val >= 0 && val <= 1) {
-          this.ctx.fillStyle = interpolateRdBu(val)
-        } else if(val < 0) {
-          this.ctx.fillStyle = colorSmallValue
-        } else {
-          this.ctx.fillStyle = colorLargeValue
-        }
+        this.ctx.fillStyle = getFillStyle(val)
 
-        this.ctx.fillRect(i * cellWidth, row * cellHeight, cellWidth, cellHeight)
+        this.ctx.fillRect(i * cellWidth, row * this.cellHeight, cellWidth, this.cellHeight)
       }
     }
   }
 
   calculateSize() {
-    let rect = this.root.querySelector("canvas").getBoundingClientRect()
+    let rect = this.root.querySelector("#main-canvas").getBoundingClientRect()
 
     this.setState({
       canvasLeft: Math.round(rect.left),
@@ -119,8 +122,30 @@ class SentencesVsFeaturesMatrix extends Component {
     })
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(this.state.sentence !== prevState.sentence) {
+      this.paintMask()
+    }
+  }
+
+  paintMask() {
+    let { activeEncoding, mean, stdev } = this.state
+    let adjustMin = mean - stdevScale * stdev
+    let adjustMax = mean + stdevScale * stdev
+
+    this.maskCtx.clearRect(0, 0, this.maskWidth, this.maskHeight)
+    for(let i=0; i<activeEncoding.length; i++) {
+      let val = activeEncoding[i]
+      val = (val - adjustMin) / (adjustMax - adjustMin)
+      
+      this.maskCtx.fillStyle = getFillStyle(val)
+
+      this.maskCtx.fillRect(0, i * maskVScale * this.cellHeight, this.maskWidth, maskVScale * this.cellHeight)
+    }
+  }
+
   componentWillMount() {
-    bindAll(this, ['draw', 'calculateSize', 'changeDropdown', 'updateBins'])
+    bindAll(this, ['draw', 'calculateSize', 'changeDropdown', 'updateBins', 'paintMask'])
 
     let files = []
     let data = {}
@@ -195,9 +220,6 @@ class SentencesVsFeaturesMatrix extends Component {
         })
       })
 
-      console.log(bins)
-      console.log(meta)
-
       this.setState({ data, bins, meta })
 
       this.updateBins()
@@ -216,8 +238,13 @@ class SentencesVsFeaturesMatrix extends Component {
 
       let left = e.clientX - this.state.canvasLeft
       let index = Math.floor(left / cellSize)
+      let sentence = index > 0 && index < sentences.length ? index : 0
 
-      this.setState({ sentence: index > 0 && index < sentences.length ? index : 0 })
+      let activeEncoding = sentences[sentence].encoding
+
+      this.setState({ 
+        sentence, activeEncoding
+      })
     })
 
     window.addEventListener("scroll", debounce(this.calculateSize, 200))
@@ -239,6 +266,21 @@ class SentencesVsFeaturesMatrix extends Component {
       this.draw()
       this.calculateSize()
     })
+  }
+
+  componentDidMount() {
+    let maskCanvas = this.root.querySelector("#mask-canvas")
+    this.maskCtx = maskCanvas.getContext("2d")
+
+    this.maskWidth = cellSize * maskHScale
+    this.maskHeight = maxCanvasHeight * maskVScale
+    maskCanvas.width = this.maskWidth * 2
+    maskCanvas.height = this.maskHeight * 2
+
+    maskCanvas.style.width = (this.maskWidth) + 'px'
+    maskCanvas.style.height = (this.maskHeight) + 'px'
+
+    this.maskCtx.scale(2, 2)
   }
 
   updateBins() {
@@ -378,8 +420,10 @@ class SentencesVsFeaturesMatrix extends Component {
               {scale}
             </div>
             <div style={`width: calc(100% - ${controlsWidth + controlsBuffer}px)`} class="canvas-wrapper">
-              <canvas></canvas>
-              <div data-active="true" style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask"></div>
+              <canvas id="main-canvas"></canvas>
+              <div data-active="true" style={`height:${canvasHeight}px;left:${sentence * cellSize - 1}px`} class="mask">
+                <canvas id="mask-canvas"></canvas>
+              </div>
               {activeSentence}
             </div>
           </div>
