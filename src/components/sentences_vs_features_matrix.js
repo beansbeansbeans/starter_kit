@@ -301,13 +301,15 @@ class SentencesVsFeaturesMatrix extends Component {
     let activeModel = getActiveOption(models)
     let activeStory = getActiveOption(stories)
     let activeDimension = getActiveOption(dimensions)
-    let activeSentence, scale
+    let activeSentence, scale, stdevDOM
 
     if(Object.keys(data).length) {
       let { embeddings, min: storyMin, max: storyMax } = data[activeStory][activeModel][activeDimension]
       activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
+      stdevDOM = <div style={`width:${100 * ((mean + 2 * stdev) - (mean - 2 * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - 2 * stdev) - min) / (max - min)}%`} class="stdev-line">
+          <div class="stdev-label">{`μ: ${mean.toFixed(2)}, 2σ: ${(2 * stdev).toFixed(2)}`}</div>
+        </div>
       scale = <div style={`width:${100 * ((storyMax - storyMin) / (max - min))}%;margin-left:${100 * (storyMin - min) / (max - min)}%`} class="scale-wrapper">
-        <div style={`width:${100 * ((mean + 2 * stdev) - (mean - 2 * stdev)) / (max - min)}%; margin-left: ${100 * ((mean - 2 * stdev) - min) / (max - min)}%`} class="stdev-line"></div>
         <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
         <div class="scale-wrapper-labels">
           <div class="scale-label min">{storyMin}</div>
@@ -346,6 +348,7 @@ class SentencesVsFeaturesMatrix extends Component {
                   </div>
                 </div>
               </div>
+              {stdevDOM}
               {scale}
             </div>
             <div style={`width: calc(100% - ${controlsWidth + controlsBuffer}px)`} class="canvas-wrapper">

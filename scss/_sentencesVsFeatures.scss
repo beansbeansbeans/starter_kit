@@ -6,7 +6,7 @@ $controls-buffer: 25px;
     padding-top: 40px;
   }
   .bins-wrapper {
-    margin-bottom: 30px;
+    margin-bottom: 38px;
     margin-top: 18px;
     position: relative;
     .max-fraction {
@@ -55,28 +55,35 @@ $controls-buffer: 25px;
   }
   .dropdown-wrapper-wrapper {
   }
-  .scale-wrapper {
-    .stdev-line {
-      height: 1px;
-      background: $mine-shaft;
-      margin-bottom: 6px;
-      position: relative;
-      &:before, &:after {
-        content: "";
-        position: absolute;
-        border-radius: 50%;
-        background: $mine-shaft;
-        width: 3px;
-        height: 3px;
-        top: -1px;
-      }
-      &:before {
-        left: 0;
-      }
-      &:after {
-        right: 0;
-      }
+  .stdev-line {
+    height: 1px;
+    background: $mine-shaft;
+    margin-bottom: 8px;
+    position: relative;
+    .stdev-label {
+      position: absolute;
+      left: 0;
+      bottom: 100%;
+      font-size: 10px;
+      white-space: nowrap;
     }
+    &:before, &:after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: $mine-shaft;
+      width: 3px;
+      height: 3px;
+      top: -1px;
+    }
+    &:before {
+      left: 0;
+    }
+    &:after {
+      right: 0;
+    }
+  }
+  .scale-wrapper {
     .scale-wrapper-labels {
       position: relative;
     }
