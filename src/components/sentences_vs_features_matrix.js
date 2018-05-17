@@ -292,12 +292,14 @@ class SentencesVsFeaturesMatrix extends Component {
     let activeSentence, scale
 
     if(Object.keys(data).length) {
-      let { embeddings, min, max } = data[activeStory][activeModel][activeDimension]
+      let { embeddings, min: storyMin, max: storyMax } = data[activeStory][activeModel][activeDimension]
       activeSentence = <div class="active-sentence">{embeddings[sentence].sentence}</div>
-      scale = <div class="scale-wrapper">
-        <div class="scale-label">{min}</div>
+      scale = <div style={`width:${100 * ((storyMax - storyMin) / (max - min))}%;margin-left:${100 * (storyMin - min) / (max - min)}%`} class="scale-wrapper">
         <div style={`background-image: linear-gradient(to right, ${interpolateRdBu(0)}, ${interpolateRdBu(0.25)}, ${interpolateRdBu(0.5)}, ${interpolateRdBu(0.75)}, ${interpolateRdBu(1)})`} class="color-bar"></div>
-        <div class="scale-label">{max}</div>
+        <div class="scale-wrapper-labels">
+          <div class="scale-label min">{storyMin}</div>
+          <div class="scale-label max">{storyMax}</div>
+        </div>
       </div>
     }
 
