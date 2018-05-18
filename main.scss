@@ -1,17 +1,4 @@
 @import "scss/variables";
-@import "scss/uiElements";
-
-// sections
-@import "scss/introduction";
-
-// components - should maybe be moved into components
-@import "scss/aggregation";
-@import "scss/permutations";
-@import "scss/distanceMatrix";
-@import "scss/parallelCoordinates";
-@import "scss/embedding_spiral";
-@import "scss/pairwise";
-@import "scss/sentencesVsFeatures";
 
 body {
   margin: 0;
@@ -25,24 +12,4 @@ body, html {
 
 * {
   box-sizing: border-box;
-}
-
-app {
-  width: 100vw;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  position: absolute;
-}
-
-// distill stylesheet overrides
-
-.section {
-  margin-left: auto !important;
-  margin-right: auto;
-  &:last-of-type {
-    hr {
-      display: none;
-    }
-  }
 }

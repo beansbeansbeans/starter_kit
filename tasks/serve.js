@@ -3,7 +3,7 @@ var utils = require('./_utils'),
 
 module.exports = function(options) {
   options = utils.extend({
-    port: 5550
+    port: 8080
   }, options)
   // serve the contents of this folder
   return build().then(() => {
